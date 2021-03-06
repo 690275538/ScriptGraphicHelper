@@ -109,7 +109,7 @@ namespace ScriptGraphicHelper.ViewModels.Core
                 return false;
             }
 
-            CommandParameters list = new();
+            CommandParameters list = new CommandParameters();
 
             list.Sender = sender;
 
@@ -147,8 +147,8 @@ namespace ScriptGraphicHelper.ViewModels.Core
 
     public struct CommandParameters
     {
-        public object Sender;
-        public object EventArgs;
+        public object? Sender;
+        public object? EventArgs;
         public object? CommandParameter;
     }
 }

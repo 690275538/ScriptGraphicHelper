@@ -1,0 +1,94 @@
+<UserControl
+    x:Class="ScriptGraphicHelper.Panels.ColorInfos"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cv="using:ScriptGraphicHelper.Converters"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <cv:ColorConverter x:Key="colorConverter" />
+        <cv:BrushConverter x:Key="brushConverter" />
+    </UserControl.Resources>
+
+
+    <Border
+        BorderBrush="#666666"
+        BorderThickness="1"
+        CornerRadius="3">
+        <DataGrid
+            Name="ColorInfos"
+            AutoGenerateColumns="False"
+            CanUserResizeColumns="False"
+            CanUserSortColumns="False"
+            Items="{Binding ColorInfos, Mode=TwoWay}"
+            RowHeight="40"
+            SelectedIndex="{Binding ColorInfoSelected, Mode=TwoWay}"
+            SelectionMode="Extended">
+            <DataGrid.Columns>
+                <DataGridTemplateColumn
+                    Width="40"
+                    Header="序号"
+                    IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding Index}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Width="80"
+                    Header="坐标"
+                    IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding Point}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn
+                    Width="80"
+                    Header="颜色"
+                    IsReadOnly="True">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Text="{Binding Color, Converter={StaticResource colorConverter}}" />
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTemplateColumn Width="40" Header="状态">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <Grid
+                                Width="20"
+                                Height="20"
+                                HorizontalAlignment="Center">
+                                <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}">
+                                    <CheckBox.Styles>
+                                        <Style Selector="CheckBox:checked Border#NormalRectangle">
+                                            <Setter Property="FocusAdorner" Value="{Binding Color, Converter={StaticResource brushConverter}}" />
+                                            <Setter Property="CornerRadius" Value="2" />
+                                            <Setter Property="BorderBrush" Value="Transparent" />
+                                            <Setter Property="Background" Value="{Binding Color, Converter={StaticResource brushConverter}}" />
+                                        </Style>
+
+                                    </CheckBox.Styles>
+                                </CheckBox>
+                            </Grid>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Border>
+</UserControl>

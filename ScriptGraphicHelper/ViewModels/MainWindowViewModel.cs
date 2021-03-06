@@ -5,19 +5,23 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
+using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels.Core;
+using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows.Input;
 
 namespace ScriptGraphicHelper.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-       
+
         private int emulatorSelected;
         public int EmulatorSelected
         {
@@ -136,18 +140,28 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref rect_IsVisible, value);
         }
 
+        private ObservableCollection<ColorInfo> colorInfos;
+        public ObservableCollection<ColorInfo> ColorInfos 
+        {
+            get => colorInfos;
+            set => this.RaiseAndSetIfChanged(ref colorInfos, value);
+        }
+
 
         public MainWindowViewModel()
         {
+            ColorInfos = new ObservableCollection<ColorInfo>();
+         
+
             LoupeWriteBmp = LoupeWriteBitmap.Init(241, 241);
             Loupe_IsVisible = false;
             Rect_IsVisible = false;
-            EmulatorInfo = new();
-            EmulatorInfo.Add("雷电");
-            EmulatorInfo.Add("雷电64");
-            EmulatorInfo.Add("夜神");
-            EmulatorInfo.Add("逍遥");
-            EmulatorInfo.Add("UDP");
+            EmulatorInfo = new ObservableCollection<string>();
+            EmulatorInfo.Add("雷电模拟器");
+            EmulatorInfo.Add("雷电模拟器64");
+            EmulatorInfo.Add("夜神模拟器");
+            EmulatorInfo.Add("逍遥模拟器");
+            EmulatorInfo.Add("UDP通信");
         }
 
         private Point StartPoint;
@@ -202,7 +216,7 @@ namespace ScriptGraphicHelper.ViewModels
 
                     int sx = (int)PointX - 7;
                     int sy = (int)PointY - 7;
-                    List<byte[]> colors = new();
+                    List<byte[]> colors = new List<byte[]>();
                     for (int j = 0; j < 15; j++)
                     {
                         for (int i = 0; i < 15; i++)
@@ -221,10 +235,7 @@ namespace ScriptGraphicHelper.ViewModels
                         }
                     }
                     LoupeWriteBmp.WriteColor(colors);
-
                 }
-
-
             }
         });
 
@@ -235,10 +246,20 @@ namespace ScriptGraphicHelper.ViewModels
                 CommandParameters parameters = (CommandParameters)param;
                 if (Rect_IsVisible)
                 {
-                    var img = (Image)parameters.Sender;
                     var eventArgs = (PointerEventArgs)parameters.EventArgs;
-                    var point = eventArgs.GetPosition(img);
-                    Rect = string.Format("[{0},{1},{2},{3}]", point.X-RectWidth, point.Y - rectHeight, point.X, point.Y);
+                    var point = eventArgs.GetPosition((Image)parameters.Sender);
+                    int sx = (int)(point.X - RectWidth);
+                    int sy = (int)(point.Y - rectHeight);
+                    if (RectWidth > 10 && rectHeight > 10)
+                    {
+                        Rect = string.Format("[{0},{1},{2},{3}]", sx, sy, point.X, point.Y);
+                    }
+                    else
+                    {
+                        byte[] color = GraphicHelper.GetPixel(sx, sy);
+                        ColorInfos.Add(new ColorInfo(ColorInfos.Count, sx, sy, color));
+                    }
+
                 }
                 Rect_IsVisible = false;
                 Loupe_IsVisible = true;
@@ -258,43 +279,45 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                //OpenFileDialog fileDialog = new()
-                //{
-                //    AllowMultiple = false,
-                //    Filters = new List<FileDialogFilter>()
-                //    {
-                //        new FileDialogFilter
-                //        {
-                //            Name = "位图文件",
-                //            Extensions = new List<string>() { "jpg", "png", "bmp" }
-                //        }
-                //    },
-                //    Title = "请选择文件",
-                //};
-                //string[] result = await fileDialog.ShowAsync(new Window());
                 string[] result = new string[] { @"C:\Users\PC\Documents\leidian\Pictures\test.png" };
-                if (result.Length > 0)
-                {
-                    string fileName = result[0];
-                    var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                    var position = fileStream.Position;
 
+                OpenFileName ofn = new OpenFileName();
+
+                ofn.structSize = Marshal.SizeOf(ofn);
+                ofn.filter = "位图文件 (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
+                ofn.file = new string(new char[256]);
+                ofn.maxFile = ofn.file.Length;
+                ofn.fileTitle = new string(new char[64]);
+                ofn.maxFileTitle = ofn.fileTitle.Length;
+                ofn.initialDir = "C:\\";
+                ofn.title = "请选择文件";
+
+                if (Win32Api.GetOpenFileName(ofn))
+                {
+
+                    Debug.WriteLine("Selected file with full path: {0}", ofn.file);
+
+                    string fileName = ofn.file;
+                    var fileStream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
                     Img = new Bitmap(fileStream);
                     ImgWidth = Img.Size.Width;
                     ImgHeight = Img.Size.Height;
-                    fileStream.Position = position;
+
+                    fileStream.Position = 0;
                     SKBitmap sKBitmap = SKBitmap.Decode(fileStream);
                     GraphicHelper.KeepScreen(sKBitmap);
                     fileStream.Close();
                     fileStream.Dispose();
-                }
 
+                }
             }
             catch (Exception e)
             {
-                //var messageBoxStandardWindow = MessageBox.Avalonia.MessageBoxManager.GetMessageBoxStandardWindow("title", e.Message);
-                //await messageBoxStandardWindow.Show();
+                Win32Api.MessageBox(e.Message, uType: 48);
             }
+
+
+
         }
     }
 

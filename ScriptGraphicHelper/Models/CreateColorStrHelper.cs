@@ -63,62 +63,27 @@ namespace ScriptGraphicHelper.Models
             {
                 if (colorInfo.IsChecked)
                 {
-                    if (!diyFormat.IsBgr)
+
+                    string res = diyFormat.FollowColorFormat;
+                    string color = colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2");
+                    if (res.IndexOf("{x}") != -1)
                     {
-                        string res = diyFormat.FollowColorFormat;
-                        string color = colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2");
-                        string offsetColor = colorInfo.OffsetColor;
-                        if (res.IndexOf("{x}") != -1)
-                        {
-                            res = res.Replace("{x}", colorInfo.ThePoint.X.ToString());
-                        }
-                        if (res.IndexOf("{y}") != -1)
-                        {
-                            res = res.Replace("{y}", colorInfo.ThePoint.Y.ToString());
-                        }
-                        if (res.IndexOf("{color}") != -1)
-                        {
-                            res = res.Replace("{color}", color);
-                        }
-                        if (res.IndexOf("{offsetColor}") != -1 && offsetColor != "000000")
-                        {
-                            res = res.Replace("{offsetColor}", offsetColor);
-                        }
-                        else
-                        {
-                            string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
-                            res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
-                        }
-                        colorStr += res + ",";
+                        res = res.Replace("{x}", colorInfo.Point.X.ToString());
                     }
-                    else
+                    if (res.IndexOf("{y}") != -1)
                     {
-                        string res = diyFormat.FollowColorFormat;
-                        string color = colorInfo.TheColor.B.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.R.ToString("x2");
-                        string offsetColor = colorInfo.OffsetColor.Substring(4, 2) + colorInfo.OffsetColor.Substring(2, 2) + colorInfo.OffsetColor.Substring(0, 2);
-                        if (res.IndexOf("{x}") != -1)
-                        {
-                            res = res.Replace("{x}", colorInfo.ThePoint.X.ToString());
-                        }
-                        if (res.IndexOf("{y}") != -1)
-                        {
-                            res = res.Replace("{y}", colorInfo.ThePoint.Y.ToString());
-                        }
-                        if (res.IndexOf("{color}") != -1)
-                        {
-                            res = res.Replace("{color}", color);
-                        }
-                        if (res.IndexOf("{offsetColor}") != -1 && offsetColor != "000000")
-                        {
-                            res = res.Replace("{offsetColor}", offsetColor);
-                        }
-                        else
-                        {
-                            string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
-                            res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
-                        }
-                        colorStr += res + ",";
+                        res = res.Replace("{y}", colorInfo.Point.Y.ToString());
                     }
+                    if (res.IndexOf("{color}") != -1)
+                    {
+                        res = res.Replace("{color}", color);
+                    }
+
+                    string endstr = res[(res.IndexOf("{color}") + 7)..];
+                    res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
+
+                    colorStr += res + ",";
+
                 }
             }
             colorStr = colorStr.Trim(',');
@@ -143,108 +108,42 @@ namespace ScriptGraphicHelper.Models
                     if (!isInit)
                     {
                         isInit = true;
-                        startPoint = colorInfo.ThePoint;
-                        if (!diyFormat.IsBgr)
+                        startPoint = colorInfo.Point;
+                        string res = diyFormat.FirstColorFormat;
+                        string color = colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2");
+                        if (res.IndexOf("{color}") != -1)
                         {
-                            string res = diyFormat.FirstColorFormat;
-                            string color = colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2");
-                            string offsetColor = colorInfo.OffsetColor;
-                            if (res.IndexOf("{color}") != -1)
-                            {
-                                res = res.Replace("{color}", color);
-                            }
-                            if (res.IndexOf("{offsetColor}") != -1 && offsetColor != "000000")
-                            {
-                                res = res.Replace("{offsetColor}", offsetColor);
-                            }
-                            else
-                            {
-                                string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
-                                res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
-                            }
-                            colorStr[0] += res;
+                            res = res.Replace("{color}", color);
                         }
-                        else
-                        {
-                            string res = diyFormat.FirstColorFormat;
-                            string color = colorInfo.TheColor.B.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.R.ToString("x2");
-                            string offsetColor = colorInfo.OffsetColor.Substring(4, 2) + colorInfo.OffsetColor.Substring(2, 2) + colorInfo.OffsetColor.Substring(0, 2);
-                            if (diyFormat.FirstColorFormat.IndexOf("{color}") != -1)
-                            {
-                                res = res.Replace("{color}", color);
-                            }
-                            if (diyFormat.FirstColorFormat.IndexOf("{offsetColor}") != -1 && offsetColor != "000000")
-                            {
-                                res = res.Replace("{offsetColor}", offsetColor);
-                            }
-                            else
-                            {
-                                string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
-                                res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
-                            }
-                            colorStr[0] += res;
-                        }
+
+                        string endstr = res[(res.IndexOf("{color}") + 7)..];
+                        res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
+                        colorStr[0] += res;
+
                     }
                     else
                     {
-                        double OffsetX = colorInfo.ThePoint.X - startPoint.X;
-                        double OffsetY = colorInfo.ThePoint.Y - startPoint.Y;
-                        if (!diyFormat.IsBgr)
+                        double OffsetX = colorInfo.Point.X - startPoint.X;
+                        double OffsetY = colorInfo.Point.Y - startPoint.Y;
+
+                        string res = diyFormat.FollowColorFormat;
+                        string color = colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2");
+                        if (res.IndexOf("{x}") != -1)
                         {
-                            string res = diyFormat.FollowColorFormat;
-                            string color = colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2");
-                            string offsetColor = colorInfo.OffsetColor;
-                            if (res.IndexOf("{x}") != -1)
-                            {
-                                res = res.Replace("{x}", OffsetX.ToString());
-                            }
-                            if (res.IndexOf("{y}") != -1)
-                            {
-                                res = res.Replace("{y}", OffsetY.ToString());
-                            }
-                            if (res.IndexOf("{color}") != -1)
-                            {
-                                res = res.Replace("{color}", color);
-                            }
-                            if (res.IndexOf("{offsetColor}") != -1 && offsetColor != "000000")
-                            {
-                                res = res.Replace("{offsetColor}", offsetColor);
-                            }
-                            else
-                            {
-                                string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
-                                res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
-                            }
-                            colorStr[1] += res + ",";
+                            res = res.Replace("{x}", OffsetX.ToString());
                         }
-                        else
+                        if (res.IndexOf("{y}") != -1)
                         {
-                            string res = diyFormat.FollowColorFormat;
-                            string color = colorInfo.TheColor.B.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.R.ToString("x2");
-                            string offsetColor = colorInfo.OffsetColor.Substring(4, 2) + colorInfo.OffsetColor.Substring(2, 2) + colorInfo.OffsetColor.Substring(0, 2);
-                            if (res.IndexOf("{x}") != -1)
-                            {
-                                res = res.Replace("{x}", OffsetX.ToString());
-                            }
-                            if (res.IndexOf("{y}") != -1)
-                            {
-                                res = res.Replace("{y}", OffsetY.ToString());
-                            }
-                            if (res.IndexOf("{color}") != -1)
-                            {
-                                res = res.Replace("{color}", color);
-                            }
-                            if (res.IndexOf("{offsetColor}") != -1 && offsetColor != "000000")
-                            {
-                                res = res.Replace("{offsetColor}", offsetColor);
-                            }
-                            else
-                            {
-                                string endstr = res[(res.IndexOf("{offsetColor}") + 13)..];
-                                res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
-                            }
-                            colorStr[1] += res + ",";
+                            res = res.Replace("{y}", OffsetY.ToString());
                         }
+                        if (res.IndexOf("{color}") != -1)
+                        {
+                            res = res.Replace("{color}", color);
+                        }
+
+                        string endstr = res[(res.IndexOf("{color}") + 7)..];
+                        res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
+                        colorStr[1] += res + ",";
                     }
                 }
             }
@@ -280,22 +179,16 @@ namespace ScriptGraphicHelper.Models
                     if (!isInit)
                     {
                         isInit = true;
-                        startPoint = colorInfo.ThePoint;
-                        if (colorInfo.OffsetColor == "000000")
-                            result += "\"" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "\",\"";
-                        else
-                            result += "\"" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "-" + colorInfo.OffsetColor + "\",\"";
+                        startPoint = colorInfo.Point;
+                        result += "\"" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "\",\"";
                     }
                     else
                     {
-                        double OffsetX = colorInfo.ThePoint.X - startPoint.X;
-                        double OffsetY = colorInfo.ThePoint.Y - startPoint.Y;
-                        if (colorInfo.OffsetColor == "000000")
-                            result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") +
-                            colorInfo.TheColor.B.ToString("x2") + ",";
-                        else
-                            result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") +
-                            colorInfo.TheColor.B.ToString("x2") + "-" + colorInfo.OffsetColor + ",";
+                        double OffsetX = colorInfo.Point.X - startPoint.X;
+                        double OffsetY = colorInfo.Point.Y - startPoint.Y;
+                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        colorInfo.Color.B.ToString("x2") + ",";
+
                     }
                 }
             }
@@ -313,22 +206,15 @@ namespace ScriptGraphicHelper.Models
                 {
                     if (result == string.Empty)
                     {
-                        startPoint = colorInfo.ThePoint;
-                        if (colorInfo.OffsetColor == "000000")
-                            result += "0x" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + ",\"";
-                        else
-                            result += "0x" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "|0x" + colorInfo.OffsetColor + ",\"";
+                        startPoint = colorInfo.Point;
+                        result += "0x" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + ",\"";
                     }
                     else
                     {
-                        double OffsetX = colorInfo.ThePoint.X - startPoint.X;
-                        double OffsetY = colorInfo.ThePoint.Y - startPoint.Y;
-                        if (colorInfo.OffsetColor == "000000")
-                            result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|0x" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") +
-                            colorInfo.TheColor.B.ToString("x2") + ",";
-                        else
-                            result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|0x" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") +
-                            colorInfo.TheColor.B.ToString("x2") + "|0x" + colorInfo.OffsetColor + ",";
+                        double OffsetX = colorInfo.Point.X - startPoint.X;
+                        double OffsetY = colorInfo.Point.Y - startPoint.Y;
+                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|0x" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        colorInfo.Color.B.ToString("x2") + ",";
                     }
                 }
             }
@@ -359,27 +245,15 @@ namespace ScriptGraphicHelper.Models
                     if (!isInit)
                     {
                         isInit = true;
-                        startPoint = colorInfo.ThePoint;
-                        if (colorInfo.OffsetColor == "000000")
-                            result += "\"" + colorInfo.TheColor.B.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.R.ToString("x2") + "\",\"";
-                        else
-                        {
-                            string offsetColor = colorInfo.OffsetColor.Substring(4, 2) + colorInfo.OffsetColor.Substring(2, 2) + colorInfo.OffsetColor.Substring(0, 2);
-                            result += "\"" + colorInfo.TheColor.B.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.R.ToString("x2") + "-" + offsetColor + "\",\"";
-                        }
+                        startPoint = colorInfo.Point;
+                        result += "\"" + colorInfo.Color.B.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.R.ToString("x2") + "\",\"";
                     }
                     else
                     {
-                        double OffsetX = colorInfo.ThePoint.X - startPoint.X;
-                        double OffsetY = colorInfo.ThePoint.Y - startPoint.Y;
-                        if (colorInfo.OffsetColor == "000000")
-                            result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.TheColor.B.ToString("x2") + colorInfo.TheColor.G.ToString("x2") +
-                            colorInfo.TheColor.R.ToString("x2") + ",";
-                        else
-                        {
-                            string offsetColor = colorInfo.OffsetColor.Substring(4, 2) + colorInfo.OffsetColor.Substring(2, 2) + colorInfo.OffsetColor.Substring(0, 2);
-                            result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.TheColor.B.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.R.ToString("x2") + "-" + offsetColor + ",";
-                        }
+                        double OffsetX = colorInfo.Point.X - startPoint.X;
+                        double OffsetY = colorInfo.Point.Y - startPoint.Y;
+                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.Color.B.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        colorInfo.Color.R.ToString("x2") + ",";
                     }
                 }
             }
@@ -397,15 +271,15 @@ namespace ScriptGraphicHelper.Models
                 {
                     if (result == string.Empty)
                     {
-                        startPoint = colorInfo.ThePoint;
-                        result = "\"#" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "\",[";
+                        startPoint = colorInfo.Point;
+                        result = "\"#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "\",[";
                     }
                     else
                     {
-                        double OffsetX = colorInfo.ThePoint.X - startPoint.X;
-                        double OffsetY = colorInfo.ThePoint.Y - startPoint.Y;
-                        result += "[" + OffsetX.ToString() + "," + OffsetY.ToString() + ",\"#" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") +
-                            colorInfo.TheColor.B.ToString("x2") + "\"],";
+                        double OffsetX = colorInfo.Point.X - startPoint.X;
+                        double OffsetY = colorInfo.Point.Y - startPoint.Y;
+                        result += "[" + OffsetX.ToString() + "," + OffsetY.ToString() + ",\"#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                            colorInfo.Color.B.ToString("x2") + "\"],";
                     }
                 }
             }
@@ -431,22 +305,15 @@ namespace ScriptGraphicHelper.Models
                 {
                     if (result == string.Empty)
                     {
-                        startPoint = colorInfo.ThePoint;
-                        if (colorInfo.OffsetColor == "000000")
-                            result += "\"0x" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "\",\"";
-                        else
-                            result += "\"0x" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "-0x" + colorInfo.OffsetColor + "\",\"";
+                        startPoint = colorInfo.Point;
+                        result += "\"0x" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "\",\"";
                     }
                     else
                     {
-                        double OffsetX = colorInfo.ThePoint.X - startPoint.X;
-                        double OffsetY = colorInfo.ThePoint.Y - startPoint.Y;
-                        if (colorInfo.OffsetColor == "000000")
-                            result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|0x" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") +
-                            colorInfo.TheColor.B.ToString("x2") + ",";
-                        else
-                            result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|0x" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") +
-                           colorInfo.TheColor.B.ToString("x2") + "-0x" + colorInfo.OffsetColor + ",";
+                        double OffsetX = colorInfo.Point.X - startPoint.X;
+                        double OffsetY = colorInfo.Point.Y - startPoint.Y;
+                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|0x" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        colorInfo.Color.B.ToString("x2") + ",";
                     }
                 }
             }
@@ -469,12 +336,8 @@ namespace ScriptGraphicHelper.Models
             {
                 if (colorInfo.IsChecked)
                 {
-                    if (colorInfo.OffsetColor == "000000")
-                        result += colorInfo.ThePoint.X.ToString() + "|" + colorInfo.ThePoint.Y.ToString() + "|" + colorInfo.TheColor.R.ToString("x2") +
-                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + ",";
-                    else
-                        result += colorInfo.ThePoint.X.ToString() + "|" + colorInfo.ThePoint.Y.ToString() + "|" + colorInfo.TheColor.R.ToString("x2") +
-                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "-" + colorInfo.OffsetColor + ",";
+                    result += colorInfo.Point.X.ToString() + "|" + colorInfo.Point.Y.ToString() + "|" + colorInfo.Color.R.ToString("x2") +
+                    colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + ",";
                 }
             }
             result = result.Trim(',');
@@ -488,13 +351,7 @@ namespace ScriptGraphicHelper.Models
             {
                 if (colorInfo.IsChecked)
                 {
-                    if (colorInfo.OffsetColor == "000000")
-                        result += colorInfo.ThePoint.X.ToString() + "|" + colorInfo.ThePoint.Y.ToString() + "|" + colorInfo.TheColor.B.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.R.ToString("x2") + ",";
-                    else
-                    {
-                        string offsetColor = colorInfo.OffsetColor.Substring(4, 2) + colorInfo.OffsetColor.Substring(2, 2) + colorInfo.OffsetColor.Substring(0, 2);
-                        result += colorInfo.ThePoint.X.ToString() + "|" + colorInfo.ThePoint.Y.ToString() + "|" + colorInfo.TheColor.B.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.R.ToString("x2") + "-" + offsetColor + ",";
-                    }
+                        result += colorInfo.Point.X.ToString() + "|" + colorInfo.Point.Y.ToString() + "|" + colorInfo.Color.B.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.R.ToString("x2") + ",";
                 }
             }
             result = result.Trim(',');
@@ -508,7 +365,7 @@ namespace ScriptGraphicHelper.Models
             {
                 if (colorInfo.IsChecked)
                 {
-                    result += "{" + colorInfo.ThePoint.X.ToString() + "," + colorInfo.ThePoint.Y.ToString() + ",0x" + colorInfo.TheColor.R.ToString("x2") + colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "},";
+                    result += "{" + colorInfo.Point.X.ToString() + "," + colorInfo.Point.Y.ToString() + ",0x" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "},";
                 }
             }
             result = result.Trim(',');
@@ -530,16 +387,8 @@ namespace ScriptGraphicHelper.Models
                     else if (colorInfo.Anchors == "R")
                         result += "[right,";
 
-                    if (colorInfo.OffsetColor == "000000")
-                    {
-                        result += colorInfo.ThePoint.X.ToString() + "," + colorInfo.ThePoint.Y.ToString() + ",0x" + colorInfo.TheColor.R.ToString("x2") +
-                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "],\r\n";
-                    }
-                    else
-                    {
-                        result += colorInfo.ThePoint.X.ToString() + "," + colorInfo.ThePoint.Y.ToString() + ",0x" + colorInfo.TheColor.R.ToString("x2") +
-                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + ",0x" + colorInfo.OffsetColor + "],\r\n";
-                    }
+                        result += colorInfo.Point.X.ToString() + "," + colorInfo.Point.Y.ToString() + ",0x" + colorInfo.Color.R.ToString("x2") +
+                        colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "],\r\n";
                 }
             }
             result = result.Trim(",\r\n".ToCharArray());
@@ -564,16 +413,8 @@ namespace ScriptGraphicHelper.Models
                     else if (colorInfo.Anchors == "R")
                         result += "[right,";
 
-                    if (colorInfo.OffsetColor == "000000")
-                    {
-                        result += colorInfo.ThePoint.X.ToString() + "," + colorInfo.ThePoint.Y.ToString() + ",0x" + colorInfo.TheColor.R.ToString("x2") +
-                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + "],\r\n";
-                    }
-                    else
-                    {
-                        result += colorInfo.ThePoint.X.ToString() + "," + colorInfo.ThePoint.Y.ToString() + ",0x" + colorInfo.TheColor.R.ToString("x2") +
-                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + ",0x" + colorInfo.OffsetColor + "],\r\n";
-                    }
+                        result += colorInfo.Point.X.ToString() + "," + colorInfo.Point.Y.ToString() + ",0x" + colorInfo.Color.R.ToString("x2") +
+                        colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "],\r\n";
                 }
             }
             result = result.Trim(",\r\n".ToCharArray());
@@ -587,8 +428,8 @@ namespace ScriptGraphicHelper.Models
             {
                 if (colorInfo.IsChecked)
                 {
-                    result += colorInfo.Anchors + "|" + colorInfo.ThePoint.X.ToString() + "|" + colorInfo.ThePoint.Y.ToString() + "|" + colorInfo.TheColor.R.ToString("x2") +
-                        colorInfo.TheColor.G.ToString("x2") + colorInfo.TheColor.B.ToString("x2") + ",";
+                    result += colorInfo.Anchors + "|" + colorInfo.Point.X.ToString() + "|" + colorInfo.Point.Y.ToString() + "|" + colorInfo.Color.R.ToString("x2") +
+                        colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + ",";
                 }
             }
             result = result.Trim(',');

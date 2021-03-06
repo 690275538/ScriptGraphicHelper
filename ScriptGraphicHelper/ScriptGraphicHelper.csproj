@@ -1,28 +1,52 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFramework>net5.0</TargetFramework>
     <Nullable>enable</Nullable>
+    <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+    <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Remove="Views\Messagebox.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="App.xaml" />
     <None Remove="Assets\format.svg" />
     <None Remove="Assets\ico.ico" />
     <None Remove="Assets\mode.svg" />
     <None Remove="Assets\rect.svg" />
     <None Remove="Assets\sim.svg" />
     <None Remove="Assets\test.svg" />
+    <None Remove="Panels\Controls.xaml" />
+    <None Remove="Views\ColorInfosDataGrid.xaml" />
     <None Remove="Views\MainWindow.xaml" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaXaml Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
+    <AvaloniaXaml Include="Panels\ColorInfos.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
+    <AvaloniaXaml Include="Panels\Controls.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
     <AvaloniaXaml Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
@@ -35,10 +59,15 @@
     <PackageReference Include="Avalonia.Svg.Skia" Version="0.10.0" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-*" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="Views\MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Update="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Update="Panels\Controls.xaml.cs">
+      <DependentUpon>Controls.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\MainWindow.xaml.cs" />
   </ItemGroup>
 </Project>
