@@ -1,13 +1,10 @@
-﻿using Avalonia;
-using Avalonia.Media.Imaging;
-using SkiaSharp;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
+﻿using System;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
+using Point = Avalonia.Point;
+using SystemBitmap = System.Drawing.Bitmap;
 
 namespace ScriptGraphicHelper.Models
 {
@@ -20,53 +17,62 @@ namespace ScriptGraphicHelper.Models
         public static byte[] ScreenData { get; set; }
         public static int DiySim { get; set; } = 95;
         public static int DiyOffset { get; set; } = 0;
-        public static void KeepScreen(SKBitmap bitmap)
+
+        public static void KeepScreen(SystemBitmap bitmap)
         {
             Width = bitmap.Width;
             Height = bitmap.Height;
-            Debug.WriteLine(bitmap.RowBytes);
-            ScreenData = new byte[bitmap.RowBytes * Height];
-            Stride = bitmap.RowBytes;
-            FormatSize = bitmap.RowBytes / Width;
-            Marshal.Copy(bitmap.GetPixels(), ScreenData, 0, ScreenData.Length);
+            BitmapData data = bitmap.LockBits(new Rectangle(0, 0, Width, Height), ImageLockMode.ReadOnly, bitmap.PixelFormat);
+            IntPtr IntPtr = data.Scan0;
+            FormatSize = Image.GetPixelFormatSize(bitmap.PixelFormat) / 8;
+            Stride = data.Stride;
+            ScreenData = new byte[Stride * Height];
+            Marshal.Copy(IntPtr, ScreenData, 0, Stride * Height);
+            bitmap.UnlockBits(data);
         }
 
-        //public static async Task<Bitmap> GetBmp(Range range)
-        //{
-        //    var task = Task.Run(() =>
-        //    {
-        //        int left = (int)range.Left;
-        //        int top = (int)range.Top;
-        //        int right = (int)range.Right;
-        //        int bottom = (int)range.Bottom;
-        //        int width = right - left;
-        //        int height = bottom - top;
-        //        Bitmap bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
-        //        BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-        //        unsafe
-        //        {
-        //            byte* ptr = (byte*)data.Scan0;
-        //            int stride = data.Stride;
-        //            for (int i = top; i < bottom; i++)
-        //            {
-        //                int ptr_location = (i - top) * stride;
-        //                int parent_location = i * Stride + left * FormatSize;
-        //                for (int j = left; j < right; j++)
-        //                {
-        //                    ptr[ptr_location] = ScreenData[parent_location];
-        //                    ptr[ptr_location + 1] = ScreenData[parent_location + 1];
-        //                    ptr[ptr_location + 2] = ScreenData[parent_location + 2];
-        //                    ptr[ptr_location + 3] = 255;
-        //                    ptr_location += 4;
-        //                    parent_location += FormatSize;
-        //                }
-        //            }
-        //        }
-        //        bitmap.UnlockBits(data);
-        //        return bitmap;
-        //    });
-        //    return await task;
-        //}
+        public static async Task<SystemBitmap> GetBitmap(Range? range)
+        {
+            var task = Task.Run(() =>
+            {
+                if (range == null)
+                {
+                    range = new Range(0, 0, Width - 1, Height - 1);
+                }
+
+                int left = (int)range.Left;
+                int top = (int)range.Top;
+                int right = (int)range.Right;
+                int bottom = (int)range.Bottom;
+                int width = right - left + 1;
+                int height = bottom - top + 1;
+
+                SystemBitmap bitmap = new SystemBitmap(width, height, PixelFormat.Format32bppArgb);
+                BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
+                unsafe
+                {
+                    byte* ptr = (byte*)data.Scan0;
+                    int stride = data.Stride;
+                    for (int i = top; i < bottom; i++)
+                    {
+                        int ptr_location = (i - top) * stride;
+                        int parent_location = i * Stride + left * FormatSize;
+                        for (int j = left; j < right; j++)
+                        {
+                            ptr[ptr_location] = ScreenData[parent_location];
+                            ptr[ptr_location + 1] = ScreenData[parent_location + 1];
+                            ptr[ptr_location + 2] = ScreenData[parent_location + 2];
+                            ptr[ptr_location + 3] = 255;
+                            ptr_location += 4;
+                            parent_location += FormatSize;
+                        }
+                    }
+                }
+                bitmap.UnlockBits(data);
+                return bitmap;
+            });
+            return await task;
+        }
 
         public static byte[] GetPixel(int x, int y)
         {
@@ -99,17 +105,17 @@ namespace ScriptGraphicHelper.Models
                 string[] compareColor = compareColorArr[i].Split('|');
                 double findX = int.Parse(compareColor[1]);
                 double findY = int.Parse(compareColor[2]);
-                if (compareColor[0] == "L")
+                if (compareColor[0] == "Left" || compareColor[0] == "None")
                 {
                     findX = Math.Floor(findX * multiple);
                     findY = Math.Floor(findY * multiple);
                 }
-                else if (compareColor[0] == "C")
+                else if (compareColor[0] == "Center")
                 {
                     findX = Math.Floor(Width / 2 - 1 - (width / 2 - findX - 1) * multiple);
                     findY = Math.Floor(findY * multiple);
                 }
-                else if (compareColor[0] == "R")
+                else if (compareColor[0] == "Right")
                 {
                     findX = Math.Floor(Width - 1 - (width - findX - 1) * multiple);
                     findY = Math.Floor(findY * multiple);
@@ -134,17 +140,17 @@ namespace ScriptGraphicHelper.Models
             double y = int.Parse(startColorArr[2]);
             double startX = -1;
             double startY = -1;
-            if (startColorArr[0] == "L")
+            if (startColorArr[0] == "Left" || startColorArr[0] == "None")
             {
                 startX = Math.Floor(x * multiple);
                 startY = Math.Floor(y * multiple);
             }
-            else if (startColorArr[0] == "C")
+            else if (startColorArr[0] == "Center")
             {
                 startX = Math.Floor(Width / 2 - 1 - (width / 2 - x - 1) * multiple);
                 startY = Math.Floor(y * multiple);
             }
-            else if (startColorArr[0] == "R")
+            else if (startColorArr[0] == "Right")
             {
                 startX = Math.Floor(Width - 1 - (width - x - 1) * multiple);
                 startY = Math.Floor(y * multiple);
@@ -156,17 +162,17 @@ namespace ScriptGraphicHelper.Models
                 string[] compareColor = compareColorArr[i].Split('|');
                 double findX = int.Parse(compareColor[1]);
                 double findY = int.Parse(compareColor[2]);
-                if (compareColor[0] == "L")
+                if (compareColor[0] == "Left"|| compareColor[0] == "None")
                 {
                     findX = Math.Floor(findX * multiple) - startX;
                     findY = Math.Floor(findY * multiple) - startY;
                 }
-                else if (compareColor[0] == "C")
+                else if (compareColor[0] == "Center")
                 {
                     findX = Math.Floor(Width / 2 - 1 - (width / 2 - 1 - findX) * multiple) - startX;
                     findY = Math.Floor(findY * multiple) - startY;
                 }
-                else if (compareColor[0] == "R")
+                else if (compareColor[0] == "Right")
                 {
                     findX = Math.Floor(Width - 1 - (width - findX - 1) * multiple) - startX;
                     findY = Math.Floor(findY * multiple) - startY;

@@ -1,6 +1,5 @@
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
-using ScriptGraphicHelper.ViewModels;
 using ScriptGraphicHelper.ViewModels.Core;
 using System;
 

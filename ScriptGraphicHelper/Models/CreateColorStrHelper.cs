@@ -1,8 +1,8 @@
 ﻿using Avalonia;
 using Newtonsoft.Json;
+using ScriptGraphicHelper.Converters;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Windows;
 
 namespace ScriptGraphicHelper.Models
 {
@@ -18,10 +18,10 @@ namespace ScriptGraphicHelper.Models
         ecFindStr = 7,
         diyFindStr = 8,
         diyCompareStr = 9,
-        anchorsCompareStr = 10,
-        anchorsFindStr = 11,
-        anchorsCompareStrTest = 12,
-        anchorsFindStrTest = 13
+        anchorsFindStr = 10,
+        anchorsCompareStr = 11,
+        anchorsFindStrTest = 12,
+        anchorsCompareStrTest = 13,
 
     };
     public static class CreateColorStrHelper
@@ -351,7 +351,7 @@ namespace ScriptGraphicHelper.Models
             {
                 if (colorInfo.IsChecked)
                 {
-                        result += colorInfo.Point.X.ToString() + "|" + colorInfo.Point.Y.ToString() + "|" + colorInfo.Color.B.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.R.ToString("x2") + ",";
+                    result += colorInfo.Point.X.ToString() + "|" + colorInfo.Point.Y.ToString() + "|" + colorInfo.Color.B.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.R.ToString("x2") + ",";
                 }
             }
             result = result.Trim(',');
@@ -380,15 +380,17 @@ namespace ScriptGraphicHelper.Models
             {
                 if (colorInfo.IsChecked)
                 {
-                    if (colorInfo.Anchors == "L")
+                    if (colorInfo.Anchor == AnchorType.Left)
                         result += "[left,";
-                    else if (colorInfo.Anchors == "C")
+                    else if (colorInfo.Anchor == AnchorType.Center)
                         result += "[center,";
-                    else if (colorInfo.Anchors == "R")
+                    else if (colorInfo.Anchor == AnchorType.Right)
                         result += "[right,";
+                    else
+                        result += "[none,";
 
-                        result += colorInfo.Point.X.ToString() + "," + colorInfo.Point.Y.ToString() + ",0x" + colorInfo.Color.R.ToString("x2") +
-                        colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "],\r\n";
+                    result += colorInfo.Point.X.ToString() + "," + colorInfo.Point.Y.ToString() + ",0x" + colorInfo.Color.R.ToString("x2") +
+                    colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "],\r\n";
                 }
             }
             result = result.Trim(",\r\n".ToCharArray());
@@ -402,19 +404,25 @@ namespace ScriptGraphicHelper.Models
             {
                 result += string.Format(",\r\n[{0}],\r\n[", rect.ToString(2));
             }
+            else
+            {
+                result += ",\r\n[";
+            }
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)
                 {
-                    if (colorInfo.Anchors == "L")
+                    if (colorInfo.Anchor == AnchorType.Left)
                         result += "[left,";
-                    else if (colorInfo.Anchors == "C")
+                    else if (colorInfo.Anchor == AnchorType.Center)
                         result += "[center,";
-                    else if (colorInfo.Anchors == "R")
+                    else if (colorInfo.Anchor == AnchorType.Right)
                         result += "[right,";
+                    else
+                        result += "[none,";
 
-                        result += colorInfo.Point.X.ToString() + "," + colorInfo.Point.Y.ToString() + ",0x" + colorInfo.Color.R.ToString("x2") +
-                        colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "],\r\n";
+                    result += colorInfo.Point.X.ToString() + "," + colorInfo.Point.Y.ToString() + ",0x" + colorInfo.Color.R.ToString("x2") +
+                    colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "],\r\n";
                 }
             }
             result = result.Trim(",\r\n".ToCharArray());
@@ -428,7 +436,7 @@ namespace ScriptGraphicHelper.Models
             {
                 if (colorInfo.IsChecked)
                 {
-                    result += colorInfo.Anchors + "|" + colorInfo.Point.X.ToString() + "|" + colorInfo.Point.Y.ToString() + "|" + colorInfo.Color.R.ToString("x2") +
+                    result += colorInfo.Anchor.ToString() + "|" + colorInfo.Point.X.ToString() + "|" + colorInfo.Point.Y.ToString() + "|" + colorInfo.Color.R.ToString("x2") +
                         colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + ",";
                 }
             }

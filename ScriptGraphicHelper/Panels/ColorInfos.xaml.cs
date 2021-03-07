@@ -14,6 +14,6 @@ namespace ScriptGraphicHelper.Panels
         {
             AvaloniaXamlLoader.Load(this);
         }
-        
+
     }
 }

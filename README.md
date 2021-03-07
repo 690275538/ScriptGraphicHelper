@@ -4,7 +4,10 @@
 
 主要的目的是尝试一下AOT, 顺带学习一下avalonia(基于xaml的跨平台UI库)
 
-当前进度:![](screenshot/screenshot_1.png)
+当前进度:
+
+
+![](screenshot/screenshot_1.png)
 
 
 

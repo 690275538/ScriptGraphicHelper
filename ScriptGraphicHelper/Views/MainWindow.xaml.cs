@@ -2,10 +2,8 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
-using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using System;
-using System.Diagnostics;
 
 namespace ScriptGraphicHelper.Views
 {
@@ -27,11 +25,12 @@ namespace ScriptGraphicHelper.Views
         private void Window_Opened(object sender, EventArgs e)
         {
             this.FontWeight = Avalonia.Media.FontWeight.Medium;
+            DataGrid d = this.FindControl<DataGrid>("ColorInfos");
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            
+
             Key key = e.Key;
             POINT point = Win32Api.GetCursorPos();
             switch (key)

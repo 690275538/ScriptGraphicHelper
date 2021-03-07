@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ScriptGraphicHelper.Models
+﻿namespace ScriptGraphicHelper.Models
 {
     public class Range
     {
@@ -14,6 +8,7 @@ namespace ScriptGraphicHelper.Models
         public double Bottom { get; set; }
         public int Mode_1 { get; set; }
         public int Mode_2 { get; set; }
+
 
         public Range(double left, double top, double right, double bottom, int mode_1 = -1, int mode_2 = -1)
         {

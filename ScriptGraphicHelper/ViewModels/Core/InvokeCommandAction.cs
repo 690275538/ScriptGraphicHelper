@@ -1,11 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Data.Converters;
 using Avalonia.Xaml.Interactivity;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ScriptGraphicHelper.ViewModels.Core
@@ -133,7 +128,7 @@ namespace ScriptGraphicHelper.ViewModels.Core
             {
                 list.CommandParameter = CommandParameter;
             }
-           
+
 
             if (!Command.CanExecute(list))
             {

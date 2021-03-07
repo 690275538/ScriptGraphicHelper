@@ -34,6 +34,7 @@
     <None Remove="Assets\sim.svg" />
     <None Remove="Assets\test.svg" />
     <None Remove="Panels\Controls.xaml" />
+    <None Remove="Panels\Img.xaml" />
     <None Remove="Views\ColorInfosDataGrid.xaml" />
     <None Remove="Views\MainWindow.xaml" />
   </ItemGroup>
@@ -47,9 +48,15 @@
     <AvaloniaXaml Include="Panels\Controls.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
+    <AvaloniaXaml Include="Panels\Img.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
     <AvaloniaXaml Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0" />
@@ -58,6 +65,7 @@
     <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
     <PackageReference Include="Avalonia.Svg.Skia" Version="0.10.0" />
     <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.0" />
+    <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
     <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-*" />
   </ItemGroup>
@@ -67,6 +75,9 @@
     </Compile>
     <Compile Update="Panels\Controls.xaml.cs">
       <DependentUpon>Controls.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Panels\Img.xaml.cs">
+      <DependentUpon>Img.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\MainWindow.xaml.cs" />
   </ItemGroup>
