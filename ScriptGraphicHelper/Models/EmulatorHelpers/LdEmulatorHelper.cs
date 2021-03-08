@@ -1,10 +1,10 @@
-﻿using Microsoft.Win32;
+﻿using Avalonia.Media.Imaging;
+using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
-using ScriptGraphicHelper.Models.UnmanagedMethods;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Drawing;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -74,8 +74,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
                 RedirectStandardInput = true,
-                UseShellExecute = false,
-                Verb = "runas"
+                UseShellExecute = false
             };
             Process pipe = Process.Start(start);
             StreamReader readStream = pipe.StandardOutput;
@@ -155,9 +154,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
             {
                 if (!IsStart(index))
                 {
-
-                    Win32Api.MessageBox("模拟器未启动 ! ");
-                    return new Bitmap(1, 1);
+                    throw new Exception("模拟器未启动 ! ");
                 }
                 if (BmpPath == string.Empty)
                 {
@@ -175,16 +172,18 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                 }
                 try
                 {
-                    FileStream fileStream = new FileStream(BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
-                    Bitmap bmp = (Bitmap)Image.FromStream(fileStream);
-                    fileStream.Close();
-                    fileStream.Dispose();
-                    return bmp;
+                    FileStream stream = new FileStream(BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
+                    var bitmap = new Bitmap(stream);
+                    stream.Position = 0;
+                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    GraphicHelper.KeepScreen(sKBitmap);
+                    sKBitmap.Dispose();
+                    stream.Dispose();
+                    return bitmap;
                 }
                 catch (Exception e)
                 {
-                    Win32Api.MessageBox(e.Message);
-                    return new Bitmap(1, 1);
+                    throw new Exception(e.Message);
                 }
             });
             return await task;

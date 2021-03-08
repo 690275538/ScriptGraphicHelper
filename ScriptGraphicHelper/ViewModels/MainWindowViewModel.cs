@@ -1,23 +1,21 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Input;
+using Avalonia.Media;
+using Avalonia.Media.Imaging;
+using Newtonsoft.Json;
+using ScriptGraphicHelper.Converters;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels.Core;
+using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.Drawing;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Windows.Input;
 using Image = Avalonia.Controls.Image;
 using Point = Avalonia.Point;
-using SystemBitmap = System.Drawing.Bitmap;
-using AvaloniaBitmap = Avalonia.Media.Imaging.Bitmap;
-using ScriptGraphicHelper.Converters;
 using Range = ScriptGraphicHelper.Models.Range;
 
 namespace ScriptGraphicHelper.ViewModels
@@ -26,9 +24,22 @@ namespace ScriptGraphicHelper.ViewModels
     {
         public MainWindowViewModel()
         {
+            try
+            {
+                StreamReader sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + "setting.json");
+                string configStr = sr.ReadToEnd();
+                sr.Close();
+                configStr = configStr.Replace("\\\\", "\\").Replace("\\", "\\\\");
+                PubSetting.Setting = JsonConvert.DeserializeObject<Setting>(configStr) ?? new Setting();
+                SimSelectedIndex = PubSetting.Setting.SimSelectedIndex;
+                FormatSelectedIndex = (FormatMode)PubSetting.Setting.FormatSelectedIndex;
+            }
+            catch (Exception error)
+            {
+                Win32Api.MessageBox(error.Message);
+            }
+
             ColorInfos = new ObservableCollection<ColorInfo>();
-
-
             LoupeWriteBmp = LoupeWriteBitmap.Init(241, 241);
             DataGridHeight = 40;
             Loupe_IsVisible = false;
@@ -36,11 +47,6 @@ namespace ScriptGraphicHelper.ViewModels
             EmulatorSelectedIndex = -1;
             EmulatorInfo = EmulatorHelper.Init();
             ImgMargin = new Thickness(170, 20, 280, 20);
-            //EmulatorInfo.Add("雷电模拟器");
-            //EmulatorInfo.Add("雷电模拟器64");
-            //EmulatorInfo.Add("夜神模拟器");
-            //EmulatorInfo.Add("逍遥模拟器");
-            //EmulatorInfo.Add("UDP通信");
         }
 
         private Point StartPoint;
@@ -183,11 +189,11 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Emulator_Selected(int value)
         {
-            if (EmulatorHelper.IsInit == EmlatorState.success)
+            if (EmulatorHelper.State == EmlatorState.success)
             {
                 EmulatorHelper.Index = EmulatorSelectedIndex;
             }
-            else if (EmulatorHelper.IsInit == EmlatorState.Waiting)
+            else if (EmulatorHelper.State == EmlatorState.Waiting)
             {
                 WindowCursor = new Cursor(StandardCursorType.Wait);
                 EmulatorHelper.Changed(EmulatorSelectedIndex);
@@ -196,9 +202,9 @@ namespace ScriptGraphicHelper.ViewModels
                 WindowCursor = new Cursor(StandardCursorType.Arrow);
 
             }
-            else if (EmulatorHelper.IsInit == EmlatorState.Starting)
+            else if (EmulatorHelper.State == EmlatorState.Starting)
             {
-                EmulatorHelper.IsInit = EmlatorState.success;
+                EmulatorHelper.State = EmlatorState.success;
             }
         }
 
@@ -211,19 +217,24 @@ namespace ScriptGraphicHelper.ViewModels
                 WindowCursor = new Cursor(StandardCursorType.Arrow);
                 return;
             }
-            Bitmap bitmap = await EmulatorHelper.ScreenShot();
-            if (bitmap.Width != 1)
+            try
             {
-                LoadBitmap(bitmap);
-                bitmap.Dispose();
+                Img = await EmulatorHelper.ScreenShot();
             }
+            catch (Exception e)
+            {
+                Win32Api.MessageBox(e.Message);
+            }
+
+
             WindowCursor = new Cursor(StandardCursorType.Arrow);
         }
 
         public void ResetEmulatorOptions_Click()
         {
-            if (EmulatorHelper.IsInit == EmlatorState.success)
+            if (EmulatorHelper.State == EmlatorState.Starting || EmulatorHelper.State == EmlatorState.success)
             {
+                EmulatorSelectedIndex = -1;
                 EmulatorHelper.Dispose();
                 EmulatorInfo.Clear();
                 EmulatorInfo = EmulatorHelper.Init();
@@ -236,10 +247,7 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 return;
             }
-            SystemBitmap bitmap = await GraphicHelper.GetBitmap(null);
-            bitmap.RotateFlip(RotateFlipType.Rotate90FlipNone);
-            LoadBitmap(bitmap);
-            bitmap.Dispose();
+            Img = await GraphicHelper.TurnRight();
         }
 
         public void Load_Click()
@@ -256,21 +264,51 @@ namespace ScriptGraphicHelper.ViewModels
                 ofn.maxFile = ofn.file.Length;
                 ofn.fileTitle = new string(new char[64]);
                 ofn.maxFileTitle = ofn.fileTitle.Length;
-                ofn.initialDir = "C:\\";
                 ofn.title = "请选择文件";
 
                 if (Win32Api.GetOpenFileName(ofn))
                 {
-
-                    Debug.WriteLine("Selected file with full path: {0}", ofn.file);
-
                     string fileName = ofn.file;
 
                     var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                    SystemBitmap bitmap = new SystemBitmap(stream);
-                    LoadBitmap(bitmap);
-                    bitmap.Dispose();
+                    Img = new Bitmap(stream);
+                    stream.Position = 0;
+                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    GraphicHelper.KeepScreen(sKBitmap);
+                    sKBitmap.Dispose();
                     stream.Dispose();
+                }
+            }
+            catch (Exception e)
+            {
+                Win32Api.MessageBox(e.Message, uType: 48);
+            }
+        }
+
+        public void Save_Click()
+        {
+            if (Img == null)
+            {
+                return;
+            }
+            try
+            {
+                string[] result = new string[] { @"C:\Users\PC\Documents\leidian\Pictures\test.png" };
+
+                OpenFileName ofn = new();
+
+                ofn.structSize = Marshal.SizeOf(ofn);
+                ofn.filter = "位图文件 (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
+                ofn.file = new string(new char[256]);
+                ofn.maxFile = ofn.file.Length;
+                ofn.fileTitle = new string(new char[64]);
+                ofn.maxFileTitle = ofn.fileTitle.Length;
+                ofn.title = "保存文件";
+                ofn.defExt = ".png";
+                if (Win32Api.GetSaveFileName(ofn))
+                {
+                    string fileName = ofn.file;
+                    Img.Save(fileName);
                 }
             }
             catch (Exception e)
@@ -281,7 +319,7 @@ namespace ScriptGraphicHelper.ViewModels
 
         public void Test_Click()
         {
-            if (Img!=null && ColorInfos.Count>0)
+            if (Img != null && ColorInfos.Count > 0)
             {
                 int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
                 if (FormatSelectedIndex == FormatMode.compareStr || FormatSelectedIndex == FormatMode.ajCompareStr || FormatSelectedIndex == FormatMode.cdCompareStr || FormatSelectedIndex == FormatMode.diyCompareStr)
@@ -332,7 +370,7 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                     TestResult = result.ToString();
                 }
-        }
+            }
         }
 
         public void Create_Click()
@@ -354,15 +392,15 @@ namespace ScriptGraphicHelper.ViewModels
                     Rect = rect.ToString();
                 }
 
-                CreateString = CreateColorStrHelper.Create((FormatMode)FormatSelectedIndex, ColorInfos, rect);
+                CreateStr = CreateColorStrHelper.Create((FormatMode)FormatSelectedIndex, ColorInfos, rect);
             }
         }
 
-        public async void Copy_Click()
+        public async void CreateStr_Copy_Click()
         {
             try
             {
-              await Application.Current.Clipboard.SetTextAsync(CreateString);
+                await Application.Current.Clipboard.SetTextAsync(CreateStr);
             }
             catch (Exception ex)
             {
@@ -371,20 +409,108 @@ namespace ScriptGraphicHelper.ViewModels
         }
         public void Clear_Click()
         {
-            if (CreateString == string.Empty)
+            if (CreateStr == string.Empty)
             {
                 ColorInfos.Clear();
                 DataGridHeight = 40;
             }
             else
             {
-                CreateString = string.Empty;
+                CreateStr = string.Empty;
                 Rect = string.Empty;
                 TestResult = string.Empty;
             }
         }
 
-            private Range GetRange()
+        public ICommand Key_AddColorInfo => new Command((param) =>
+        {
+            if (!Loupe_IsVisible)
+            {
+                return;
+            }
+            int x = (int)PointX;
+            int y = (int)PointY;
+            string key = (string)param;
+            byte[] color = GraphicHelper.GetPixel(x, y);
+
+            AnchorType anchor = AnchorType.None;
+            if (FormatSelectedIndex == FormatMode.anchorsFindStr || FormatSelectedIndex == FormatMode.anchorsCompareStr)
+            {
+                if (key == "A")
+                    anchor = AnchorType.Left;
+                else if (key == "S")
+                    anchor = AnchorType.Center;
+                else if (key == "D")
+                    anchor = AnchorType.Right;
+            }
+
+            ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchor, x, y, color));
+            DataGridHeight = (ColorInfos.Count + 1) * 40;
+
+        });
+
+        public async void Rect_Copy_Click()
+        {
+            try
+            {
+                await Application.Current.Clipboard.SetTextAsync(Rect);
+            }
+            catch (Exception ex)
+            {
+                Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
+            }
+        }
+
+        public void Rect_Clear_Click()
+        {
+            Rect = string.Empty;
+        }
+
+        public void ColorInfo_Clear_Click()
+        {
+            ColorInfos.Clear();
+            DataGridHeight = 40;
+        }
+
+        public async void Point_Copy_Click()
+        {
+            try
+            {
+                if (ColorInfoSelectedIndex == -1)
+                {
+                    Win32Api.MessageBox("当前选择项为-1, 必须先左键单击激活选择项再打开右键菜单!", "错误");
+                    return;
+                }
+                Point point = ColorInfos[ColorInfoSelectedIndex].Point;
+                string pointStr = string.Format("{0},{1}", point.X, point.Y);
+                await Application.Current.Clipboard.SetTextAsync(pointStr);
+            }
+            catch (Exception ex)
+            {
+                Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "错误");
+            }
+        }
+
+        public async void Color_Copy_Click()
+        {
+            try
+            {
+                if (ColorInfoSelectedIndex == -1)
+                {
+                    Win32Api.MessageBox("当前选择项为-1, 必须先左键单击激活选择项再打开右键菜单!", "错误");
+                    return;
+                }
+                Color color = ColorInfos[ColorInfoSelectedIndex].Color;
+                string hexColor = string.Format("#{0}{1}{2}", color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2"));
+                await Application.Current.Clipboard.SetTextAsync(hexColor);
+            }
+            catch (Exception ex)
+            {
+                Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "错误");
+            }
+        }
+
+        private Range GetRange()
         {
             if (ColorInfos.Count == 0)
             {
@@ -399,8 +525,8 @@ namespace ScriptGraphicHelper.ViewModels
                     return new Range(int.Parse(range[0].Trim()), int.Parse(range[1].Trim()), int.Parse(range[2].Trim()), int.Parse(range[3].Trim()));
                 }
             }
-            double imgWidth = ImgWidth -1;
-            double imgHeight = ImgHeight -1;
+            double imgWidth = ImgWidth - 1;
+            double imgHeight = ImgHeight - 1;
 
             if (FormatSelectedIndex == FormatMode.anchorsFindStr || FormatSelectedIndex == FormatMode.anchorsCompareStr)
             {
@@ -443,19 +569,6 @@ namespace ScriptGraphicHelper.ViewModels
             return new Range(left >= 50 ? left - 50 : 0, top >= 50 ? top - 50 : 0, right + 50 > imgWidth ? imgWidth : right + 50, bottom + 50 > imgHeight ? imgHeight : bottom + 50, mode_1, mode_2);
 
 
-        }
-
-
-
-        public void LoadBitmap(SystemBitmap bitmap)
-        {
-            var stream = new MemoryStream();
-            bitmap.Save(stream, ImageFormat.Bmp);
-            stream.Position = 0;
-            Img = new AvaloniaBitmap(stream);
-            GraphicHelper.KeepScreen(bitmap);
-            stream.Close();
-            stream.Dispose();
         }
     }
 

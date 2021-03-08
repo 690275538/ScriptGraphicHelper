@@ -4,21 +4,20 @@ using Avalonia.Media.Imaging;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.ViewModels.Core;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 
 namespace ScriptGraphicHelper.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
-        private Cursor windowCursor;
+        private Cursor windowCursor = new Cursor(StandardCursorType.Arrow);
         public Cursor WindowCursor
         {
             get => windowCursor;
             set => this.RaiseAndSetIfChanged(ref windowCursor, value);
         }
 
-        private int emulatorSelectedIndex;
+        private int emulatorSelectedIndex = 0;
         public int EmulatorSelectedIndex
         {
             get => emulatorSelectedIndex;
@@ -29,21 +28,26 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
-        private int simSelectedIndex;
+        private int simSelectedIndex = 0;
         public int SimSelectedIndex
         {
             get => simSelectedIndex;
-            set => this.RaiseAndSetIfChanged(ref simSelectedIndex, value);
+            set
+            {
+                this.RaiseAndSetIfChanged(ref simSelectedIndex, value);
+                PubSetting.Setting.SimSelectedIndex = value;
+            }
         }
 
-        private FormatMode formatSelectedIndex;
+        private FormatMode formatSelectedIndex = FormatMode.compareStr;
         public FormatMode FormatSelectedIndex
         {
             get => formatSelectedIndex;
             set
             {
                 this.RaiseAndSetIfChanged(ref formatSelectedIndex, value);
-                if (value ==FormatMode.anchorsFindStr || value == FormatMode.anchorsCompareStr)
+                PubSetting.Setting.FormatSelectedIndex = (int)value;
+                if (value == FormatMode.anchorsFindStr || value == FormatMode.anchorsCompareStr)
                 {
                     DataGrid_IsVisible = false;
                     ImgMargin = new Thickness(170, 20, 340, 20);
@@ -58,7 +62,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
-        private string testResult;
+        private string testResult = string.Empty;
         public string TestResult
         {
             get => testResult;
@@ -72,11 +76,11 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref rect, value);
         }
 
-        private string createString;
-        public string CreateString
+        private string createStr = string.Empty;
+        public string CreateStr
         {
-            get => createString;
-            set => this.RaiseAndSetIfChanged(ref createString, value);
+            get => createStr;
+            set => this.RaiseAndSetIfChanged(ref createStr, value);
         }
 
         private ObservableCollection<string> emulatorInfo;
@@ -105,14 +109,14 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref imgMargin, value);
         }
 
-        private double imgWidth;
+        private double imgWidth = 0;
         public double ImgWidth
         {
             get => imgWidth;
             set => this.RaiseAndSetIfChanged(ref imgWidth, value);
         }
 
-        private double imgHeight;
+        private double imgHeight = 0;
         public double ImgHeight
         {
             get => imgHeight;
@@ -126,7 +130,7 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref loupeWriteBmp, value);
         }
 
-        private bool loupe_IsVisible;
+        private bool loupe_IsVisible = false;
         public bool Loupe_IsVisible
         {
             get => loupe_IsVisible;
@@ -140,28 +144,28 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref loupeMargin, value);
         }
 
-        private double pointX;
+        private double pointX = 0;
         public double PointX
         {
             get => pointX;
             set => this.RaiseAndSetIfChanged(ref pointX, value);
         }
 
-        private double pointY;
+        private double pointY = 0;
         public double PointY
         {
             get => pointY;
             set => this.RaiseAndSetIfChanged(ref pointY, value);
         }
 
-        private double rectWidth;
+        private double rectWidth = 0;
         public double RectWidth
         {
             get => rectWidth;
             set => this.RaiseAndSetIfChanged(ref rectWidth, value);
         }
 
-        private double rectHeight;
+        private double rectHeight = 0;
         public double RectHeight
         {
             get => rectHeight;
@@ -175,7 +179,7 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref rectMargin, value);
         }
 
-        private bool rect_IsVisible;
+        private bool rect_IsVisible = false;
         public bool Rect_IsVisible
         {
             get => rect_IsVisible;
@@ -187,6 +191,13 @@ namespace ScriptGraphicHelper.ViewModels
         {
             get => colorInfos;
             set => this.RaiseAndSetIfChanged(ref colorInfos, value);
+        }
+
+        private int colorInfoSelectedIndex;
+        public int ColorInfoSelectedIndex
+        {
+            get => colorInfoSelectedIndex;
+            set => this.RaiseAndSetIfChanged(ref colorInfoSelectedIndex, value);
         }
 
         private int dataGridHeight;

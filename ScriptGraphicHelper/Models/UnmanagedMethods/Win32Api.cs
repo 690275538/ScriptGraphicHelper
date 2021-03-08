@@ -38,5 +38,8 @@ namespace ScriptGraphicHelper.Models.UnmanagedMethods
 
         [DllImport("Comdlg32.dll", CharSet = CharSet.Auto)]
         public static extern bool GetOpenFileName([In, Out] OpenFileName ofn);
+
+        [DllImport("Comdlg32.dll", SetLastError = true, ThrowOnUnmappableChar = true, CharSet = CharSet.Auto)]
+        public static extern bool GetSaveFileName([In, Out] OpenFileName ofn);
     }
 }

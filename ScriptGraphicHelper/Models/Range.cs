@@ -30,8 +30,8 @@
             }
             else if (mode == 2)
             {
-                string mode_1 = Mode_1 == 0 ? "left" : Mode_1 == 1 ? "center" : Mode_1 == 2 ? "right" : "normal";
-                string mode_2 = Mode_2 == 0 ? "left" : Mode_2 == 1 ? "center" : Mode_2 == 2 ? "right" : "normal";
+                string mode_1 = Mode_1 == 0 ? "left" : Mode_1 == 1 ? "center" : Mode_1 == 2 ? "right" : "none";
+                string mode_2 = Mode_2 == 0 ? "left" : Mode_2 == 1 ? "center" : Mode_2 == 2 ? "right" : "none";
 
                 if (Mode_1 == Mode_2)
                 {

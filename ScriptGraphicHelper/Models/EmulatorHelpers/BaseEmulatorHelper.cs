@@ -1,6 +1,6 @@
-﻿using System;
+﻿using Avalonia.Media.Imaging;
+using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Models.EmulatorHelpers

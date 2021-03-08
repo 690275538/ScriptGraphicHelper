@@ -6,6 +6,8 @@
     <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
     <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
     <Platforms>AnyCPU;x64</Platforms>
+    <ApplicationIcon>Assets\ico.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -23,7 +25,12 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaXaml Remove="Panels\CheckBox.axaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Remove="Panels\CheckBox.axaml.cs" />
     <Compile Remove="Views\Messagebox.xaml.cs" />
+    <Compile Remove="Views\UdpConfig.xaml.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="App.xaml" />
@@ -35,8 +42,11 @@
     <None Remove="Assets\test.svg" />
     <None Remove="Panels\Controls.xaml" />
     <None Remove="Panels\Img.xaml" />
+    <None Remove="ViewModels\UdpConfig.xaml" />
     <None Remove="Views\ColorInfosDataGrid.xaml" />
     <None Remove="Views\MainWindow.xaml" />
+    <None Remove="Views\TcpConfig.xaml" />
+    <None Remove="Views\UdpConfig.xaml" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaXaml Include="App.xaml">
@@ -52,6 +62,9 @@
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
     <AvaloniaXaml Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
+    <AvaloniaXaml Include="Views\TcpConfig.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
   </ItemGroup>
@@ -80,5 +93,8 @@
       <DependentUpon>Img.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\MainWindow.xaml.cs" />
+    <Compile Update="Views\TcpConfig.xaml.cs">
+      <DependentUpon>TcpConfig.xaml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>

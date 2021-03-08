@@ -32,11 +32,11 @@
                     AutoGenerateColumns="False"
                     CanUserResizeColumns="False"
                     CanUserSortColumns="False"
-                    IsVisible="{Binding DataGrid_IsVisible,Mode=TwoWay}"
+                    IsVisible="{Binding DataGrid_IsVisible, Mode=TwoWay}"
                     Items="{Binding ColorInfos, Mode=TwoWay}"
                     RowHeight="40"
                     SelectedIndex="{Binding ColorInfoSelectedIndex, Mode=TwoWay}"
-                    SelectionMode="Extended">
+                    SelectionMode="Single">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
                             Width="40"
@@ -115,10 +115,10 @@
                     AutoGenerateColumns="False"
                     CanUserResizeColumns="False"
                     CanUserSortColumns="False"
-                    IsVisible="{Binding !DataGrid_IsVisible,Mode=TwoWay}"
+                    IsVisible="{Binding !DataGrid_IsVisible, Mode=TwoWay}"
                     Items="{Binding ColorInfos, Mode=TwoWay}"
                     RowHeight="40"
-                    SelectedIndex="{Binding ColorInfoSelected, Mode=TwoWay}"
+                    SelectedIndex="{Binding ColorInfoSelectedIndex, Mode=TwoWay}"
                     SelectionMode="Extended">
                     <DataGrid.Columns>
                         <DataGridTemplateColumn
@@ -211,6 +211,13 @@
                         </DataGridTemplateColumn>
                     </DataGrid.Columns>
                 </DataGrid>
+                <Grid.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding ColorInfo_Clear_Click}" Header="清空列表" />
+                        <MenuItem Command="{Binding Point_Copy_Click}" Header="复制坐标" />
+                        <MenuItem Command="{Binding Color_Copy_Click}" Header="复制颜色值" />
+                    </ContextMenu>
+                </Grid.ContextMenu>
             </Grid>
         </ScrollViewer>
     </Border>

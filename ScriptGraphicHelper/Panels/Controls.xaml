@@ -39,6 +39,7 @@
                     BorderBrush="#666666"
                     BorderThickness="0,0,0,1"
                     CornerRadius="0">
+
                     <ComboBox
                         Name="EmulatorOptions"
                         Width="95"
@@ -80,7 +81,8 @@
                 Name="Save"
                 Width="130"
                 Margin="0,7"
-                HorizontalContentAlignment="Center">
+                HorizontalContentAlignment="Center"
+                Command="{Binding Save_Click}">
                 保存
             </Button>
             <Button
@@ -209,7 +211,14 @@
                         BorderThickness="0"
                         FontSize="14"
                         IsReadOnly="True"
-                        Text="{Binding Rect, Mode=TwoWay}" />
+                        Text="{Binding Rect, Mode=TwoWay}">
+                        <TextBox.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="{Binding Rect_Copy_Click}" Header="复制" />
+                                <MenuItem Command="{Binding Rect_Clear_Click}" Header="清空" />
+                            </ContextMenu>
+                        </TextBox.ContextMenu>
+                    </TextBox>
                 </Border>
             </StackPanel>
             <Button
@@ -221,32 +230,32 @@
                 生成
             </Button>
             <TextBox
-                Name="CreateString"
+                Name="CreateStr"
                 Width="130"
                 Height="120"
                 Margin="0,10"
                 HorizontalContentAlignment="Left"
                 VerticalContentAlignment="Top"
+                AcceptsReturn="True"
                 Background="Transparent"
                 BorderBrush="#666666"
                 IsReadOnly="True"
-				AcceptsReturn="True"
-                Text="{Binding CreateString, Mode=TwoWay}"
+                Text="{Binding CreateStr, Mode=TwoWay}"
                 TextWrapping="Wrap" />
             <Button
-                Name="Copy"
+                Name="CreateStrCopy"
                 Width="130"
                 Margin="0,7"
-				Command="{Binding Copy_Click}"
-                HorizontalContentAlignment="Center">
+                HorizontalContentAlignment="Center"
+                Command="{Binding CreateStr_Copy_Click}">
                 复制
             </Button>
             <Button
-                Name="Clear"
+                Name="CreateStrClear"
                 Width="130"
                 Margin="0,7"
-				Command="{Binding Clear_Click}"
-                HorizontalContentAlignment="Center">
+                HorizontalContentAlignment="Center"
+                Command="{Binding Clear_Click}">
                 清空
             </Button>
         </StackPanel>

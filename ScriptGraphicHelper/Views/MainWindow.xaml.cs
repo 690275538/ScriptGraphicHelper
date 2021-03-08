@@ -2,8 +2,12 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Newtonsoft.Json;
+using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using System;
+using System.ComponentModel;
+using System.IO;
 
 namespace ScriptGraphicHelper.Views
 {
@@ -20,12 +24,23 @@ namespace ScriptGraphicHelper.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            FontWeight = Avalonia.Media.FontWeight.Medium;
         }
 
         private void Window_Opened(object sender, EventArgs e)
         {
-            this.FontWeight = Avalonia.Media.FontWeight.Medium;
-            DataGrid d = this.FindControl<DataGrid>("ColorInfos");
+            Width = PubSetting.Setting.Width;
+            Height = PubSetting.Setting.Height;
+        }
+
+        private void Window_Closing(object sender, CancelEventArgs e)
+        {
+            PubSetting.Setting.Width = Width;
+            PubSetting.Setting.Height = Height;
+
+            string settingStr = JsonConvert.SerializeObject(PubSetting.Setting, Formatting.Indented);
+            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "setting.json", settingStr);
+
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)

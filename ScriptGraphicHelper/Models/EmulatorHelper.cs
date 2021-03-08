@@ -1,7 +1,7 @@
-﻿using ScriptGraphicHelper.Models.EmulatorHelpers;
+﻿using Avalonia.Media.Imaging;
+using ScriptGraphicHelper.Models.EmulatorHelpers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing;
 using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Models
@@ -17,7 +17,7 @@ namespace ScriptGraphicHelper.Models
 
     public static class EmulatorHelper
     {
-        public static EmlatorState IsInit { get; set; } = EmlatorState.None;
+        public static EmlatorState State { get; set; } = EmlatorState.None;
         public static ObservableCollection<string> Result { get; set; }
         public static List<KeyValuePair<int, string>> Info { get; set; }
         public static int Select { get; set; } = -1;
@@ -41,9 +41,9 @@ namespace ScriptGraphicHelper.Models
             Helpers.Add(new LdEmulatorHelper(0));
             Helpers.Add(new LdEmulatorHelper(1));
             Helpers.Add(new LdEmulatorHelper(2));
-            //Helpers.Add(new YsEmulatorHelper());
-            //Helpers.Add(new XyEmulatorHelper());
-            //Helpers.Add(new MobileTcpHelper());
+            Helpers.Add(new YsEmulatorHelper());
+            Helpers.Add(new XyEmulatorHelper());
+            Helpers.Add(new MoblieTcpHelper());
             //Helpers.Add(new HwndHelper());
             Result = new ObservableCollection<string>();
 
@@ -54,7 +54,7 @@ namespace ScriptGraphicHelper.Models
                     Result.Add(emulator.Name);
                 }
             }
-            IsInit = 0;
+            State = 0;
             return Result;
         }
         public static void Dispose()
@@ -67,7 +67,7 @@ namespace ScriptGraphicHelper.Models
             Info.Clear();
             Helpers.Clear();
 
-            IsInit = EmlatorState.None;
+            State = EmlatorState.None;
 
         }
         public static void Changed(int index)
@@ -79,14 +79,14 @@ namespace ScriptGraphicHelper.Models
                     if (Helpers[i].Name == Result[index])
                     {
                         Select = i;
-                        IsInit = EmlatorState.Starting;
+                        State = EmlatorState.Starting;
                     }
                 }
             }
             else
             {
                 Select = -1;
-                IsInit = EmlatorState.Starting;
+                State = EmlatorState.Starting;
             }
         }
         public async static Task<ObservableCollection<string>> GetAll()

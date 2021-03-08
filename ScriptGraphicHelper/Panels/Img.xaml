@@ -22,6 +22,20 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Source="{Binding Img, Mode=TwoWay}">
+            <Image.KeyBindings>
+                <KeyBinding
+                    Command="{Binding Key_AddColorInfo}"
+                    CommandParameter="A"
+                    Gesture="A" />
+                <KeyBinding
+                    Command="{Binding Key_AddColorInfo}"
+                    CommandParameter="S"
+                    Gesture="S" />
+                <KeyBinding
+                    Command="{Binding Key_AddColorInfo}"
+                    CommandParameter="D"
+                    Gesture="D" />
+            </Image.KeyBindings>
             <i:Interaction.Behaviors>
                 <ic:EventTriggerBehavior EventName="PointerEnter" SourceObject="{Binding #Img}">
                     <icc:InvokeCommandAction Command="{Binding Img_PointerEnter}" />
