@@ -1,0 +1,96 @@
+﻿syntax = "proto3";
+
+option csharp_namespace = "DmService";
+
+package Methods;
+
+// The greeting service definition.
+service Methods {
+  // Sends a greeting
+  rpc Reg (RegArgs) returns (Int32Reply);
+
+  rpc UnBindWindow (NullArgs) returns (Int32Reply);
+
+  rpc GetClientSize (GetClientSizeArgs) returns (StrReply);
+
+  rpc GetScreenData (GetScreenDataArgs) returns (BytesReply);
+
+  rpc EnumWindow (EnumWindowArgs) returns(StrReply);
+
+  rpc GetWindowTitle(GetWindowTitleArgs) returns (StrReply);
+
+  rpc GetMousePointWindow(NullArgs) returns (Int32Reply);
+
+  rpc GetWindow(GetWindowArgs) returns (Int32Reply);
+
+  rpc GetWindowClass(GetWindowClassArgs) returns (StrReply);
+
+  rpc BindWindowEx(BindWindowExArgs) returns (Int32Reply);
+}
+
+message NullArgs{}
+
+
+message GetScreenDataArgs{
+	int32 x1 = 1;
+	int32 y1 = 2;
+	int32 x2 = 3;
+	int32 y2 = 4;
+    int32 hwnd = 5;
+    string display = 6;
+    string mouse = 7;
+    string keypad = 8;
+    string pubDesc = 9;
+    int32 mode = 10;
+}
+
+message BindWindowExArgs{
+    int32 hwnd = 1;
+    string display = 2;
+    string mouse = 3;
+    string keypad = 4;
+    string pubDesc = 5;
+    int32 mode = 6;
+}
+
+message GetWindowClassArgs{
+    int32 hwnd = 1;
+}
+
+message GetWindowArgs{
+    int32 hwnd = 1;
+    int32 flag = 2;
+}
+
+message GetWindowTitleArgs{
+    int32 hwnd = 1;
+}
+
+message EnumWindowArgs{
+    int32 parent = 1;
+    string title = 2;
+    string clsName = 3;
+    int32 filter = 4;
+}
+
+message StrReply{
+	string message = 1;
+}
+
+message RegArgs {
+    string name = 1;
+}
+
+message Int32Reply {
+    int32 message = 1;
+}
+
+message GetClientSizeArgs {
+    int32 hwnd = 1;
+}
+
+
+message BytesReply{
+    bytes data = 1;
+}
+

@@ -210,7 +210,6 @@
                         BorderBrush="#666666"
                         BorderThickness="0"
                         FontSize="14"
-                        IsReadOnly="True"
                         Text="{Binding Rect, Mode=TwoWay}">
                         <TextBox.ContextMenu>
                             <ContextMenu>

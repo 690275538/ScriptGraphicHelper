@@ -34,10 +34,7 @@ namespace ScriptGraphicHelper.ViewModels
                 SimSelectedIndex = PubSetting.Setting.SimSelectedIndex;
                 FormatSelectedIndex = (FormatMode)PubSetting.Setting.FormatSelectedIndex;
             }
-            catch (Exception error)
-            {
-                Win32Api.MessageBox(error.Message);
-            }
+            catch { }
 
             ColorInfos = new ObservableCollection<ColorInfo>();
             LoupeWriteBmp = LoupeWriteBitmap.Init(241, 241);
@@ -46,7 +43,6 @@ namespace ScriptGraphicHelper.ViewModels
             Rect_IsVisible = false;
             EmulatorSelectedIndex = -1;
             EmulatorInfo = EmulatorHelper.Init();
-            ImgMargin = new Thickness(170, 20, 280, 20);
         }
 
         private Point StartPoint;
@@ -189,23 +185,35 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Emulator_Selected(int value)
         {
-            if (EmulatorHelper.State == EmlatorState.success)
+            try
             {
-                EmulatorHelper.Index = EmulatorSelectedIndex;
-            }
-            else if (EmulatorHelper.State == EmlatorState.Waiting)
-            {
-                WindowCursor = new Cursor(StandardCursorType.Wait);
-                EmulatorHelper.Changed(EmulatorSelectedIndex);
-                EmulatorInfo = await EmulatorHelper.GetAll();
-                EmulatorSelectedIndex = -1;
-                WindowCursor = new Cursor(StandardCursorType.Arrow);
+                if (EmulatorHelper.State == EmlatorState.success)
+                {
+                    EmulatorHelper.Index = EmulatorSelectedIndex;
+                }
+                else if (EmulatorHelper.State == EmlatorState.Waiting)
+                {
+                    WindowCursor = new Cursor(StandardCursorType.Wait);
+                    EmulatorHelper.Changed(EmulatorSelectedIndex);
+                    EmulatorInfo = await EmulatorHelper.GetAll();
+                    EmulatorSelectedIndex = -1;
 
+                }
+                else if (EmulatorHelper.State == EmlatorState.Starting)
+                {
+                    EmulatorHelper.State = EmlatorState.success;
+                }
             }
-            else if (EmulatorHelper.State == EmlatorState.Starting)
+            catch (Exception e)
             {
-                EmulatorHelper.State = EmlatorState.success;
+                EmulatorSelectedIndex = -1;
+                EmulatorHelper.Dispose();
+                EmulatorInfo.Clear();
+                EmulatorInfo = EmulatorHelper.Init();
+                Win32Api.MessageBox(e.Message);
             }
+            WindowCursor = new Cursor(StandardCursorType.Arrow);
+
         }
 
         public async void ScreenShot_Click()

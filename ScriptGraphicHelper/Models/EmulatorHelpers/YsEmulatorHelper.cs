@@ -18,7 +18,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         {
             Name = "夜神模拟器";
             string path = PubSetting.Setting.YsPath.Trim("\\".ToCharArray()) + "\\";
-            if (path != string.Empty)
+            if (path != string.Empty && Path != "")
             {
                 int index = path.LastIndexOf("\\");
                 Path = path.Substring(0, index + 1).Trim('"');

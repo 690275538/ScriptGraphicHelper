@@ -7,6 +7,7 @@ using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using System;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 
 namespace ScriptGraphicHelper.Views
@@ -41,6 +42,18 @@ namespace ScriptGraphicHelper.Views
             string settingStr = JsonConvert.SerializeObject(PubSetting.Setting, Formatting.Indented);
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "setting.json", settingStr);
 
+            try
+            {
+                Process[] processes = Process.GetProcessesByName("DmServer");
+                if (processes.Length > 0)
+                {
+                    for (int i = 0; i < processes.Length; i++)
+                    {
+                        processes[i].Kill();
+                    }
+                }
+            }
+            catch { }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)

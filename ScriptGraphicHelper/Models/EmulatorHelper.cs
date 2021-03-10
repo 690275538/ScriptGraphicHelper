@@ -38,18 +38,19 @@ namespace ScriptGraphicHelper.Models
         public static List<BaseEmulatorHelper> Helpers = new List<BaseEmulatorHelper>();
         public static ObservableCollection<string> Init()
         {
+            Helpers = new List<BaseEmulatorHelper>();
             Helpers.Add(new LdEmulatorHelper(0));
             Helpers.Add(new LdEmulatorHelper(1));
             Helpers.Add(new LdEmulatorHelper(2));
             Helpers.Add(new YsEmulatorHelper());
             Helpers.Add(new XyEmulatorHelper());
             Helpers.Add(new MoblieTcpHelper());
-            //Helpers.Add(new HwndHelper());
+            Helpers.Add(new HwndHelper());
             Result = new ObservableCollection<string>();
 
             foreach (var emulator in Helpers)
             {
-                if (emulator.Path != string.Empty)
+                if (emulator.Path != string.Empty && emulator.Path != "")
                 {
                     Result.Add(emulator.Name);
                 }
@@ -59,15 +60,19 @@ namespace ScriptGraphicHelper.Models
         }
         public static void Dispose()
         {
-            foreach (var emulator in Helpers)
+            try
             {
-                emulator.Dispose();
-            }
-            Result.Clear();
-            Info.Clear();
-            Helpers.Clear();
+                foreach (var emulator in Helpers)
+                {
+                    emulator.Dispose();
+                }
+                Result.Clear();
+                Info.Clear();
+                Helpers.Clear();
 
-            State = EmlatorState.None;
+                State = EmlatorState.None;
+            }
+            catch { }
 
         }
         public static void Changed(int index)

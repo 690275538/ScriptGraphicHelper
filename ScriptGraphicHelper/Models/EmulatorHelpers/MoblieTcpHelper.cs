@@ -21,8 +21,8 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
     }
     class MoblieTcpHelper : BaseEmulatorHelper
     {
-        public override string Path { get; set; } = "tcp连接";
-        public override string Name { get; set; } = "tcp连接";
+        public override string Path { get; set; } = "TCP连接";
+        public override string Name { get; set; } = "TCP连接";
 
         private TcpClient MyTcpClient;
 

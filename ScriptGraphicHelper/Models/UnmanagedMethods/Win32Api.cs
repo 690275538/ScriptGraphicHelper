@@ -41,5 +41,20 @@ namespace ScriptGraphicHelper.Models.UnmanagedMethods
 
         [DllImport("Comdlg32.dll", SetLastError = true, ThrowOnUnmappableChar = true, CharSet = CharSet.Auto)]
         public static extern bool GetSaveFileName([In, Out] OpenFileName ofn);
+
+
+
+        internal const uint SPI_SETCURSORS = 87;
+        internal const uint SPIF_SENDWININICHANGE = 2;
+
+        [DllImport("user32", CharSet = CharSet.Unicode)]
+        internal static extern IntPtr LoadCursorFromFile(string fileName);
+
+        [DllImport("User32.DLL")]
+        internal static extern bool SetSystemCursor(IntPtr hcur, uint id);
+        internal const uint OCR_NORMAL = 32512;
+
+        [DllImport("User32.DLL")]
+        internal static extern bool SystemParametersInfo(uint uiAction, uint uiParam, IntPtr pvParam, uint fWinIni);
     }
 }
