@@ -80,7 +80,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         {
             Name = "逍遥模拟器";
 
-            string path = PubSetting.Setting.XyPath.Trim("\\".ToCharArray()) + "\\";
+            string path = Setting.Instance.XyPath.Trim("\\".ToCharArray()) + "\\";
             if (path != string.Empty && Path != "")
             {
                 int index = path.LastIndexOf("\\");

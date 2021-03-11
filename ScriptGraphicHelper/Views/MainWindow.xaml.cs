@@ -30,16 +30,16 @@ namespace ScriptGraphicHelper.Views
 
         private void Window_Opened(object sender, EventArgs e)
         {
-            Width = PubSetting.Setting.Width;
-            Height = PubSetting.Setting.Height;
+            Width = Setting.Instance.Width;
+            Height = Setting.Instance.Height;
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
         {
-            PubSetting.Setting.Width = Width;
-            PubSetting.Setting.Height = Height;
+            Setting.Instance.Width = Width;
+            Setting.Instance.Height = Height;
 
-            string settingStr = JsonConvert.SerializeObject(PubSetting.Setting, Formatting.Indented);
+            string settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "setting.json", settingStr);
 
             try

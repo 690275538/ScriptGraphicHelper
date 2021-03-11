@@ -2,6 +2,8 @@
 {
     public class Setting
     {
+        public static Setting Instance { get; set; } = new();
+
         public double Width { get; set; } = 1450;
         public double Height { get; set; } = 850;
         public int SimSelectedIndex { get; set; } = 0;
@@ -13,10 +15,5 @@
         public string Ldpath3 { get; set; } = string.Empty;
         public string Ldpath4 { get; set; } = string.Empty;
         public string Ldpath64 { get; set; } = string.Empty;
-    }
-
-    public static class PubSetting
-    {
-        public static Setting Setting = new();
     }
 }

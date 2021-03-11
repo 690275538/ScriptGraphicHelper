@@ -35,7 +35,7 @@ namespace ScriptGraphicHelper.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref simSelectedIndex, value);
-                PubSetting.Setting.SimSelectedIndex = value;
+                Setting.Instance.SimSelectedIndex = value;
             }
         }
 
@@ -46,7 +46,7 @@ namespace ScriptGraphicHelper.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref formatSelectedIndex, value);
-                PubSetting.Setting.FormatSelectedIndex = (int)value;
+                Setting.Instance.FormatSelectedIndex = (int)value;
                 if (value == FormatMode.anchorsFindStr || value == FormatMode.anchorsCompareStr)
                 {
                     DataGrid_IsVisible = false;

@@ -17,7 +17,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         public YsEmulatorHelper()//初始化 , 获取模拟器路径
         {
             Name = "夜神模拟器";
-            string path = PubSetting.Setting.YsPath.Trim("\\".ToCharArray()) + "\\";
+            string path = Setting.Instance.YsPath.Trim("\\".ToCharArray()) + "\\";
             if (path != string.Empty && Path != "")
             {
                 int index = path.LastIndexOf("\\");

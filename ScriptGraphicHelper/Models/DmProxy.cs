@@ -5,6 +5,7 @@ using ScriptGraphicHelper.Models.UnmanagedMethods;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net.Http;
 using System.Threading.Tasks;
 using static DmService.Methods;
 
@@ -55,13 +56,13 @@ namespace ScriptGraphicHelper.Models
         {
             if (File.Exists(Path))
             {
-                ProcessStartInfo start = new ProcessStartInfo(Path)
-                {
-                    CreateNoWindow = true,
-                    UseShellExecute = false,
-                    Verb = "runas"
-                };
-                Process.Start(start);
+                //ProcessStartInfo start = new ProcessStartInfo(Path)
+                //{
+                //    CreateNoWindow = true,
+                //    UseShellExecute = false,
+                //    Verb = "runas"
+                //};
+                Process.Start(Path);
             }
             else
             {
@@ -89,8 +90,13 @@ namespace ScriptGraphicHelper.Models
                 var channel = GrpcChannel.ForAddress("http://localhost:1024", new GrpcChannelOptions
                 {
                     MaxReceiveMessageSize = 20 * 1024 * 1024,
-                    MaxSendMessageSize = 1 * 1024 * 1024
-                });
+                    MaxSendMessageSize = 1 * 1024 * 1024,
+                    DisposeHttpClient = true,
+                    HttpClient = new HttpClient(new SocketsHttpHandler
+                    {
+                        ConnectTimeout = TimeSpan.FromSeconds(60 * 60)
+                    })
+                }); ;
                 DmClient = new MethodsClient(channel);
                 return true;
             }
@@ -104,15 +110,15 @@ namespace ScriptGraphicHelper.Models
 
         public static bool Reg()
         {
-            RegCode = PubSetting.Setting.DmRegcode;
+            RegCode = Setting.Instance.DmRegcode;
             if (RegCode == string.Empty || RegCode == "")
             {
                 Win32Api.MessageBox("错误, 需要在setting.json文件中填写大漠注册码");
                 return false;
             }
-            
+
             int result = DmClient.Reg(new RegArgs { Name = RegCode }).Message;
-            if (result==1)
+            if (result == 1)
             {
                 return true;
             }
@@ -121,7 +127,7 @@ namespace ScriptGraphicHelper.Models
                 Win32Api.MessageBox("注册大漠失败, 返回值" + result.ToString());
                 return false;
             }
-           
+
         }
 
         public static byte[] GetScreenData(int x1, int y1, int x2, int y2)

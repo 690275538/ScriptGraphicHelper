@@ -30,9 +30,9 @@ namespace ScriptGraphicHelper.ViewModels
                 string configStr = sr.ReadToEnd();
                 sr.Close();
                 configStr = configStr.Replace("\\\\", "\\").Replace("\\", "\\\\");
-                PubSetting.Setting = JsonConvert.DeserializeObject<Setting>(configStr) ?? new Setting();
-                SimSelectedIndex = PubSetting.Setting.SimSelectedIndex;
-                FormatSelectedIndex = (FormatMode)PubSetting.Setting.FormatSelectedIndex;
+                Setting.Instance = JsonConvert.DeserializeObject<Setting>(configStr) ?? new Setting();
+                SimSelectedIndex = Setting.Instance.SimSelectedIndex;
+                FormatSelectedIndex = (FormatMode)Setting.Instance.FormatSelectedIndex;
             }
             catch { }
 
@@ -574,8 +574,8 @@ namespace ScriptGraphicHelper.ViewModels
 
                 }
             }
-            return new Range(left >= 50 ? left - 50 : 0, top >= 50 ? top - 50 : 0, right + 50 > imgWidth ? imgWidth : right + 50, bottom + 50 > imgHeight ? imgHeight : bottom + 50, mode_1, mode_2);
-
+            //return new Range(left >= 50 ? left - 50 : 0, top >= 50 ? top - 50 : 0, right + 50 > imgWidth ? imgWidth : right + 50, bottom + 50 > imgHeight ? imgHeight : bottom + 50, mode_1, mode_2);
+            return new Range(left >= 4 ? left - 4 : 0, top >= 4 ? top - 4 : 0, right + 4 > imgWidth ? imgWidth : right + 4, bottom + 4 > imgHeight ? imgHeight : bottom + 4, mode_1, mode_2);
 
         }
     }
