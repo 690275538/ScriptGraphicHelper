@@ -26,7 +26,10 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     RegistryKey Aimdir = Hkml.OpenSubKey("Software\\ChangZhi2\\dnplayer", true);
                     if (Aimdir == null)
                     {
-                        Path = string.Empty;
+                        if (Setting.Instance.Ldpath3 != null && Setting.Instance.Ldpath3 != string.Empty)
+                        {
+                            Path = Setting.Instance.Ldpath64;
+                        }
                         return;
                     }
                     Path = Aimdir.GetValue("InstallDir").ToString();
@@ -38,7 +41,10 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     RegistryKey Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer", true);
                     if (Aimdir == null)
                     {
-                        Path = string.Empty;
+                        if (Setting.Instance.Ldpath4 != null && Setting.Instance.Ldpath4 != string.Empty)
+                        {
+                            Path = Setting.Instance.Ldpath64;
+                        }
                         return;
                     }
                     Path = Aimdir.GetValue("InstallDir").ToString();
@@ -50,7 +56,10 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     RegistryKey Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer64", true);
                     if (Aimdir == null)
                     {
-                        Path = string.Empty;
+                        if (Setting.Instance.Ldpath64 != null && Setting.Instance.Ldpath64 != string.Empty)
+                        {
+                            Path = Setting.Instance.Ldpath64;
+                        }
                         return;
                     }
                     Path = Aimdir.GetValue("InstallDir").ToString();

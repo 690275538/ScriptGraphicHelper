@@ -151,11 +151,14 @@ namespace ScriptGraphicHelper.Models
 
         public static int UnBindWindow()
         {
-            if (!ServerExists())
+            Process[] processes = Process.GetProcessesByName("DmServer");
+            if (processes.Length > 0)
             {
-                throw new Exception("大漠GRPC服务异常!");
+                return DmClient.UnBindWindow(new NullArgs()).Message;
             }
-            return DmClient.UnBindWindow(new NullArgs()).Message;
+            else
+                return 0;
+
         }
 
         public static Point GetClientSize(int hwnd)

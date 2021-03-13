@@ -6,8 +6,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="tcp配置"
     Width="250"
-    Height="250"
+    Height="240"
     Icon="/Assets/ico.ico"
+    Opened="WindowOpened"
     mc:Ignorable="d">
     <Grid Background="#333333">
 
@@ -42,6 +43,7 @@
                 VerticalAlignment="Top"
                 Orientation="Horizontal">
                 <TextBlock
+                    Name="Description"
                     Margin="20,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center">

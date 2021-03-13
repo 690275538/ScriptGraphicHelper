@@ -45,6 +45,7 @@ namespace ScriptGraphicHelper.Models
             Helpers.Add(new YsEmulatorHelper());
             Helpers.Add(new XyEmulatorHelper());
             Helpers.Add(new MoblieTcpHelper());
+            Helpers.Add(new AJHelper());
             Helpers.Add(new HwndHelper());
             Result = new ObservableCollection<string>();
 

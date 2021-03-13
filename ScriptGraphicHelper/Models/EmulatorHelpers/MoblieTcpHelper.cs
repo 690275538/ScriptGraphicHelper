@@ -129,7 +129,6 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     if (!GetTcpState())
                     {
                         throw new Exception("Tcp已断开连接! 请重新连接");
-
                     }
                     networkStream.WriteByte(MessageType.ScreenShot);
                     byte[] result = new byte[Width * Height * 4];

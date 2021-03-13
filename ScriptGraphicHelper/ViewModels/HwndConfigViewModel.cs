@@ -1,4 +1,7 @@
-﻿using Avalonia.Input;
+﻿using Avalonia;
+using Avalonia.Input;
+using Avalonia.Platform;
+using Avalonia.Shared.PlatformSupport;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
@@ -6,6 +9,7 @@ using ScriptGraphicHelper.ViewModels.Core;
 using ScriptGraphicHelper.Views;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows.Input;
 
 namespace ScriptGraphicHelper.ViewModels
@@ -98,7 +102,7 @@ namespace ScriptGraphicHelper.ViewModels
                 var eventArgs = (PointerPressedEventArgs)parameters.EventArgs;
                 if (eventArgs.GetCurrentPoint(null).Properties.IsLeftButtonPressed)
                 {
-                    IntPtr cur = Win32Api.LoadCursorFromFile(AppDomain.CurrentDomain.BaseDirectory + "aiming.cur");
+                    IntPtr cur = Win32Api.LoadCursorFromFile(AppDomain.CurrentDomain.BaseDirectory + @"Assets/aiming.cur");
                     Win32Api.SetSystemCursor(cur, Win32Api.OCR_NORMAL);
                 }
 
@@ -111,6 +115,7 @@ namespace ScriptGraphicHelper.ViewModels
             Win32Api.SystemParametersInfo(Win32Api.SPI_SETCURSORS, 0, IntPtr.Zero, Win32Api.SPIF_SENDWININICHANGE);
             int hwnd = DmProxy.GetMousePointWindow();
             int parentHwnd = DmProxy.GetWindow(hwnd, 7);
+            var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
             HwndInfos.Add(new MovieCategory(parentHwnd, DmProxy.GetWindowTitle(parentHwnd), DmProxy.GetWindowClass(parentHwnd)));
             EnumWindows(parentHwnd, HwndInfos[0]);
         });

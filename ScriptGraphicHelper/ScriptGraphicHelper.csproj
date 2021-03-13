@@ -26,31 +26,8 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaXaml Remove="Panels\CheckBox.axaml" />
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Remove="Panels\CheckBox.axaml.cs" />
-    <Compile Remove="Views\Messagebox.xaml.cs" />
-    <Compile Remove="Views\UdpConfig.xaml.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="App.xaml" />
-    <None Remove="Assets\aiming.svg" />
-    <None Remove="Assets\format.svg" />
-    <None Remove="Assets\ico.ico" />
-    <None Remove="Assets\mode.svg" />
-    <None Remove="Assets\rect.svg" />
-    <None Remove="Assets\sim.svg" />
-    <None Remove="Assets\test.svg" />
-    <None Remove="Panels\Controls.xaml" />
-    <None Remove="Panels\Img.xaml" />
-    <None Remove="ViewModels\UdpConfig.xaml" />
-    <None Remove="Views\ColorInfosDataGrid.xaml" />
-    <None Remove="Views\HwndConfig.xaml" />
-    <None Remove="Views\HwndConfigHwndHwd.xaml" />
-    <None Remove="Views\MainWindow.xaml" />
-    <None Remove="Views\TcpConfig.xaml" />
-    <None Remove="Views\UdpConfig.xaml" />
+    <AvaloniaResource Remove="Assets\aiming.cur" />
+    <AvaloniaResource Remove="Assets\screenshotHelper.js" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaXaml Include="App.xaml">
@@ -117,5 +94,18 @@
   </ItemGroup>
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\HwndConfig.xaml" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaResource Update="Assets\aiming.svg">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </AvaloniaResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\aiming.cur">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\screenshotHelper.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>
