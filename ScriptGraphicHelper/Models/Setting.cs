@@ -8,7 +8,9 @@
         public double Height { get; set; } = 850;
         public int SimSelectedIndex { get; set; } = 0;
         public int FormatSelectedIndex { get; set; } = 0;
-        public bool Addrange { get; set; } = false;
+        public bool AddRange { get; set; } = false;
+        public int DiySim { get; set; } = 95;
+        public bool IsOffset { get; set; } = false;
         public string DmRegcode { get; set; } = string.Empty;
         public string YsPath { get; set; } = string.Empty;
         public string XyPath { get; set; } = string.Empty;

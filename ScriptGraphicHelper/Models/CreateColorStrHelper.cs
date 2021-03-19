@@ -29,7 +29,7 @@ namespace ScriptGraphicHelper.Models
         public static bool IsAddRange { get; set; } = false;
         public static string Create(FormatMode mode, ObservableCollection<ColorInfo> colorInfos, Range rect = null)
         {
-            IsAddRange = Setting.Instance.Addrange;
+            IsAddRange = Setting.Instance.AddRange;
             return mode switch
             {
                 FormatMode.compareStr => CompareStr(colorInfos),

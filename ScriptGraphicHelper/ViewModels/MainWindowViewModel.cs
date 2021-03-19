@@ -1,12 +1,15 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Converters;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels.Core;
+using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -451,10 +454,8 @@ namespace ScriptGraphicHelper.ViewModels
                 else if (key == "D")
                     anchor = AnchorType.Right;
             }
-
             ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchor, x, y, color));
             DataGridHeight = (ColorInfos.Count + 1) * 40;
-
         });
 
         public async void Rect_Copy_Click()
@@ -478,6 +479,12 @@ namespace ScriptGraphicHelper.ViewModels
         {
             ColorInfos.Clear();
             DataGridHeight = 40;
+        }
+
+        public async void SetConfig_Click()
+        {
+            var config = new Config();
+            await config.ShowDialog(new Window());
         }
 
         public async void Point_Copy_Click()

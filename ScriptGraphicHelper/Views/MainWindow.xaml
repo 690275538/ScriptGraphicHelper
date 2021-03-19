@@ -10,7 +10,7 @@
     xmlns:ica="using:ScriptGraphicHelper.ViewModels.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:ScriptGraphicHelper.ViewModels"
-    Title="综合图色助手 V1.2.0 Preview.2"
+    Title="综合图色助手 V1.2.0 Preview.3"
     Width="1450"
     Height="850"
     Closing="Window_Closing"
@@ -36,6 +36,8 @@
             Command="{Binding Key_AddColorInfo}"
             CommandParameter="D"
             Gesture="D" />
+        <KeyBinding Command="{Binding ColorInfo_Clear_Click}" Gesture="F1" />
+        <KeyBinding Command="{Binding SetConfig_Click}" Gesture="F2" />
     </Window.KeyBindings>
 
     <Design.DataContext>
@@ -94,6 +96,24 @@
                     Text="{Binding PointY, Mode=TwoWay}" />
             </StackPanel>
         </StackPanel>
+        <Border
+            Name="HintMessage"
+            Width="450"
+            Height="60"
+            Margin="20"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Top"
+            Background="#808080"
+            CornerRadius="10">
+            <TextBlock
+                Margin="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center"
+                FontSize="18"
+				FontStyle="Normal"
+				FontWeight="Normal"
+                Text="F1清空列表, F2更改配置, A当前点添加到列表" />
+        </Border>
 
     </Grid>
 

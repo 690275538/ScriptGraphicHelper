@@ -20,7 +20,60 @@
             <Setter Property="Padding" Value="0,10,0,10" />
             <Setter Property="Height" Value="40" />
         </Style>
+
+        <Style Selector="CheckBox">
+            <Setter Property="Padding" Value="8,0,0,0" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalContentAlignment" Value="Left" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="FontSize" Value="{DynamicResource ControlContentThemeFontSize}" />
+            <Setter Property="MinHeight" Value="32" />
+            <!--<Setter Property="UseSystemFocusVisuals" Value="{StaticResource UseSystemFocusVisuals}" />
+    <Setter Property="FocusVisualMargin" Value="-7,-3,-7,-3" />-->
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Grid x:Name="RootGrid" ColumnDefinitions="20,*">
+                        <Border
+                            x:Name="PART_Border"
+                            Grid.ColumnSpan="2"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" />
+
+                        <Grid Height="32" VerticalAlignment="Top">
+                            <Border
+                                x:Name="NormalRectangle"
+                                Width="16"
+                                Height="16"
+                                BorderThickness="{DynamicResource CheckBoxBorderThemeThickness}"
+                                UseLayoutRounding="False" />
+
+                            <Viewbox Width="12" Height="12">
+                                <Path
+                                    x:Name="CheckGlyph"
+                                    VerticalAlignment="Center"
+                                    Opacity="1"
+                                    Stretch="Uniform"
+                                    Stroke="#000000"
+                                    StrokeThickness="0.6" />
+                            </Viewbox>
+                        </Grid>
+                        <ContentPresenter
+                            x:Name="ContentPresenter"
+                            Grid.Column="1"
+                            Margin="{TemplateBinding Padding}"
+                            HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                            Content="{TemplateBinding Content}"
+                            ContentTemplate="{TemplateBinding ContentTemplate}" />
+                        <!--  TODO: TextWrapping="Wrap" on contentpresenter  -->
+                    </Grid>
+                </ControlTemplate>
+            </Setter>
+        </Style>
     </UserControl.Styles>
+
     <Border
         BorderBrush="#666666"
         BorderThickness="2"
@@ -201,7 +254,10 @@
                                                         <Setter Property="BorderBrush" Value="Transparent" />
                                                         <Setter Property="CornerRadius" Value="2" />
                                                     </Style>
-
+                                                    <Style Selector="CheckBox:unChecked Border#NormalRectangle">
+                                                        <Setter Property="BorderBrush" Value="#ffffff" />
+                                                        <Setter Property="CornerRadius" Value="20" />
+                                                    </Style>
                                                 </CheckBox.Styles>
                                             </CheckBox>
                                         </Grid>

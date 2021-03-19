@@ -129,6 +129,7 @@
                         <ComboBoxItem>90</ComboBoxItem>
                         <ComboBoxItem>85</ComboBoxItem>
                         <ComboBoxItem>80</ComboBoxItem>
+                        <ComboBoxItem>自定义</ComboBoxItem>
                     </ComboBox>
                 </Border>
             </StackPanel>

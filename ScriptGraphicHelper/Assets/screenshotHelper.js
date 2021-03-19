@@ -1,5 +1,3 @@
-importClass(java.io.IOException);
-importClass(java.net.NetworkInterface);
 importClass(java.io.OutputStream);
 importClass(java.net.Socket);
 importClass(java.net.ServerSocket);
@@ -12,7 +10,6 @@ function Int2Bytes(num) {
     return bytes;
 }
 
-$settings.setEnabled('foreground_service', true);
 if (!requestScreenCapture()) {
     alert("请求截图权限失败");
     exit();
@@ -27,17 +24,19 @@ try {
 catch (error) {
     print(error);
     serversocket.close();
-    $settings.setEnabled('foreground_service', false);
     exit();
 }
 let img = captureScreen();
 let bytes = images.toBytes(img);
 let stream = socket.getOutputStream();
-let info = Int2Bytes(bytes.length);
-stream.write(info); stream.write(bytes);
+let len = Int2Bytes(bytes.length);
+
+stream.write(len);
+stream.write(bytes);
+
+img.recycle();
 stream.close();
 socket.close();
 serversocket.close();
-$settings.setEnabled('foreground_service', false);
 exit();
 

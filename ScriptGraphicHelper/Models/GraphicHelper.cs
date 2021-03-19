@@ -3,6 +3,8 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using SkiaSharp;
 using System;
+using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using Point = Avalonia.Point;
@@ -17,8 +19,6 @@ namespace ScriptGraphicHelper.Models
         public static int FormatSize { get; set; }
         public static int Stride { get; set; }
         public static byte[] ScreenData { get; set; }
-        public static int DiySim { get; set; } = 95;
-        public static int DiyOffset { get; set; } = 0;
 
         public static void KeepScreen(SKBitmap bitmap)
         {
@@ -51,7 +51,7 @@ namespace ScriptGraphicHelper.Models
                 SKBitmap sKBitmap = new(new SKImageInfo(Height, Width));
                 Marshal.Copy(data, 0, sKBitmap.GetPixels(), data.Length);
                 KeepScreen(sKBitmap);
-                var bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(Width, Height), new Vector(96, 96), sKBitmap.RowBytes);
+                var bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Unpremul, sKBitmap.GetPixels(), new PixelSize(Width, Height), new Vector(96, 96), sKBitmap.RowBytes);
                 sKBitmap.Dispose();
                 return bitmap;
             });
@@ -320,11 +320,10 @@ namespace ScriptGraphicHelper.Models
             endX = Math.Min(endX, Width - 1);
             endY = Math.Min(endY, Height - 1);
 
-            int offset = 0;
+            int offset = Setting.Instance.IsOffset ? 1 : 0;
             if (sim == 0)
             {
-                sim = DiySim;
-                offset = DiyOffset;
+                sim = Setting.Instance.DiySim;
             }
 
             string[] findColor = findcolorString.Split('-');

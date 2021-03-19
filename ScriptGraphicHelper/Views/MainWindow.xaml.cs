@@ -2,6 +2,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
@@ -28,10 +29,22 @@ namespace ScriptGraphicHelper.Views
             FontWeight = Avalonia.Media.FontWeight.Medium;
         }
 
+        private DispatcherTimer timer = new DispatcherTimer();
+
         private void Window_Opened(object sender, EventArgs e)
         {
             Width = Setting.Instance.Width;
             Height = Setting.Instance.Height;
+            timer.Tick += new EventHandler(HintMessage_Closed);
+            timer.Interval = new TimeSpan(0,0,5);
+            timer.Start();
+        }
+
+        private void HintMessage_Closed(object? sender, EventArgs e)
+        {
+            var hint = this.FindControl<Border>("HintMessage");
+            hint.IsVisible = false;
+            timer.IsEnabled = false;
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -61,6 +74,7 @@ namespace ScriptGraphicHelper.Views
 
             Key key = e.Key;
             POINT point = Win32Api.GetCursorPos();
+            this.Focus();
             switch (key)
             {
                 case Key.Left: Win32Api.SetCursorPos(point.X - 1, point.Y); break;
@@ -69,6 +83,7 @@ namespace ScriptGraphicHelper.Views
                 case Key.Down: Win32Api.SetCursorPos(point.X, point.Y + 1); break;
                 default: break;
             }
+            e.Handled=true;
         }
     }
 }
