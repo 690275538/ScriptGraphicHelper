@@ -272,6 +272,13 @@ namespace ScriptGraphicHelper.Models
         {
             int findX;
             int findY;
+
+            offset = Setting.Instance.IsOffset ? 1 : 0;
+            if (sim == 0)
+            {
+                sim = Setting.Instance.DiySim;
+            }
+
             colorString = colorString.Trim("\"".ToCharArray());
             double similarity = 255 - 255 * (sim / 100.0);
             string[] findColors = colorString.Split(',');
