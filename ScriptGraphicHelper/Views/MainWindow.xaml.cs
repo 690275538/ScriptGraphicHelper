@@ -29,22 +29,22 @@ namespace ScriptGraphicHelper.Views
             FontWeight = Avalonia.Media.FontWeight.Medium;
         }
 
-        private DispatcherTimer timer = new DispatcherTimer();
+        private DispatcherTimer Timer = new DispatcherTimer();
 
         private void Window_Opened(object sender, EventArgs e)
         {
             Width = Setting.Instance.Width;
             Height = Setting.Instance.Height;
-            timer.Tick += new EventHandler(HintMessage_Closed);
-            timer.Interval = new TimeSpan(0,0,5);
-            timer.Start();
+            Timer.Tick += new EventHandler(HintMessage_Closed);
+            Timer.Interval = new TimeSpan(0,0,5);
+            Timer.Start();
         }
 
         private void HintMessage_Closed(object? sender, EventArgs e)
         {
             var hint = this.FindControl<Border>("HintMessage");
             hint.IsVisible = false;
-            timer.IsEnabled = false;
+            Timer.IsEnabled = false; 
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -53,7 +53,7 @@ namespace ScriptGraphicHelper.Views
             Setting.Instance.Height = Height;
 
             string settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "setting.json", settingStr);
+            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json", settingStr);
 
             try
             {

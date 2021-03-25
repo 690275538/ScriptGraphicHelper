@@ -15,6 +15,10 @@
 
 &nbsp;
 
+[下载地址](https://gitee.com/yiszza/ScriptGraphicHelper/releases)
+
+&nbsp;
+
 # 展示
 
 

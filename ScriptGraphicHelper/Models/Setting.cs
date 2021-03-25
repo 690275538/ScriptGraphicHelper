@@ -9,6 +9,8 @@
         public int SimSelectedIndex { get; set; } = 0;
         public int FormatSelectedIndex { get; set; } = 0;
         public bool AddRange { get; set; } = false;
+        public bool AddInfo { get; set; } = false;
+        public int RangeTolerance { get; set; } = 50;
         public int DiySim { get; set; } = 95;
         public bool IsOffset { get; set; } = false;
         public string DmRegcode { get; set; } = string.Empty;

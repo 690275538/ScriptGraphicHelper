@@ -190,14 +190,17 @@ namespace ScriptGraphicHelper.ViewModels
         public ObservableCollection<ColorInfo> ColorInfos
         {
             get => colorInfos;
-            set => this.RaiseAndSetIfChanged(ref colorInfos, value);
+            set 
+                {
+                this.RaiseAndSetIfChanged(ref colorInfos, value);
+            } 
         }
 
-        private int colorInfoSelectedIndex;
-        public int ColorInfoSelectedIndex
+        private int dataGridSelectedIndex;
+        public int DataGridSelectedIndex
         {
-            get => colorInfoSelectedIndex;
-            set => this.RaiseAndSetIfChanged(ref colorInfoSelectedIndex, value);
+            get => dataGridSelectedIndex;
+            set => this.RaiseAndSetIfChanged(ref dataGridSelectedIndex, value);
         }
 
         private int dataGridHeight;

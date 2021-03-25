@@ -8,7 +8,7 @@
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationIcon>Assets\ico.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.2.0.3</Version>
+    <Version>1.2.0.6</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -31,6 +31,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Views\Config.xaml" />
+    <None Remove="Views\DataImport.xaml" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaXaml Include="App.xaml">
@@ -46,6 +47,9 @@
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
     <AvaloniaXaml Include="Views\Config.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
+    <AvaloniaXaml Include="Views\DataImport.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
     <AvaloniaXaml Include="Views\HwndConfig.xaml">
@@ -89,6 +93,9 @@
     </Compile>
     <Compile Update="Views\Config.xaml.cs">
       <DependentUpon>Config.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\DataImport.xaml.cs">
+      <DependentUpon>DataImport.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\HwndConfig.xaml.cs">
       <DependentUpon>HwndConfig.xaml</DependentUpon>

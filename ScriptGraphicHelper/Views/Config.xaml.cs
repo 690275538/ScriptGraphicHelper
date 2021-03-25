@@ -26,13 +26,16 @@ namespace ScriptGraphicHelper.Views
 
         private void Window_Opened(object sender, EventArgs e)
         {
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             var addRange = this.FindControl<ToggleSwitch>("AddRange");
+            var addInfo = this.FindControl<ToggleSwitch>("AddInfo");
             var isOffset = this.FindControl<ToggleSwitch>("IsOffset");
             var diySim = this.FindControl<TextBox>("DiySim");
             var ysPath = this.FindControl<TextBox>("YsPath");
             var xyPath = this.FindControl<TextBox>("XyPath");
             var dmRegcode = this.FindControl<TextBox>("DmRegcode");
             addRange.IsChecked = Setting.Instance.AddRange;
+            addInfo.IsChecked = Setting.Instance.AddInfo;
             isOffset.IsChecked = Setting.Instance.IsOffset;
             diySim.Text = Setting.Instance.DiySim.ToString();
             ysPath.Text = Setting.Instance.YsPath;
@@ -45,12 +48,14 @@ namespace ScriptGraphicHelper.Views
             try
             {
                 var addRange = this.FindControl<ToggleSwitch>("AddRange");
+                var addInfo = this.FindControl<ToggleSwitch>("AddInfo");
                 var isOffset = this.FindControl<ToggleSwitch>("IsOffset");
                 var diySim = this.FindControl<TextBox>("DiySim");
                 var ysPath = this.FindControl<TextBox>("YsPath");
                 var xyPath = this.FindControl<TextBox>("XyPath");
                 var dmRegcode = this.FindControl<TextBox>("DmRegcode");
                 Setting.Instance.AddRange = (bool)addRange.IsChecked;
+                Setting.Instance.AddInfo = (bool)addInfo.IsChecked;
                 Setting.Instance.IsOffset = (bool)isOffset.IsChecked;
                 int result = 95;
                 int.TryParse(diySim.Text.Trim(), out result);
@@ -58,9 +63,8 @@ namespace ScriptGraphicHelper.Views
                 Setting.Instance.YsPath = ysPath.Text ?? string.Empty;
                 Setting.Instance.XyPath = xyPath.Text ?? string.Empty;
                 Setting.Instance.DmRegcode = dmRegcode.Text ?? string.Empty;
-
                 string settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + "setting.json", settingStr);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json", settingStr);
                 this.Close();
             }
             catch { }

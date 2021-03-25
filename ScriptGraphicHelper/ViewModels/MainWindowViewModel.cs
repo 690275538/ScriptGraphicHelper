@@ -14,8 +14,10 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Image = Avalonia.Controls.Image;
 using Point = Avalonia.Point;
@@ -29,7 +31,7 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                StreamReader sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + "setting.json");
+                StreamReader sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json");
                 string configStr = sr.ReadToEnd();
                 sr.Close();
                 configStr = configStr.Replace("\\\\", "\\").Replace("\\", "\\\\");
@@ -58,7 +60,6 @@ namespace ScriptGraphicHelper.ViewModels
                 var eventArgs = (PointerPressedEventArgs)parameters.EventArgs;
                 if (eventArgs.GetCurrentPoint(null).Properties.IsLeftButtonPressed)
                 {
-
                     Loupe_IsVisible = false;
                     StartPoint = eventArgs.GetPosition(null);
                     RectMargin = new Thickness(StartPoint.X, StartPoint.Y, 0, 0);
@@ -333,7 +334,7 @@ namespace ScriptGraphicHelper.ViewModels
             if (Img != null && ColorInfos.Count > 0)
             {
                 int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
-                if (FormatSelectedIndex == FormatMode.compareStr || FormatSelectedIndex == FormatMode.ajCompareStr || FormatSelectedIndex == FormatMode.cdCompareStr || FormatSelectedIndex == FormatMode.diyCompareStr)
+                if (FormatSelectedIndex == FormatMode.compareStr || FormatSelectedIndex == FormatMode.anjianCompareStr || FormatSelectedIndex == FormatMode.cdCompareStr || FormatSelectedIndex == FormatMode.diyCompareStr)
                 {
                     string str = CreateColorStrHelper.Create(0, ColorInfos);
                     TestResult = GraphicHelper.CompareColorEx(str.Trim('"'), sims[SimSelectedIndex]).ToString();
@@ -491,18 +492,17 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                if (ColorInfoSelectedIndex == -1)
+                if (DataGridSelectedIndex == -1 || DataGridSelectedIndex > ColorInfos.Count)
                 {
-                    Win32Api.MessageBox("当前选择项为-1, 必须先左键单击激活选择项再打开右键菜单!", "错误");
                     return;
                 }
-                Point point = ColorInfos[ColorInfoSelectedIndex].Point;
+                Point point = ColorInfos[DataGridSelectedIndex].Point;
                 string pointStr = string.Format("{0},{1}", point.X, point.Y);
                 await Application.Current.Clipboard.SetTextAsync(pointStr);
             }
             catch (Exception ex)
             {
-                Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "错误");
+                Win32Api.MessageBox("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
             }
         }
 
@@ -510,19 +510,37 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                if (ColorInfoSelectedIndex == -1)
+                if (DataGridSelectedIndex == -1 || DataGridSelectedIndex > ColorInfos.Count)
                 {
-                    Win32Api.MessageBox("当前选择项为-1, 必须先左键单击激活选择项再打开右键菜单!", "错误");
                     return;
                 }
-                Color color = ColorInfos[ColorInfoSelectedIndex].Color;
+                Color color = ColorInfos[DataGridSelectedIndex].Color;
                 string hexColor = string.Format("#{0}{1}{2}", color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2"));
                 await Application.Current.Clipboard.SetTextAsync(hexColor);
             }
             catch (Exception ex)
             {
-                Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "错误");
+                Win32Api.MessageBox("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
             }
+        }
+
+        public async void ColorInfo_Import_Click()
+        {
+            var dataImport = new DataImport();
+            await dataImport.ShowDialog(new Window());
+            ColorInfos.Clear();
+            ColorInfos = DataImportHelper.Import(dataImport.ImportString);
+            DataGridHeight = (ColorInfos.Count + 1) * 40;
+        }
+
+        public void ColorInfo_SelectItemClear_Click()
+        {
+            if (DataGridSelectedIndex == -1 || DataGridSelectedIndex > ColorInfos.Count)
+            {
+                return;
+            }
+            ColorInfos.RemoveAt(DataGridSelectedIndex);
+            DataGridHeight = (ColorInfos.Count + 1) * 40;
         }
 
         private Range GetRange()
@@ -581,8 +599,8 @@ namespace ScriptGraphicHelper.ViewModels
 
                 }
             }
-            //return new Range(left >= 50 ? left - 50 : 0, top >= 50 ? top - 50 : 0, right + 50 > imgWidth ? imgWidth : right + 50, bottom + 50 > imgHeight ? imgHeight : bottom + 50, mode_1, mode_2);
-            return new Range(left >= 4 ? left - 4 : 0, top >= 4 ? top - 4 : 0, right + 4 > imgWidth ? imgWidth : right + 4, bottom + 4 > imgHeight ? imgHeight : bottom + 4, mode_1, mode_2);
+            var tolerance = Setting.Instance.RangeTolerance;
+            return new Range(left >= tolerance ? left - tolerance : 0, top >= tolerance ? top - tolerance : 0, right + tolerance > imgWidth ? imgWidth : right + tolerance, bottom + tolerance > imgHeight ? imgHeight : bottom + tolerance, mode_1, mode_2);
 
         }
     }

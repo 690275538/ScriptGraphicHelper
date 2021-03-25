@@ -185,7 +185,9 @@
                         <ComboBoxItem>触动找色</ComboBoxItem>
                         <ComboBoxItem>触动比色</ComboBoxItem>
                         <ComboBoxItem>AJ找色</ComboBoxItem>
+                        <ComboBoxItem>AJ比色</ComboBoxItem>
                         <ComboBoxItem>EC找色</ComboBoxItem>
+                        <ComboBoxItem>EC比色</ComboBoxItem>
                         <ComboBoxItem>自定义找色</ComboBoxItem>
                         <ComboBoxItem>自定义比色</ComboBoxItem>
                         <ComboBoxItem>锚点找色</ComboBoxItem>

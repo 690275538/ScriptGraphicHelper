@@ -10,17 +10,15 @@ namespace ScriptGraphicHelper.Models
     {
         public static double Width { get; set; } = 0;
         public static double Height { get; set; } = 0;
-        public List<string> AnchorItems => new() { "N", "L", "C", "R" };
+        public static List<string> AnchorItems => new() { "N", "L", "C", "R" };
 
         public int Index { get; set; }
+        public AnchorType Anchor { get; set; } = AnchorType.None;
         public Point Point { get; set; }
         public Color Color { get; set; }
-        public bool IsChecked { get; set; }
+        public bool IsChecked { get; set; } = false;
 
-
-        public AnchorType Anchor { get; set; }
-
-
+        public ColorInfo() { }
 
         public ColorInfo(int index, int x, int y, byte[] color)
         {
