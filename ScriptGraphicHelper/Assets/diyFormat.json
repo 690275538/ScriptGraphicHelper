@@ -1,0 +1,6 @@
+{
+  "FirstColorFormat": "0x{color}",
+  "FollowColorFormat": "{x}|{y}|0x{color}",
+  "FindStrFormat": "findMultiColor({range},\"{firstColorStr}\",\"{followColorStr}\",0.9,1,x,y)",
+  "CompareStrFormat": "compareColor(\"{colorStr}\",0.9)"
+}

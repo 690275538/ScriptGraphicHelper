@@ -7,6 +7,7 @@ using Newtonsoft.Json;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -33,10 +34,9 @@ namespace ScriptGraphicHelper.Views
 
         private void Window_Opened(object sender, EventArgs e)
         {
-            Width = Setting.Instance.Width;
-            Height = Setting.Instance.Height;
+            this.ClientSize = new Size(Setting.Instance.Width, Setting.Instance.Height);
             Timer.Tick += new EventHandler(HintMessage_Closed);
-            Timer.Interval = new TimeSpan(0,0,5);
+            Timer.Interval = new TimeSpan(0, 0, 5);
             Timer.Start();
         }
 
@@ -44,7 +44,7 @@ namespace ScriptGraphicHelper.Views
         {
             var hint = this.FindControl<Border>("HintMessage");
             hint.IsVisible = false;
-            Timer.IsEnabled = false; 
+            Timer.IsEnabled = false;
         }
 
         private void Window_Closing(object sender, CancelEventArgs e)
@@ -71,7 +71,6 @@ namespace ScriptGraphicHelper.Views
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-
             Key key = e.Key;
             POINT point = Win32Api.GetCursorPos();
             this.Focus();
@@ -83,7 +82,7 @@ namespace ScriptGraphicHelper.Views
                 case Key.Down: Win32Api.SetCursorPos(point.X, point.Y + 1); break;
                 default: break;
             }
-            e.Handled=true;
+            e.Handled = true;
         }
     }
 }

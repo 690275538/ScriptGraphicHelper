@@ -3,7 +3,6 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Platform;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Converters;
 using ScriptGraphicHelper.Models;
@@ -14,10 +13,8 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Threading.Tasks;
 using System.Windows.Input;
 using Image = Avalonia.Controls.Image;
 using Point = Avalonia.Point;
@@ -88,13 +85,12 @@ namespace ScriptGraphicHelper.ViewModels
                 }
                 else
                 {
-                    if (point.Y > 600)
+                    if (point.Y > 500)
                         LoupeMargin = new Thickness(point.X + 20, point.Y - 261, 0, 0);
                     else
                         LoupeMargin = new Thickness(point.X + 20, point.Y + 20, 0, 0);
 
                     var imgPoint = eventArgs.GetPosition((Image)parameters.Sender);
-
 
                     PointX = Math.Floor(imgPoint.X);
                     PointY = Math.Floor(imgPoint.Y);

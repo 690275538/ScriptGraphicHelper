@@ -1,0 +1,96 @@
+
+一款简单好用的图色助手, 快速生成多种脚本开发工具的图色格式代码
+
+自定义格式参数说明请看文本末尾
+
+模拟器模式
+适用于雷电、夜神、逍遥模拟器
+自动获取路径调用模拟器命令行对模拟器进行adb截图
+如果你安装了某个模拟器但是工具没有识别出来, 可以将模拟器主程序的快捷方式放在本工具所在目录, 然后重命名快捷方式
+雷电系列模拟器可以自动获取路径(绿色版除外)
+夜神和逍遥模拟器的路径需要手动填写到setting.config(不推荐使用逍遥模拟器, 命令行连接不稳定, 底层可能还是普通adb)
+
+aj模式
+适用于安卓真机或模拟器, 需要在目标设备上安装autojs, 并开启调试服务和悬浮窗
+
+tcp模式
+适用于安卓真机或模拟器, 需要在目标设备上安装ScreenShotHelper.apk
+
+
+导入数据说明
+不支持自定义格式
+不需要额外信息: 多点比色, 触动比色, ec比色, 锚点找色/比色
+需要额外信息(即: 需要在配置里打开生成添加信息开关, 之后生成的字符串才可以重新导入): 大漠找色, 按键找色/比色, 触动找色, autojs找色/比色, ec找色
+
+
+选择坐标: 触发鼠标左键 or A
+清空表格: 触发F1 or 表格右键菜单 or 生成字符串为空时点击清空按钮
+重置模拟器选择: 截图按钮右键菜单
+手动范围选择: 在图片框按住鼠标左键后拖动
+
+放大镜(跟随鼠标)
+当中心点相邻 2 格内的所有点的rgb与中心点的rgb差值 ±10 时中心点标记为绿色
+当中心点相邻 1 格内的所有点的rgb与中心点的rgb差值 ±10 时中心点标记为黄色
+
+交流群：717647184
+QQ：1104573225，有发现bug请向我反馈
+
+开源地址:
+码云: https://gitee.com/yiszza/ScriptGraphicHelper
+
+下载链接:
+码云: https://gitee.com/yiszza/ScriptGraphicHelper/releases
+
+
+自定义格式参数说明:
+参数说明:
+FirstColorFormat: 基准色组格式(color = 颜色)
+FollowColorFormat: 偏移色组格式
+FindStrFormat: 多点找色返回格式(range = 查找范围)
+CompareStrFormat: 多点比色返回格式
+
+示例1(字符串格式):
+{
+  "FirstColorFormat": "0x{color}",
+  "FollowColorFormat": "{x}|{y}|0x{color}",
+  "FindStrFormat": "findMultiColor({range},\"{firstColorStr}\",\"{followColorStr}\",0.9,1,x,y)",
+  "CompareStrFormat": "compareColor(\"{colorStr}\",0.9)"
+}
+
+找色格式返回:
+findMultiColor(170,215,563,523,"717171","343|-118|343434-121212,300|140|4d83c2,89|106|1a1a1a", 0.9, 1, x, y)
+
+比色格式返回:
+compareColor("195|358|717171,538|240|343434-121212,495|498|4d83c2,284|464|1a1a1a", 0.9)
+
+
+示例2(数组格式):
+{
+  "FirstColorFormat": "[0x{color}]",
+  "FollowColorFormat": "\n[{x},{y},0x{color}]",
+  "FindStrFormat": "description[description.length] = \n[\n[{range}], \n[\n{firstColorStr},\n[{followColorStr}\n]\n]\n]",
+  "CompareStrFormat": "description[description.length] = \n[{colorStr}\n]"
+}
+
+找色格式返回:
+description[description.length] =
+    [
+        [170, 215, 563, 523],
+        [
+            [0x717171],
+            [
+                [343, -118, 0x343434],
+                [300, 140, 0x4d83c2],
+                [89, 106, 0x1a1a1a]
+            ]
+        ]
+    ];
+
+比色格式返回:
+description[description.length] =
+    [
+        [195, 358, 0x717171],
+        [538, 240, 0x343434],
+        [495, 498, 0x4d83c2],
+        [284, 464, 0x1a1a1a]
+    ];

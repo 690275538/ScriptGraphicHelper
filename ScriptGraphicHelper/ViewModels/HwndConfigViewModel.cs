@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Input;
 using Avalonia.Platform;
-using Avalonia.Shared.PlatformSupport;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
@@ -9,7 +8,6 @@ using ScriptGraphicHelper.ViewModels.Core;
 using ScriptGraphicHelper.Views;
 using System;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Windows.Input;
 
 namespace ScriptGraphicHelper.ViewModels

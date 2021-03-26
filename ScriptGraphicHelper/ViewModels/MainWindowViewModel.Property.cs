@@ -102,7 +102,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
-        private Thickness imgMargin;
+        private Thickness imgMargin = new Thickness(170, 20, 280, 20);
         public Thickness ImgMargin
         {
             get => imgMargin;
@@ -190,10 +190,10 @@ namespace ScriptGraphicHelper.ViewModels
         public ObservableCollection<ColorInfo> ColorInfos
         {
             get => colorInfos;
-            set 
-                {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref colorInfos, value);
-            } 
+            }
         }
 
         private int dataGridSelectedIndex;

@@ -19,7 +19,7 @@ namespace ScriptGraphicHelper.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-          
+
         }
 
         public static string Address { get; set; } = string.Empty;
@@ -32,7 +32,7 @@ namespace ScriptGraphicHelper.Views
             address.Text = Address != string.Empty ? Address : "192.168.0.";
             var port = this.FindControl<TextBox>("Port");
             port.Text = Port != -1 ? Port.ToString() : "0";
-            if (Title=="AJ≈‰÷√")
+            if (Title == "AJ≈‰÷√")
             {
                 port.IsVisible = false;
                 var tb = this.FindControl<TextBlock>("Description");

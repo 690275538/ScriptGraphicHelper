@@ -9,6 +9,7 @@
     <ApplicationIcon>Assets\ico.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <Version>1.2.0.6</Version>
+    <NeutralLanguage></NeutralLanguage>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -24,14 +25,6 @@
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
-  </ItemGroup>
-  <ItemGroup>
-    <AvaloniaResource Remove="Assets\aiming.cur" />
-    <AvaloniaResource Remove="Assets\screenshotHelper.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Views\Config.xaml" />
-    <None Remove="Views\DataImport.xaml" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaXaml Include="App.xaml">
@@ -75,7 +68,7 @@
     <PackageReference Include="Grpc.Net.Client" Version="2.35.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-*" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-preview.3.21167.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DmServer\DmServer.csproj" />
@@ -109,15 +102,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <UpToDateCheckInput Remove="Views\HwndConfig.xaml" />
-  </ItemGroup>
-  <ItemGroup>
     <AvaloniaResource Update="Assets\aiming.svg">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </AvaloniaResource>
+    <None Update="使用说明.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Update="Assets\aiming.cur">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\diyFormat.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\screenshotHelper.js">
