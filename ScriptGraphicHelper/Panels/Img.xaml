@@ -17,6 +17,7 @@
                     Height="{Binding ImgHeight, Mode=TwoWay}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
+					 PointerEnter="Img_PointerEnter"
                     Source="{Binding Img, Mode=TwoWay}">
                     <Image.KeyBindings>
                         <KeyBinding

@@ -73,7 +73,6 @@ namespace ScriptGraphicHelper.Views
         {
             Key key = e.Key;
             POINT point = Win32Api.GetCursorPos();
-            this.Focus();
             switch (key)
             {
                 case Key.Left: Win32Api.SetCursorPos(point.X - 1, point.Y); break;

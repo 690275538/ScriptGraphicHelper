@@ -22,8 +22,9 @@ namespace ScriptGraphicHelper.Models
         diyCompareStr = 11,
         anchorsFindStr = 12,
         anchorsCompareStr = 13,
-        anchorsFindStrTest = 14,
-        anchorsCompareStrTest = 15,
+        anchorsFindStr4Test = 14,
+        anchorsCompareStr4Test = 15,
+        findStr4Test = 16
 
     };
     public static class CreateColorStrHelper
@@ -46,8 +47,9 @@ namespace ScriptGraphicHelper.Models
                 FormatMode.diyCompareStr => DiyCompareStr(colorInfos),
                 FormatMode.anchorsCompareStr => AnchorsCompareStr(colorInfos),
                 FormatMode.anchorsFindStr => AnchorsFindStr(colorInfos, rect),
-                FormatMode.anchorsCompareStrTest => AnchorsCompareStrTest(colorInfos),
-                FormatMode.anchorsFindStrTest => AnchorsCompareStrTest(colorInfos),
+                FormatMode.anchorsCompareStr4Test => AnchorsCompareStr4Test(colorInfos),
+                FormatMode.anchorsFindStr4Test => AnchorsCompareStr4Test(colorInfos),
+                FormatMode.findStr4Test => FindStr4Test(colorInfos, rect),
                 _ => CompareStr(colorInfos),
             };
         }
@@ -114,10 +116,7 @@ namespace ScriptGraphicHelper.Models
                         {
                             res = res.Replace("{color}", color);
                         }
-
-                        string endstr = res[(res.IndexOf("{color}") + 7)..];
-                        res = res.Substring(0, res.IndexOf(color) + 6) + endstr;
-                        colorStr[0] += res;
+                        colorStr[0] = res;
                     }
                     else
                     {
@@ -403,7 +402,7 @@ namespace ScriptGraphicHelper.Models
         private static string AutojsCompareStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             string result = string.Empty;
-            Point firstPoint = new Point();
+            Point firstPoint = new();
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)
@@ -505,7 +504,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string AnchorsCompareStrTest(ObservableCollection<ColorInfo> colorInfos)
+        public static string AnchorsCompareStr4Test(ObservableCollection<ColorInfo> colorInfos)
         {
             string result = "\"";
             foreach (ColorInfo colorInfo in colorInfos)
@@ -514,6 +513,42 @@ namespace ScriptGraphicHelper.Models
                 {
                     result += colorInfo.Anchor.ToString() + "|" + colorInfo.Point.X.ToString() + "|" + colorInfo.Point.Y.ToString() + "|" + colorInfo.Color.R.ToString("x2") +
                         colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + ",";
+                }
+            }
+            result = result.Trim(',');
+            result += "\"";
+            return result;
+        }
+
+
+        public static string FindStr4Test(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        {
+            string result = string.Empty;
+
+            bool inited = false;
+            Point firstPoint = new Point();
+            foreach (ColorInfo colorInfo in colorInfos)
+            {
+                if (colorInfo.IsChecked)
+                {
+                    if (!inited)
+                    {
+                        inited = true;
+                        firstPoint = colorInfo.Point;
+                        if (Setting.Instance.AddRange)
+                        {
+                            result += rect.ToString() + ",";
+                        }
+                        result += "\"" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "\",\"";
+                    }
+                    else
+                    {
+                        double OffsetX = colorInfo.Point.X - firstPoint.X;
+                        double OffsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        colorInfo.Color.B.ToString("x2") + ",";
+
+                    }
                 }
             }
             result = result.Trim(',');

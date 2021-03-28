@@ -9,6 +9,23 @@ using Point = Avalonia.Point;
 
 namespace ScriptGraphicHelper.Models
 {
+    public struct CompareResult
+    {
+        public bool Result { get; set; }
+        public string ErrorMessage { get; set; }
+
+        public CompareResult(bool result)
+        {
+            Result = result;
+            ErrorMessage = string.Empty;
+        }
+
+        public CompareResult(bool result, string message)
+        {
+            Result = result;
+            ErrorMessage = message;
+        }
+    }
 
     public static class GraphicHelper
     {
@@ -56,49 +73,6 @@ namespace ScriptGraphicHelper.Models
             return await task;
         }
 
-        //public static async Task<SystemBitmap> GetBitmap(Range? range)
-        //{
-        //    var task = Task.Run(() =>
-        //    {
-        //        if (range == null)
-        //        {
-        //            range = new Range(0, 0, Width - 1, Height - 1);
-        //        }
-
-        //        int left = (int)range.Left;
-        //        int top = (int)range.Top;
-        //        int right = (int)range.Right;
-        //        int bottom = (int)range.Bottom;
-        //        int width = right - left + 1;
-        //        int height = bottom - top + 1;
-
-        //        SystemBitmap bitmap = new SystemBitmap(width, height, PixelFormat.Format32bppArgb);
-        //        BitmapData data = bitmap.LockBits(new Rectangle(0, 0, width, height), ImageLockMode.ReadWrite, PixelFormat.Format32bppArgb);
-        //        unsafe
-        //        {
-        //            byte* ptr = (byte*)data.Scan0;
-        //            int stride = data.Stride;
-        //            for (int i = top; i < bottom; i++)
-        //            {
-        //                int ptr_location = (i - top) * stride;
-        //                int parent_location = i * Stride + left * FormatSize;
-        //                for (int j = left; j < right; j++)
-        //                {
-        //                    ptr[ptr_location] = ScreenData[parent_location];
-        //                    ptr[ptr_location + 1] = ScreenData[parent_location + 1];
-        //                    ptr[ptr_location + 2] = ScreenData[parent_location + 2];
-        //                    ptr[ptr_location + 3] = 255;
-        //                    ptr_location += 4;
-        //                    parent_location += FormatSize;
-        //                }
-        //            }
-        //        }
-        //        bitmap.UnlockBits(data);
-        //        return bitmap;
-        //    });
-        //    return await task;
-        //}
-
         public static byte[] GetPixel(int x, int y)
         {
             byte[] retRGB = new byte[] { 0, 0, 0 };
@@ -119,7 +93,7 @@ namespace ScriptGraphicHelper.Models
             return retRGB;
         }
 
-        public static bool AnchorsCompareColor(double width, double height, string colorString, int sim = 95)
+        public static CompareResult AnchorsCompareColor(double width, double height, string colorString, int sim = 95)
         {
             string[] compareColorArr = colorString.Trim('"').Split(',');
 
@@ -150,13 +124,13 @@ namespace ScriptGraphicHelper.Models
             result = result.Trim(',');
             return CompareColorEx(result, sim);
         }
+
         public static Point AnchorsFindColor(Range rect, double width, double height, string colorString, int sim = 95)
         {
             string compareColorStr = colorString.Trim('"');
             string[] compareColorArr = compareColorStr.Split(',');
             if (compareColorArr.Length < 2)
             {
-                //System.Windows.MessageBox.Show("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
                 return new Point(-1, -1);
             }
             double multiple = Height / height;
@@ -235,7 +209,7 @@ namespace ScriptGraphicHelper.Models
             return FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, startColorArr[3], result, sim);
         }
 
-        public static bool CompareColor(byte[] rgb, double offsetR, double offsetG, double offsetB, int x, int y, int offset)
+        public static bool CompareColor(byte[] rgb, double similarity, int x, int y, int offset)
         {
             int offsetSize = offset == 0 ? 1 : 9;
             Point[] offsetPoint = new Point[]{
@@ -257,7 +231,7 @@ namespace ScriptGraphicHelper.Models
                 if (_x >= 0 && _x < Width && _y >= 0 && _y < Height)
                 {
                     byte[] GetRGB = GetPixel(_x, _y);
-                    if (Math.Abs(GetRGB[0] - rgb[0]) <= offsetR && Math.Abs(GetRGB[1] - rgb[1]) <= offsetG && Math.Abs(GetRGB[2] - rgb[2]) <= offsetB)
+                    if (Math.Abs(GetRGB[0] - rgb[0]) <= similarity && Math.Abs(GetRGB[1] - rgb[1]) <= similarity && Math.Abs(GetRGB[2] - rgb[2]) <= similarity)
                     {
                         return true;
                     }
@@ -266,7 +240,7 @@ namespace ScriptGraphicHelper.Models
             return false;
         }
 
-        public static bool CompareColorEx(string colorString, int sim = 95, int x = 0, int y = 0, int offset = 0)
+        public static CompareResult CompareColorEx(string colorString, int sim = 95, int x = 0, int y = 0, int offset = 0)
         {
             int findX;
             int findY;
@@ -277,45 +251,33 @@ namespace ScriptGraphicHelper.Models
                 sim = Setting.Instance.DiySim;
             }
 
-            colorString = colorString.Trim("\"".ToCharArray());
             double similarity = 255 - 255 * (sim / 100.0);
+            colorString = colorString.Trim("\"".ToCharArray());
             string[] findColors = colorString.Split(',');
             if (findColors.Length != 0)
             {
-                int offsetSize = offset == 0 ? 1 : 9;
-
                 for (byte i = 0; i < findColors.Length; i++)
                 {
                     string[] findColor = findColors[i].Split('|');
-                    string[] offsetColor = findColor[2].Split('-');
                     byte[] findRGB = { 0, 0, 0 };
-                    findRGB[0] = Convert.ToByte(offsetColor[0].Substring(0, 2), 16);
-                    findRGB[1] = Convert.ToByte(offsetColor[0].Substring(2, 2), 16);
-                    findRGB[2] = Convert.ToByte(offsetColor[0].Substring(4, 2), 16);
+                    findRGB[0] = Convert.ToByte(findColor[2].Substring(0, 2), 16);
+                    findRGB[1] = Convert.ToByte(findColor[2].Substring(2, 2), 16);
+                    findRGB[2] = Convert.ToByte(findColor[2].Substring(4, 2), 16);
+
                     findX = x + int.Parse(findColor[0]);
                     findY = y + int.Parse(findColor[1]);
                     if (findX < 0 || findY < 0 || findX > Width || findY > Height)
                     {
-                        return false;
+                        return new CompareResult(false, string.Format("坐标越界:  index = {0}, x = {1}, y = {2}, color = {3}", i, findX, findY, findColor[2]));
                     }
-                    byte[] OffsetRGB = { 0, 0, 0 };
-                    if (offsetColor.Length > 1)
-                    {
-                        OffsetRGB[0] = Convert.ToByte(offsetColor[1].Substring(0, 2), 16);
-                        OffsetRGB[1] = Convert.ToByte(offsetColor[1].Substring(2, 2), 16);
-                        OffsetRGB[2] = Convert.ToByte(offsetColor[1].Substring(4, 2), 16);
-                    }
-                    double offsetR = (OffsetRGB[0] + similarity) < 255 ? (OffsetRGB[0] + similarity) : 255;
-                    double offsetG = (OffsetRGB[1] + similarity) < 255 ? (OffsetRGB[0] + similarity) : 255;
-                    double offsetB = (OffsetRGB[2] + similarity) < 255 ? (OffsetRGB[0] + similarity) : 255;
 
-                    if (!CompareColor(findRGB, offsetR, offsetG, offsetB, findX, findY, offset))
+                    if (!CompareColor(findRGB, similarity, findX, findY, offset))
                     {
-                        return false;
+                        return new CompareResult(false, string.Format("return false:  index = {0}, x = {1}, y = {2}, color = {3}", i, findX, findY, findColor[2]));
                     }
                 }
             }
-            return true;
+            return new CompareResult(true);
         }
 
         public static Point FindMultiColor(int startX, int startY, int endX, int endY, string findcolorString, string compareColorString, int sim = 95)
@@ -331,33 +293,25 @@ namespace ScriptGraphicHelper.Models
                 sim = Setting.Instance.DiySim;
             }
 
+            double similarity = 255 - 255 * (sim / 100.0);
             string[] findColor = findcolorString.Split('-');
             byte findR = Convert.ToByte(findColor[0].Substring(0, 2), 16);
             byte findG = Convert.ToByte(findColor[0].Substring(2, 2), 16);
             byte findB = Convert.ToByte(findColor[0].Substring(4, 2), 16);
-            byte offsetR = 0;
-            byte offsetG = 0;
-            byte offsetB = 0;
-            if (findColor.Length > 1)
-            {
-                offsetR = Convert.ToByte(findColor[1].Substring(0, 2), 16);
-                offsetG = Convert.ToByte(findColor[1].Substring(2, 2), 16);
-                offsetB = Convert.ToByte(findColor[1].Substring(4, 2), 16);
-            }
-            double similarity = 255 - 255 * (sim / 100.0);
 
             for (int i = startY; i <= endY; i++)
             {
                 int location = startX * FormatSize + Stride * i;
                 for (int j = startX; j <= endX; j++)
                 {
-                    if (Math.Abs(ScreenData[location + 2] - findR) <= offsetR + similarity)
+                    if (Math.Abs(ScreenData[location + 2] - findR) <= similarity)
                     {
-                        if (Math.Abs(ScreenData[location + 1] - findG) <= offsetG + similarity)
+                        if (Math.Abs(ScreenData[location + 1] - findG) <=  similarity)
                         {
-                            if (Math.Abs(ScreenData[location] - findB) <= offsetB + similarity)
+                            if (Math.Abs(ScreenData[location] - findB) <= similarity)
                             {
-                                if (CompareColorEx(compareColorString, sim, j, i, offset))
+                                var compareResult = CompareColorEx(compareColorString, sim, j, i, offset);
+                                if (compareResult.Result)
                                 {
                                     return new Point(j, i);
                                 }

@@ -1,4 +1,5 @@
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Markup.Xaml;
 
 namespace ScriptGraphicHelper.Panels
@@ -13,6 +14,11 @@ namespace ScriptGraphicHelper.Panels
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+        }
+
+        private void Img_PointerEnter(object sender, PointerEventArgs e)
+        {
+            Focus();
         }
     }
 }

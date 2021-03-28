@@ -133,7 +133,7 @@ namespace ScriptGraphicHelper.ViewModels
                     int sy = (int)(point.Y - rectHeight);
                     if (RectWidth > 10 && rectHeight > 10)
                     {
-                        Rect = string.Format("[{0},{1},{2},{3}]", sx, sy, point.X, point.Y);
+                        Rect = string.Format("[{0},{1},{2},{3}]", sx, sy, (int)point.X, (int)point.Y);
                     }
                     else
                     {
@@ -332,22 +332,34 @@ namespace ScriptGraphicHelper.ViewModels
                 int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
                 if (FormatSelectedIndex == FormatMode.compareStr || FormatSelectedIndex == FormatMode.anjianCompareStr || FormatSelectedIndex == FormatMode.cdCompareStr || FormatSelectedIndex == FormatMode.diyCompareStr)
                 {
-                    string str = CreateColorStrHelper.Create(0, ColorInfos);
-                    TestResult = GraphicHelper.CompareColorEx(str.Trim('"'), sims[SimSelectedIndex]).ToString();
+                    string str = CreateColorStrHelper.Create(FormatMode.compareStr, ColorInfos);
+
+                    var result = GraphicHelper.CompareColorEx(str.Trim('"'), sims[SimSelectedIndex]);
+                    if (!result.Result)
+                    {
+                        Win32Api.MessageBox(result.ErrorMessage);
+                    }
+                    TestResult = result.Result.ToString();
                 }
                 else if (FormatSelectedIndex == FormatMode.anchorsCompareStr)
                 {
                     double width = ColorInfo.Width;
                     double height = ColorInfo.Height;
-                    string str = CreateColorStrHelper.Create(FormatMode.anchorsCompareStrTest, ColorInfos);
-                    TestResult = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sims[SimSelectedIndex]).ToString();
+                    string str = CreateColorStrHelper.Create(FormatMode.anchorsCompareStr4Test, ColorInfos);
+
+                    var result = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sims[SimSelectedIndex]);
+                    if (!result.Result)
+                    {
+                        Win32Api.MessageBox(result.ErrorMessage);
+                    }
+                    TestResult = result.Result.ToString();
                 }
                 else if (FormatSelectedIndex == FormatMode.anchorsFindStr)
                 {
                     Range rect = GetRange();
                     double width = ColorInfo.Width;
                     double height = ColorInfo.Height;
-                    string str = CreateColorStrHelper.Create(FormatMode.anchorsFindStrTest, ColorInfos);
+                    string str = CreateColorStrHelper.Create(FormatMode.anchorsFindStr4Test, ColorInfos);
                     Point result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sims[SimSelectedIndex]);
                     if (result.X >= 0 && result.Y >= 0)
                     {
@@ -360,7 +372,7 @@ namespace ScriptGraphicHelper.ViewModels
                 else
                 {
                     Range rect = GetRange();
-                    string str = CreateColorStrHelper.Create(FormatMode.dmFindStr, ColorInfos, rect);
+                    string str = CreateColorStrHelper.Create(FormatMode.findStr4Test, ColorInfos, rect);
                     string[] strArray = str.Split("\",\"");
                     if (strArray[1].Length <= 3)
                     {
@@ -370,12 +382,6 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                     string[] _str = strArray[0].Split(",\"");
                     Point result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _str[^1].Trim('"'), strArray[1].Trim('"'), sims[SimSelectedIndex]);
-                    if (result.X >= 0 && result.Y >= 0)
-                    {
-                        //Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);
-                        //FindResultMargin = new Thickness(point.X - 36, point.Y - 72, 0, 0);
-                        //FindResultVisibility = Visibility.Visible;
-                    }
                     TestResult = result.ToString();
                 }
             }
@@ -400,7 +406,7 @@ namespace ScriptGraphicHelper.ViewModels
                     Rect = rect.ToString();
                 }
 
-                CreateStr = CreateColorStrHelper.Create((FormatMode)FormatSelectedIndex, ColorInfos, rect);
+                CreateStr = CreateColorStrHelper.Create(FormatSelectedIndex, ColorInfos, rect);
             }
         }
 
@@ -559,8 +565,8 @@ namespace ScriptGraphicHelper.ViewModels
 
             if (FormatSelectedIndex == FormatMode.anchorsFindStr || FormatSelectedIndex == FormatMode.anchorsCompareStr)
             {
-                imgWidth = ColorInfo.Width;
-                imgHeight = ColorInfo.Height;
+                imgWidth = ColorInfo.Width - 1;
+                imgHeight = ColorInfo.Height - 1;
             }
 
             double left = imgWidth;
