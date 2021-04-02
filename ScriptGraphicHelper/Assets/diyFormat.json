@@ -3,6 +3,6 @@
   "RangeFormat": "{startX},{startY},{endX},{endY}",
   "FirstColorFormat": "{color}",
   "FollowColorFormat": "{x}|{y}|{color}",
-  "FindStrFormat": "{ImportInfo},findMultiColor({range},\"{firstColorStr}\",\"{followColorStr}\",0.9,1,x,y)",
-  "CompareStrFormat": "compareColor(\"{colorStr}\",0.9)"
+  "FindStrFormat": "new array({ImportInfo},\"{range}\",\"{firstColorStr}\",\"{followColorStr}\",0.9,1)",
+  "CompareStrFormat": "new array({ImportInfo},\"{colorStr}\",0.9)"
 }

@@ -89,6 +89,15 @@ namespace ScriptGraphicHelper.Models
             }
             colorStr = colorStr.Trim(',');
             string result = diyFormat.CompareStrFormat;
+            if (result.IndexOf("{ImportInfo}") != -1)
+            {
+                string info = diyFormat.ImportInfo;
+                if (info != string.Empty && info != "")
+                {
+                    info = string.Format("\"{0}\"", info);
+                }
+                result = result.Replace("{ImportInfo}", info);
+            }
             if (result.IndexOf("{colorStr}") != -1)
             {
                 result = result.Replace("{colorStr}", colorStr);
@@ -148,7 +157,7 @@ namespace ScriptGraphicHelper.Models
                 string info = diyFormat.ImportInfo;
                 if (info != string.Empty && info != "")
                 {
-                    info = string.Format("{0}/{1}/{2}", info, startPoint.X, startPoint.Y);
+                    info = string.Format("\"{0}/{1}/{2}\"", info, startPoint.X, startPoint.Y);
                 }
                 result = result.Replace("{ImportInfo}", info);
             }

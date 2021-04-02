@@ -9,7 +9,15 @@ namespace ScriptGraphicHelper.Models
     {
         public static ObservableCollection<ColorInfo> Import(string str)
         {
-            str = str.Replace("\"", "");
+            if (str.IndexOf("dm")!=-1) str = str.Substring(str.IndexOf("dm"));
+            else if (str.IndexOf("anjian") != -1) str = str.Substring(str.IndexOf("anjian"));
+            else if (str.IndexOf("cd") != -1) str = str.Substring(str.IndexOf("cd"));
+            else if (str.IndexOf("autojs") != -1) str = str.Substring(str.IndexOf("autojs"));
+            else if (str.IndexOf("ec") != -1) str = str.Substring(str.IndexOf("ec"));
+            else if (str.IndexOf("array") != -1) str = str.Substring(str.IndexOf("array"));
+
+
+            str = str.Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
             string[] strArray = str.Split(",");
             string[] info = strArray[0].Split('/');
             if (info.Length == 3)
