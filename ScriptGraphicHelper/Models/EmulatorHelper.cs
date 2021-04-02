@@ -18,8 +18,8 @@ namespace ScriptGraphicHelper.Models
     public static class EmulatorHelper
     {
         public static EmlatorState State { get; set; } = EmlatorState.None;
-        public static ObservableCollection<string> Result { get; set; }
-        public static List<KeyValuePair<int, string>> Info { get; set; }
+        public static ObservableCollection<string> Result { get; set; } = new ObservableCollection<string>();
+        public static List<KeyValuePair<int, string>> Info { get; set; } = new List<KeyValuePair<int, string>>();
         public static int Select { get; set; } = -1;
 
         private static int _index = -1;
@@ -38,15 +38,18 @@ namespace ScriptGraphicHelper.Models
         public static List<BaseEmulatorHelper> Helpers = new List<BaseEmulatorHelper>();
         public static ObservableCollection<string> Init()
         {
-            Helpers = new List<BaseEmulatorHelper>();
-            Helpers.Add(new LdEmulatorHelper(0));
-            Helpers.Add(new LdEmulatorHelper(1));
-            Helpers.Add(new LdEmulatorHelper(2));
-            Helpers.Add(new YsEmulatorHelper());
-            Helpers.Add(new XyEmulatorHelper());
-            Helpers.Add(new MoblieTcpHelper());
-            Helpers.Add(new AJHelper());
-            Helpers.Add(new HwndHelper());
+            Helpers = new List<BaseEmulatorHelper>
+            {
+                new LdEmulatorHelper(0),
+                new LdEmulatorHelper(1),
+                new LdEmulatorHelper(2),
+                new LdEmulatorHelper(3),
+                new YsEmulatorHelper(),
+                new XyEmulatorHelper(),
+                new MoblieTcpHelper(),
+                new AJHelper(),
+                new HwndHelper()
+            };
             Result = new ObservableCollection<string>();
 
             foreach (var emulator in Helpers)

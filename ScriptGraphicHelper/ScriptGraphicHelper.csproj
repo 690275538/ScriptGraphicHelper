@@ -8,7 +8,7 @@
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationIcon>Assets\ico.ico</ApplicationIcon>
     <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.2.0.6</Version>
+    <Version>1.2.0.10</Version>
     <NeutralLanguage></NeutralLanguage>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">

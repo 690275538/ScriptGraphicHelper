@@ -64,6 +64,21 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     }
                     Path = Aimdir.GetValue("InstallDir").ToString();
                 }
+                else if (version == 3)
+                {
+                    Name = "雷神模拟器";
+                    RegistryKey Hkml = Registry.CurrentUser;
+                    RegistryKey Aimdir = Hkml.OpenSubKey("Software\\baizhi\\lsplayer", true);
+                    if (Aimdir == null)
+                    {
+                        if (Setting.Instance.Ldpath64 != null && Setting.Instance.Ldpath64 != string.Empty)
+                        {
+                            Path = Setting.Instance.Ldpath64;
+                        }
+                        return;
+                    }
+                    Path = Aimdir.GetValue("InstallDir").ToString();
+                }
             }
             catch
             {
@@ -75,7 +90,22 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         public string PipeCmd(string theCommand, bool select = false)
         {
             string ThePath = Path + "dnconsole.exe";
-            if (select) { ThePath = Path + "ld.exe"; }
+
+            if (select) { 
+                ThePath = Path + "ld.exe"; 
+            }
+
+            if (Name == "雷神模拟器" )
+            {
+                if (!select)
+                {
+                    ThePath = Path + "lsconsole.exe";
+                }
+                else
+                {
+                    ThePath = Path + "ls.exe";
+                }
+            }
 
             ProcessStartInfo start = new ProcessStartInfo(ThePath)
             {
@@ -85,6 +115,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                 RedirectStandardInput = true,
                 UseShellExecute = false
             };
+
             Process pipe = Process.Start(start);
             StreamReader readStream = pipe.StandardOutput;
             string OutputStr = readStream.ReadToEnd();
@@ -142,6 +173,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
             }
             return false;
         }
+
         public override async Task<List<KeyValuePair<int, string>>> ListAll()
         {
             var task = Task.Run(() =>
@@ -157,6 +189,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
             });
             return await task;
         }
+
         public override async Task<Bitmap> ScreenShot(int index)
         {
             var task = Task.Run(() =>

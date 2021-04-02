@@ -2,7 +2,8 @@
 {
     public class DiyFormat
     {
-
+        public string ImportInfo { get; set; } = string.Empty;
+        public string RangeFormat { get; set; } = string.Empty;
         public string FirstColorFormat { get; set; } = string.Empty;
         public string FollowColorFormat { get; set; } = string.Empty;
         public string FindStrFormat { get; set; } = string.Empty;

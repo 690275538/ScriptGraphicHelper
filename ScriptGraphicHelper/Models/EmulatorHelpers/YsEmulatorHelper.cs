@@ -16,13 +16,17 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         public string BmpPath { get; set; }
         public YsEmulatorHelper()//初始化 , 获取模拟器路径
         {
-            Name = "夜神模拟器";
             string path = Setting.Instance.YsPath.Trim("\\".ToCharArray()) + "\\";
-            if (path != string.Empty && Path != "")
+            if (path != string.Empty && path != "")
             {
                 int index = path.LastIndexOf("\\");
-                Path = path.Substring(0, index + 1).Trim('"');
-                BmpPath = BmpPathGet();
+                path = path.Substring(0, index + 1).Trim('"');
+                if (File.Exists(path + "NoxConsole.exe"))
+                {
+                    Name = "夜神模拟器";
+                    Path = path;
+                    BmpPath = BmpPathGet();
+                }
             }
         }
         public override void Dispose() { }
@@ -46,18 +50,16 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         public override bool IsStart(int index)
         {
             string[] resultArray = PipeCmd("list").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
-            for (int i = 0; i < resultArray.Length; i++)
+            string[] LineArray = resultArray[index].Split(',');
+            if (LineArray.Length > 1)
             {
-                string[] LineArray = resultArray[i].Split(',');
-                if (LineArray.Length > 1)
-                {
-                    if (LineArray[0] == index.ToString())
-                    {
-                        return LineArray[6] != "-1";
-                    }
-                }
+                if (LineArray.Length == 8) return LineArray[6] != "-1";
+                else return LineArray[5] != "-1";
             }
-            return false;
+            else
+            {
+                return false;
+            }
         }
         public override async Task<List<KeyValuePair<int, string>>> ListAll()
         {
@@ -68,7 +70,14 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                 for (int i = 0; i < resultArray.Length; i++)
                 {
                     string[] LineArray = resultArray[i].Split(',');
-                    result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[2]));
+                    if (LineArray.Length == 8)
+                    {
+                        result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[2]));
+                    }
+                    else
+                    {
+                        result.Add(new KeyValuePair<int, string>(key: i, value: LineArray[1]));
+                    }
                 }
                 return result;
             });

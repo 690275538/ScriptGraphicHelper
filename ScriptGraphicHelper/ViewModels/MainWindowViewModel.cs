@@ -178,7 +178,6 @@ namespace ScriptGraphicHelper.ViewModels
             }
         });
 
-
         public ICommand Img_PointerEnter => new Command((param) => Loupe_IsVisible = true);
 
         public ICommand Img_PointerLeave => new Command((param) => Loupe_IsVisible = false);
@@ -197,7 +196,6 @@ namespace ScriptGraphicHelper.ViewModels
                     EmulatorHelper.Changed(EmulatorSelectedIndex);
                     EmulatorInfo = await EmulatorHelper.GetAll();
                     EmulatorSelectedIndex = -1;
-
                 }
                 else if (EmulatorHelper.State == EmlatorState.Starting)
                 {
@@ -243,10 +241,10 @@ namespace ScriptGraphicHelper.ViewModels
             if (EmulatorHelper.State == EmlatorState.Starting || EmulatorHelper.State == EmlatorState.success)
             {
                 EmulatorSelectedIndex = -1;
-                EmulatorHelper.Dispose();
-                EmulatorInfo.Clear();
-                EmulatorInfo = EmulatorHelper.Init();
             }
+            EmulatorHelper.Dispose();
+            EmulatorInfo.Clear();
+            EmulatorInfo = EmulatorHelper.Init();
         }
 
         public async void TurnRight_Click()
@@ -487,7 +485,19 @@ namespace ScriptGraphicHelper.ViewModels
         public async void SetConfig_Click()
         {
             var config = new Config();
+            var setting = Setting.Instance;
+            string ysPath = setting.YsPath;
+            string xyPath = setting.XyPath;
+            string ldpath3 = setting.Ldpath3;
+            string ldpath4 = setting.Ldpath4;
+            string ldpath64 = setting.Ldpath64;
+
             await config.ShowDialog(new Window());
+
+            if (ysPath != setting.YsPath || xyPath != setting.XyPath || ldpath3 != setting.Ldpath3 || ldpath4 != setting.Ldpath4 || ldpath64 != setting.Ldpath64)
+            {
+                ResetEmulatorOptions_Click();
+            }
         }
 
         public async void Point_Copy_Click()
@@ -528,11 +538,36 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void ColorInfo_Import_Click()
         {
-            var dataImport = new DataImport();
-            await dataImport.ShowDialog(new Window());
-            ColorInfos.Clear();
-            ColorInfos = DataImportHelper.Import(dataImport.ImportString);
-            DataGridHeight = (ColorInfos.Count + 1) * 40;
+            try
+            {
+                var dataImport = new DataImport();
+                await dataImport.ShowDialog(new Window());
+                ColorInfos.Clear();
+
+                int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
+                int sim = sims[SimSelectedIndex];
+                if (sim == 0)
+                {
+                    sim = Setting.Instance.DiySim;
+                }
+
+                var result = DataImportHelper.Import(dataImport.ImportString);
+
+                double similarity = (255 - 255 * (sim / 100.0)) / 2;
+                for (int i = 0; i < result.Count; i++)
+                {
+                    if (GraphicHelper.CompareColor(new byte[] { result[i].Color.R, result[i].Color.G, result[i].Color.B }, similarity, (int)result[i].Point.X, (int)result[i].Point.Y, 0))
+                    {
+                        result[i].IsChecked = true;
+                    }
+                    ColorInfos.Add(result[i]);
+                }
+                DataGridHeight = (ColorInfos.Count + 1) * 40;
+            }
+            catch (Exception e)
+            {
+                Win32Api.MessageBox("µ¼ÈëÊ§°Ü: " + e.ToString());
+            }
         }
 
         public void ColorInfo_SelectItemClear_Click()

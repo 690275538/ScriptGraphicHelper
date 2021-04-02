@@ -61,8 +61,8 @@ namespace ScriptGraphicHelper.Models
                         Index = colorInfos.Count,
                         Point = new Point(int.Parse(arr[0]), int.Parse(arr[1])),
                         Color = Color.Parse("#" + arr[2]),
-                        IsChecked = true
                     };
+
                     colorInfos.Add(colorInfo);
                 }
             }
@@ -84,7 +84,6 @@ namespace ScriptGraphicHelper.Models
                         Index = colorInfos.Count,
                         Point = new Point(int.Parse(arr[0]), int.Parse(arr[1])),
                         Color = Color.Parse(arr[2]),
-                        IsChecked = true
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -107,7 +106,6 @@ namespace ScriptGraphicHelper.Models
                         Index = colorInfos.Count,
                         Point = new Point(int.Parse(arr[0]), int.Parse(arr[1])),
                         Color = Color.Parse("#" + arr[2][4] + arr[2][5] + arr[2][2] + arr[2][3] + arr[2][0] + arr[2][1]),
-                        IsChecked = true
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -121,14 +119,13 @@ namespace ScriptGraphicHelper.Models
             var strArray = str.Split(",");
             var startPoint = new Point(int.Parse(strArray[1]), int.Parse(strArray[2]));
             var startColor = Color.Parse(strArray[3]);
+
             colorInfos.Add(new ColorInfo
             {
                 Index = 0,
                 Point = startPoint,
-                Color = startColor,
-                IsChecked = true
+                Color = startColor
             });
-
             int startIndex = str.IndexOf("[[");
             int endIndex = str.IndexOf("]]", startIndex);
             string[] array = str.Substring(startIndex, endIndex - startIndex).Replace("[", "").Split("],");
@@ -139,8 +136,7 @@ namespace ScriptGraphicHelper.Models
                 {
                     Index = colorInfos.Count,
                     Point = new Point(startPoint.X + int.Parse(arr[0]), startPoint.Y + int.Parse(arr[1])),
-                    Color = Color.Parse(arr[2]),
-                    IsChecked = true
+                    Color = Color.Parse(arr[2])
                 };
                 colorInfos.Add(colorInfo);
             }
@@ -161,8 +157,7 @@ namespace ScriptGraphicHelper.Models
                     {
                         Index = colorInfos.Count,
                         Point = startPoint,
-                        Color = Color.Parse("#" + item.Replace("0x", "")),
-                        IsChecked = true
+                        Color = Color.Parse("#" + item.Replace("0x", ""))
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -172,8 +167,7 @@ namespace ScriptGraphicHelper.Models
                     {
                         Index = colorInfos.Count,
                         Point = new Point(startPoint.X + int.Parse(array[0]), startPoint.Y + int.Parse(array[1])),
-                        Color = Color.Parse("#" + array[2].Replace("0x", "")),
-                        IsChecked = true
+                        Color = Color.Parse("#" + array[2].Replace("0x", ""))
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -191,10 +185,8 @@ namespace ScriptGraphicHelper.Models
             {
                 Index = 0,
                 Point = startPoint,
-                Color = startColor,
-                IsChecked = true
+                Color = startColor
             });
-
             int startIndex = str.IndexOf("[[");
             int endIndex = str.IndexOf("]]", startIndex);
             string[] array = str.Substring(startIndex, endIndex - startIndex).Replace("[", "").Split("],");
@@ -205,8 +197,7 @@ namespace ScriptGraphicHelper.Models
                 {
                     Index = colorInfos.Count,
                     Point = new Point(startPoint.X + int.Parse(arr[0]), startPoint.Y + int.Parse(arr[1])),
-                    Color = Color.Parse(arr[2]),
-                    IsChecked = true
+                    Color = Color.Parse(arr[2])
                 };
                 colorInfos.Add(colorInfo);
             }
@@ -227,8 +218,7 @@ namespace ScriptGraphicHelper.Models
                     {
                         Index = colorInfos.Count,
                         Point = startPoint,
-                        Color = Color.Parse("#" + item.Replace("0x", "")),
-                        IsChecked = true
+                        Color = Color.Parse("#" + item.Replace("0x", ""))
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -238,8 +228,7 @@ namespace ScriptGraphicHelper.Models
                     {
                         Index = colorInfos.Count,
                         Point = new Point(startPoint.X + int.Parse(array[0]), startPoint.Y + int.Parse(array[1])),
-                        Color = Color.Parse("#" + array[2].Replace("0x", "")),
-                        IsChecked = true
+                        Color = Color.Parse("#" + array[2].Replace("0x", ""))
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -261,8 +250,7 @@ namespace ScriptGraphicHelper.Models
                     {
                         Index = colorInfos.Count,
                         Point = startPoint,
-                        Color = Color.Parse("#" + item[4] + item[5] + item[2] + item[3] + item[0] + item[1]),
-                        IsChecked = true
+                        Color = Color.Parse("#" + item[4] + item[5] + item[2] + item[3] + item[0] + item[1])
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -272,8 +260,7 @@ namespace ScriptGraphicHelper.Models
                     {
                         Index = colorInfos.Count,
                         Point = new Point(startPoint.X + int.Parse(array[0]), startPoint.Y + int.Parse(array[1])),
-                        Color = Color.Parse("#" + array[2][4] + array[2][5] + array[2][2] + array[2][3] + array[2][0] + array[2][1]),
-                        IsChecked = true
+                        Color = Color.Parse("#" + array[2][4] + array[2][5] + array[2][2] + array[2][3] + array[2][0] + array[2][1])
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -295,8 +282,7 @@ namespace ScriptGraphicHelper.Models
                     {
                         Index = colorInfos.Count,
                         Point = startPoint,
-                        Color = Color.Parse("#" + item),
-                        IsChecked = true
+                        Color = Color.Parse("#" + item)
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -307,8 +293,7 @@ namespace ScriptGraphicHelper.Models
                         Index = colorInfos.Count,
                         Anchor = AnchorType.None,
                         Point = new Point(startPoint.X + int.Parse(array[0]), startPoint.Y + int.Parse(array[1])),
-                        Color = Color.Parse("#" + array[2]),
-                        IsChecked = true
+                        Color = Color.Parse("#" + array[2])
                     };
                     colorInfos.Add(colorInfo);
                 }
@@ -342,7 +327,6 @@ namespace ScriptGraphicHelper.Models
                 colorInfo.Index = colorInfos.Count;
                 colorInfo.Point = new Point(int.Parse(arr[1]), int.Parse(arr[2]));
                 colorInfo.Color = Color.Parse(arr[3].Replace("0x", "#"));
-                colorInfo.IsChecked = true;
                 colorInfos.Add(colorInfo);
             }
             return colorInfos;

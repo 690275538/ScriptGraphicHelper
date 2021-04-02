@@ -76,15 +76,18 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
             return await task;
         }
 
-        public XyEmulatorHelper()//初始化 , 获取模拟器路径
+        public XyEmulatorHelper()//初始化, 获取模拟器路径
         {
-            Name = "逍遥模拟器";
-
             string path = Setting.Instance.XyPath.Trim("\\".ToCharArray()) + "\\";
-            if (path != string.Empty && Path != "")
+            if (path != string.Empty && path != "")
             {
                 int index = path.LastIndexOf("\\");
-                Path = path.Substring(0, index + 1).Trim('"');
+                path = path.Substring(0, index + 1).Trim('"');
+                if (File.Exists(path + "memuc.exe"))
+                {
+                    Name = "逍遥模拟器";
+                    Path = path;
+                }
             }
         }
 
@@ -125,7 +128,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         }
         public string PipeCmd(string theCommand)
         {
-            string path = Path + "memuc";
+            string path = Path + "memuc.exe";
             ProcessStartInfo start = new ProcessStartInfo(path)
             {
                 Arguments = theCommand,

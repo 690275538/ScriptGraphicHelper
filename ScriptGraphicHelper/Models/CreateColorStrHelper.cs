@@ -143,9 +143,43 @@ namespace ScriptGraphicHelper.Models
             }
             colorStr[1] = colorStr[1].Trim(',');
             string result = diyFormat.FindStrFormat;
+            if (result.IndexOf("{ImportInfo}") != -1)
+            {
+                string info = diyFormat.ImportInfo;
+                if (info != string.Empty && info != "")
+                {
+                    info = string.Format("{0}/{1}/{2}", info, startPoint.X, startPoint.Y);
+                }
+                result = result.Replace("{ImportInfo}", info);
+            }
             if (result.IndexOf("{range}") != -1)
             {
-                result = result.Replace("{range}", rect.ToString());
+                string range = diyFormat.RangeFormat;
+                if (range.IndexOf("{startX}") != -1)
+                {
+                    range = range.Replace("{startX}", rect.Left.ToString());
+                }
+                if (range.IndexOf("{startY}") != -1)
+                {
+                    range = range.Replace("{startY}", rect.Top.ToString());
+                }
+                if (range.IndexOf("{endX}") != -1)
+                {
+                    range = range.Replace("{endX}", rect.Right.ToString());
+                }
+                if (range.IndexOf("{endY}") != -1)
+                {
+                    range = range.Replace("{endY}", rect.Bottom.ToString());
+                }
+                if (range.IndexOf("{width}") != -1)
+                {
+                    range = range.Replace("{width}", (rect.Right - rect.Left).ToString());
+                }
+                if (range.IndexOf("{height}") != -1)
+                {
+                    range = range.Replace("{height}", (rect.Bottom - rect.Top).ToString());
+                }
+                result = result.Replace("{range}", range);
             }
             if (result.IndexOf("{firstColorStr}") != -1)
             {

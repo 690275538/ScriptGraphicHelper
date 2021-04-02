@@ -268,12 +268,12 @@ namespace ScriptGraphicHelper.Models
                     findY = y + int.Parse(findColor[1]);
                     if (findX < 0 || findY < 0 || findX > Width || findY > Height)
                     {
-                        return new CompareResult(false, string.Format("坐标越界:  index = {0}, x = {1}, y = {2}, color = {3}", i, findX, findY, findColor[2]));
+                        return new CompareResult(false, string.Format("坐标越界:  index = {0}, x = {1}, y = {2}, color = 0x{3}", i, findX, findY, findColor[2]));
                     }
 
                     if (!CompareColor(findRGB, similarity, findX, findY, offset))
                     {
-                        return new CompareResult(false, string.Format("return false:  index = {0}, x = {1}, y = {2}, color = {3}", i, findX, findY, findColor[2]));
+                        return new CompareResult(false, string.Format("return false:  index = {0}, x = {1}, y = {2}, color = 0x{3}", i, findX, findY, findColor[2]));
                     }
                 }
             }
