@@ -24,17 +24,21 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         {
             var task = Task.Run(() =>
             {
-                string[] resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n".ToCharArray());
+                string[] resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n");
                 List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
                 for (int i = 0; i < resultArray.Length; i++)
                 {
                     string[] LineArray = resultArray[i].Split(',');
-                    result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[1]));
+                    if (LineArray.Length>=4)
+                    {
+                        result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[1]));
+                    }
                 }
                 return result;
-            });
+            });   
             return await task;
         }
+
         public override async Task<Bitmap> ScreenShot(int index)
         {
             var task = Task.Run(() =>
@@ -93,7 +97,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
 
         public string[] List(int index)
         {
-            string[] resultArray = PipeCmd("listvms").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
+            string[] resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n");
             for (int i = 0; i < resultArray.Length; i++)
             {
                 string[] LineArray = resultArray[i].Split(',');

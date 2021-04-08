@@ -26,10 +26,8 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
 
         private TcpClient MyTcpClient;
 
-        private NetworkStream networkStream;
+        private NetworkStream MyNetworkStream;
 
-        private int Width = -1;
-        private int Height = -1;
         private bool IsInit = false;
         public override void Dispose()
         {
@@ -38,8 +36,8 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                 try
                 {
                     IsInit = false;
-                    networkStream.WriteByte(MessageType.Stop);
-                    networkStream.Close();
+                    MyNetworkStream.WriteByte(MessageType.Stop);
+                    MyNetworkStream.Close();
                     MyTcpClient.Close();
                 }
                 catch { };
@@ -67,18 +65,16 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     try
                     {
                         MyTcpClient = new TcpClient(address, port);
-                        networkStream = MyTcpClient.GetStream();
+                        MyNetworkStream = MyTcpClient.GetStream();
                         byte[] buf = new byte[256];
                         for (int i = 0; i < 40; i++)
                         {
                             Task.Delay(100).Wait();
-                            if (networkStream.DataAvailable)
+                            if (MyNetworkStream.DataAvailable)
                             {
-                                int length = networkStream.Read(buf, 0, 256);
-                                string[] info = Encoding.UTF8.GetString(buf, 0, length).Split('|');
-                                Width = int.Parse(info[1]);
-                                Height = int.Parse(info[2]);
-                                result.Add(new KeyValuePair<int, string>(key: 0, value: info[0]));
+                                int length = MyNetworkStream.Read(buf, 0, 256);
+                                string info = Encoding.UTF8.GetString(buf, 0, length);
+                                result.Add(new KeyValuePair<int, string>(key: 0, value: info));
                                 IsInit = true;
                                 return result;
                             }
@@ -97,14 +93,14 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
 
         private bool GetTcpState()
         {
-            networkStream.WriteByte(MessageType.Ping);
+            MyNetworkStream.WriteByte(MessageType.Ping);
             for (int i = 0; i < 40; i++)
             {
                 Task.Delay(50).Wait();
                 byte[] _ = new byte[9];
-                if (networkStream.DataAvailable)
+                if (MyNetworkStream.DataAvailable)
                 {
-                    int length = networkStream.Read(_, 0, 1);
+                    int length = MyNetworkStream.Read(_, 0, 1);
                     if (length == 1)
                     {
                         if (_[0] == MessageType.Ping)
@@ -120,6 +116,27 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
             }
             return false;
         }
+
+        private int Bytes2Int(byte[] src, int offset = 0)
+        {
+            int value;
+            value = ((src[offset] & 0xFF) << 24)
+                    | ((src[offset + 1] & 0xFF) << 16)
+                    | ((src[offset + 2] & 0xFF) << 8)
+                    | (src[offset + 3] & 0xFF);
+            return value;
+        }
+
+        private byte[] Int2Bytes(int value)
+        {
+            byte[] src = new byte[4];
+            src[0] = (byte)((value >> 24) & 0xFF);
+            src[1] = (byte)((value >> 16) & 0xFF);
+            src[2] = (byte)((value >> 8) & 0xFF);
+            src[3] = (byte)(value & 0xFF);
+            return src;
+        }
+
         public override async Task<Bitmap> ScreenShot(int Index)
         {
             var task = Task.Run(() =>
@@ -130,36 +147,39 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     {
                         throw new Exception("Tcp已断开连接! 请重新连接");
                     }
-                    networkStream.WriteByte(MessageType.ScreenShot);
-                    byte[] result = new byte[Width * Height * 4];
+                    MyNetworkStream.WriteByte(MessageType.ScreenShot);
+
                     int offset = 0;
-                    while (offset < result.Length)
+                    byte[] info = new byte[4];
+                    for (int i = 0; i < 100; i++)
                     {
-                        int len = result.Length - offset;
-                        int length = networkStream.Read(result, offset, len);
-                        offset += length;
-
-                    }
-
-                    byte[] data = new byte[Width * 4 * Height];
-                    int step = 0;
-                    for (int j = 0; j < Height; j++)
-                    {
-                        int location = Width * 4 * j;
-                        for (int i = 0; i < Width; i++)
+                        Task.Delay(100).Wait();
+                        if (MyNetworkStream.DataAvailable)
                         {
-                            data[step] = result[location + 2];
-                            data[step + 1] = result[location + 1];
-                            data[step + 2] = result[location];
-                            data[step + 3] = 255;
-                            step += 4;
-                            location += 4;
+                            while (offset < 4)
+                            {
+                                int len = MyNetworkStream.Read(info, offset, 4 - offset);
+                                offset += 4;
+                            }
+                            break;
                         }
                     }
-                    SKBitmap sKBitmap = new(new SKImageInfo(Width, Height));
-                    Marshal.Copy(data, 0, sKBitmap.GetPixels(), data.Length);
+
+                    int length = Bytes2Int(info);
+
+                    byte[] data = new byte[length];
+
+                    offset = 0;
+
+                    while (offset < length)
+                    {
+                        int len = MyNetworkStream.Read(data, offset, length - offset);
+                        offset += len;
+                    }
+
+                    SKBitmap sKBitmap = SKBitmap.Decode(data);
                     GraphicHelper.KeepScreen(sKBitmap);
-                    var bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(Width, Height), new Vector(96, 96), sKBitmap.RowBytes);
+                    var bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
                     sKBitmap.Dispose();
                     return bitmap;
                 }
