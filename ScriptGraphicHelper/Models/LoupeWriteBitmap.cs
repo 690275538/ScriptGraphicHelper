@@ -17,16 +17,16 @@ namespace ScriptGraphicHelper.Models
             {
                 unsafe
                 {
-                    var pBackBuffer = (byte*)bmpData.Address;
+                    var ptr = (byte*)bmpData.Address;
                     for (int j = 0; j < 16; j++)
                     {
                         for (int i = 0; i < 241; i++)
                         {
                             int k = j * 16 * bmpData.RowBytes + i * 4;
-                            pBackBuffer[k] = 75;
-                            pBackBuffer[k + 1] = 75;
-                            pBackBuffer[k + 2] = 75;
-                            pBackBuffer[k + 3] = 255;
+                            ptr[k] = 75;
+                            ptr[k + 1] = 75;
+                            ptr[k + 2] = 75;
+                            ptr[k + 3] = 255;
                         }
                     }
                     for (int j = 0; j < 16; j++)
@@ -34,10 +34,10 @@ namespace ScriptGraphicHelper.Models
                         for (int i = 0; i < 241; i++)
                         {
                             int k = i * bmpData.RowBytes + j * 16 * 4;
-                            pBackBuffer[k] = 75;
-                            pBackBuffer[k + 1] = 75;
-                            pBackBuffer[k + 2] = 75;
-                            pBackBuffer[k + 3] = 255;
+                            ptr[k] = 75;
+                            ptr[k + 1] = 75;
+                            ptr[k + 2] = 75;
+                            ptr[k + 3] = 255;
                         }
                     }
                 }
@@ -53,7 +53,7 @@ namespace ScriptGraphicHelper.Models
             {
                 unsafe
                 {
-                    var pBackBuffer = (byte*)bmpData.Address;
+                    var ptr = (byte*)bmpData.Address;
                     for (int j = 0; j < 16; j++)
                     {
                         for (int i = 0; i < 241; i++)
@@ -61,10 +61,10 @@ namespace ScriptGraphicHelper.Models
                             int k = j * 16 * bmpData.RowBytes + i * 4;
                             if (i >= 110 && i <= 130 && j <= 8 && j >= 7)
                             {
-                                pBackBuffer[k] = highLightColor[0];
-                                pBackBuffer[k + 1] = highLightColor[1];
-                                pBackBuffer[k + 2] = highLightColor[2];
-                                pBackBuffer[k + 3] = 255;
+                                ptr[k] = highLightColor[0];
+                                ptr[k + 1] = highLightColor[1];
+                                ptr[k + 2] = highLightColor[2];
+                                ptr[k + 3] = 255;
 
                             }
                         }
@@ -76,10 +76,10 @@ namespace ScriptGraphicHelper.Models
                             int k = i * bmpData.RowBytes + j * 16 * 4;
                             if (i >= 110 && i <= 130 && j <= 8 && j >= 7)
                             {
-                                pBackBuffer[k] = highLightColor[0];
-                                pBackBuffer[k + 1] = highLightColor[1];
-                                pBackBuffer[k + 2] = highLightColor[2];
-                                pBackBuffer[k + 3] = 255;
+                                ptr[k] = highLightColor[0];
+                                ptr[k + 1] = highLightColor[1];
+                                ptr[k + 2] = highLightColor[2];
+                                ptr[k + 3] = 255;
                             }
                         }
                     }
@@ -149,7 +149,7 @@ namespace ScriptGraphicHelper.Models
             {
                 unsafe
                 {
-                    var pBackBuffer = (byte*)bmpData.Address;
+                    var ptr = (byte*)bmpData.Address;
                     for (int y = 0; y < 15; y++)
                     {
                         for (int x = 0; x < 15; x++)
@@ -162,24 +162,24 @@ namespace ScriptGraphicHelper.Models
                                     int k = i * bmpData.RowBytes + j * 4;
                                     if (i >= 110 && i <= 130 && ((j >= 110 && j <= 112) || (j >= 128 && j <= 130)))
                                     {
-                                        pBackBuffer[k] = highLightColor[offsetRange][0];
-                                        pBackBuffer[k + 1] = highLightColor[offsetRange][1];
-                                        pBackBuffer[k + 2] = highLightColor[offsetRange][2];
-                                        pBackBuffer[k + 3] = 255;
+                                        ptr[k] = highLightColor[offsetRange][0];
+                                        ptr[k + 1] = highLightColor[offsetRange][1];
+                                        ptr[k + 2] = highLightColor[offsetRange][2];
+                                        ptr[k + 3] = 255;
                                     }
                                     else if (j >= 110 && j <= 130 && ((i >= 110 && i <= 112) || (i >= 128 && i <= 130)))
                                     {
-                                        pBackBuffer[k] = highLightColor[offsetRange][0];
-                                        pBackBuffer[k + 1] = highLightColor[offsetRange][1];
-                                        pBackBuffer[k + 2] = highLightColor[offsetRange][2];
-                                        pBackBuffer[k + 3] = 255;
+                                        ptr[k] = highLightColor[offsetRange][0];
+                                        ptr[k + 1] = highLightColor[offsetRange][1];
+                                        ptr[k + 2] = highLightColor[offsetRange][2];
+                                        ptr[k + 3] = 255;
                                     }
                                     else
                                     {
-                                        pBackBuffer[k] = color[2];
-                                        pBackBuffer[k + 1] = color[1];
-                                        pBackBuffer[k + 2] = color[0];
-                                        pBackBuffer[k + 3] = 255;
+                                        ptr[k] = color[2];
+                                        ptr[k + 1] = color[1];
+                                        ptr[k + 2] = color[0];
+                                        ptr[k + 3] = 255;
                                     }
                                 }
                             }

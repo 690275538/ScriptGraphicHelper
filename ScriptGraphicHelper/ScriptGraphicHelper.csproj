@@ -27,6 +27,9 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
+    <None Remove="Views\ImgEditor.xaml" />
+  </ItemGroup>
+  <ItemGroup>
     <AvaloniaXaml Include="App.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
@@ -46,6 +49,9 @@
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
     <AvaloniaXaml Include="Views\HwndConfig.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
+    <AvaloniaXaml Include="Views\ImgEditor.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
     <AvaloniaXaml Include="Views\MainWindow.xaml">
@@ -95,6 +101,9 @@
     </Compile>
     <Compile Update="Views\HwndConfigHnwdHwd.xaml.cs">
       <DependentUpon>HwndConfigHnwdHwd.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Views\ImgEditor.xaml.cs">
+      <DependentUpon>ImgEditor.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\MainWindow.xaml.cs" />
     <Compile Update="Views\TcpConfig.xaml.cs">

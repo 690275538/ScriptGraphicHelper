@@ -32,7 +32,7 @@ namespace ScriptGraphicHelper.Models
         public static int Width { get; set; } = 0;
         public static int Height { get; set; } = 0;
         public static int FormatSize { get; set; }
-        public static int Stride { get; set; }
+        public static int RowStride { get; set; }
         public static byte[] ScreenData { get; set; }
 
         public static void KeepScreen(SKBitmap bitmap)
@@ -40,22 +40,49 @@ namespace ScriptGraphicHelper.Models
             Width = bitmap.Width;
             Height = bitmap.Height;
             ScreenData = new byte[bitmap.RowBytes * Height];
-            Stride = bitmap.RowBytes;
+            RowStride = bitmap.RowBytes;
             FormatSize = bitmap.RowBytes / Width;
             Marshal.Copy(bitmap.GetPixels(), ScreenData, 0, ScreenData.Length);
+        }
+
+        public static byte[] GetRectData(Range range)
+        {
+
+            int sx = (int)range.Left;
+            int sy = (int)range.Top;
+            int ex = (int)range.Right;
+            int ey = (int)range.Bottom;
+            int width = ex - sx + 1;
+            int height = ey - sy + 1;
+            byte[] data = new byte[width * height * 4];
+            int site = 0;
+            for (int i = sy; i <= ey; i++)
+            {
+                int location = sx * 4 + Width * 4 * i;
+                for (int j = sx; j <= ex; j++)
+                {
+                    data[site] = ScreenData[location];
+                    data[site + 1] = ScreenData[location + 1];
+                    data[site + 2] = ScreenData[location + 2];
+                    data[site + 3] = ScreenData[location + 3];
+                    location += 4;
+                    site += 4;
+                }
+            }
+            return data;
         }
 
         public static async Task<Bitmap> TurnRight()
         {
             var task = Task.Run(() =>
             {
-                byte[] data = new byte[Stride * Height];
+                byte[] data = new byte[RowStride * Height];
                 int step = 0;
                 for (int j = 0; j < Width; j++)
                 {
                     for (int i = Height - 1; i >= 0; i--)
                     {
-                        int location = j * FormatSize + i * Stride;
+                        int location = j * FormatSize + i * RowStride;
                         data[step] = ScreenData[location];
                         data[step + 1] = ScreenData[location + 1];
                         data[step + 2] = ScreenData[location + 2];
@@ -80,7 +107,7 @@ namespace ScriptGraphicHelper.Models
             {
                 if (x < Width && y < Height)
                 {
-                    int location = x * FormatSize + y * Stride;
+                    int location = x * FormatSize + y * RowStride;
                     retRGB[0] = ScreenData[location + 2];
                     retRGB[1] = ScreenData[location + 1];
                     retRGB[2] = ScreenData[location];
@@ -240,12 +267,12 @@ namespace ScriptGraphicHelper.Models
             return false;
         }
 
-        public static CompareResult CompareColorEx(string colorString, int sim = 95, int x = 0, int y = 0, int offset = 0)
+        public static CompareResult CompareColorEx(string colorString, int sim = 95, int x = 0, int y = 0)
         {
             int findX;
             int findY;
 
-            offset = Setting.Instance.IsOffset ? 1 : 0;
+            int offset = Setting.Instance.IsOffset ? 1 : 0;
             if (sim == 0)
             {
                 sim = Setting.Instance.DiySim;
@@ -287,7 +314,6 @@ namespace ScriptGraphicHelper.Models
             endX = Math.Min(endX, Width - 1);
             endY = Math.Min(endY, Height - 1);
 
-            int offset = Setting.Instance.IsOffset ? 1 : 0;
             if (sim == 0)
             {
                 sim = Setting.Instance.DiySim;
@@ -301,16 +327,16 @@ namespace ScriptGraphicHelper.Models
 
             for (int i = startY; i <= endY; i++)
             {
-                int location = startX * FormatSize + Stride * i;
+                int location = startX * FormatSize + RowStride * i;
                 for (int j = startX; j <= endX; j++)
                 {
                     if (Math.Abs(ScreenData[location + 2] - findR) <= similarity)
                     {
-                        if (Math.Abs(ScreenData[location + 1] - findG) <=  similarity)
+                        if (Math.Abs(ScreenData[location + 1] - findG) <= similarity)
                         {
                             if (Math.Abs(ScreenData[location] - findB) <= similarity)
                             {
-                                var compareResult = CompareColorEx(compareColorString, sim, j, i, offset);
+                                var compareResult = CompareColorEx(compareColorString, sim, j, i);
                                 if (compareResult.Result)
                                 {
                                     return new Point(j, i);

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ScriptGraphicHelper.Views;
+using System;
 using System.Runtime.InteropServices;
 
 namespace ScriptGraphicHelper.Models.UnmanagedMethods
@@ -33,7 +34,7 @@ namespace ScriptGraphicHelper.Models.UnmanagedMethods
 
         public static void MessageBox(string msg, string title = "提示", int uType = 0)
         {
-            MessageBox(IntPtr.Zero, msg, title, uType);
+            MessageBox(MainWindow.Instance.Handle, msg, title, uType);
         }
 
         [DllImport("Comdlg32.dll", CharSet = CharSet.Auto)]

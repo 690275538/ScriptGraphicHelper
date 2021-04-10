@@ -1,0 +1,57 @@
+<Window
+    x:Class="ScriptGraphicHelper.Views.ImgEditor"
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    Title="图像编辑"
+    Width="500"
+    Height="300"
+    mc:Ignorable="d">
+    <Grid Background="#333333">
+        <StackPanel Margin="20,15" Orientation="Horizontal">
+            <StackPanel HorizontalAlignment="Left" VerticalAlignment="Top">
+                <Button
+                    Width="100"
+                    Margin="0,7"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding CutImg_Click}"
+                    Content="裁剪" />
+                <Button
+                    Width="100"
+                    Margin="0,7"
+                    HorizontalContentAlignment="Center"
+                    Content="保存" />
+                <Button
+                    Width="100"
+                    Margin="0,7"
+                    HorizontalContentAlignment="Center"
+                    Command="{Binding Reset_Click}"
+                    Content="重置" />
+                <ToggleButton
+                    Width="100"
+                    Margin="0,7"
+                    HorizontalContentAlignment="Center"
+                    Content="笔刷" />
+                <ToggleButton
+                    Width="100"
+                    Margin="0,7"
+                    HorizontalContentAlignment="Center"
+                    Content="反选" />
+                <Slider Width="100" />
+            </StackPanel>
+            <Image
+                Width="{Binding ImgWidth, Mode=TwoWay}"
+                Height="{Binding ImgHeight, Mode=TwoWay}"
+                Margin="20,7"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Top"
+                Focusable="True"
+                Source="{Binding DrawBitmap, Mode=TwoWay}" />
+        </StackPanel>
+
+
+
+
+    </Grid>
+</Window>

@@ -52,7 +52,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         {
 
             TcpConfig tcpConfig = new();
-            await tcpConfig.ShowDialog(new Avalonia.Controls.Window());
+            await tcpConfig.ShowDialog(MainWindow.Instance);
 
             string address = TcpConfig.Address;
             int port = TcpConfig.Port;

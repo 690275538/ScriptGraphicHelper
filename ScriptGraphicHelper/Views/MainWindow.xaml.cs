@@ -16,8 +16,12 @@ namespace ScriptGraphicHelper.Views
 {
     public class MainWindow : Window
     {
+        public static MainWindow Instance { get; private set; }
+        public IntPtr Handle { get; private set; }
+
         public MainWindow()
         {
+            Instance = this;
             InitializeComponent();
 #if DEBUG
             this.AttachDevTools();
@@ -34,6 +38,7 @@ namespace ScriptGraphicHelper.Views
 
         private void Window_Opened(object sender, EventArgs e)
         {
+            this.Handle = this.PlatformImpl.Handle.Handle;
             this.ClientSize = new Size(Setting.Instance.Width, Setting.Instance.Height);
             Timer.Tick += new EventHandler(HintMessage_Closed);
             Timer.Interval = new TimeSpan(0, 0, 5);

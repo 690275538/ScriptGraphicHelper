@@ -139,7 +139,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     }
                 }
             }
-            return new string[] { };
+            return Array.Empty<string>();
         }
         public string[] List(int ldIndex)
         {
@@ -155,7 +155,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     }
                 }
             }
-            return new string[] { };
+            return Array.Empty<string>();
         }
         public override bool IsStart(int ldIndex)
         {

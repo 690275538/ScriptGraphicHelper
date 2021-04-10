@@ -419,6 +419,7 @@ namespace ScriptGraphicHelper.ViewModels
                 Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
             }
         }
+
         public void Clear_Click()
         {
             if (CreateStr == string.Empty)
@@ -492,7 +493,7 @@ namespace ScriptGraphicHelper.ViewModels
             string ldpath4 = setting.Ldpath4;
             string ldpath64 = setting.Ldpath64;
 
-            await config.ShowDialog(new Window());
+            await config.ShowDialog(MainWindow.Instance);
 
             if (ysPath != setting.YsPath || xyPath != setting.XyPath || ldpath3 != setting.Ldpath3 || ldpath4 != setting.Ldpath4 || ldpath64 != setting.Ldpath64)
             {
@@ -541,7 +542,7 @@ namespace ScriptGraphicHelper.ViewModels
             try
             {
                 var dataImport = new DataImport();
-                await dataImport.ShowDialog(new Window());
+                await dataImport.ShowDialog(MainWindow.Instance);
                 ColorInfos.Clear();
 
                 int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
@@ -580,12 +581,19 @@ namespace ScriptGraphicHelper.ViewModels
             DataGridHeight = (ColorInfos.Count + 1) * 40;
         }
 
+        public async void CutImg_Click()
+        {
+            Range range = GetRange();
+            await new ImgEditor(range,GraphicHelper.GetRectData(range)).ShowDialog(MainWindow.Instance);
+            
+        }
+
         private Range GetRange()
         {
-            if (ColorInfos.Count == 0)
-            {
-                return new Range(0, 0, ImgWidth, ImgHeight);
-            }
+            //if (ColorInfos.Count == 0)
+            //{
+            //    return new Range(0, 0, ImgWidth, ImgHeight);
+            //}
             if (Rect != string.Empty)
             {
                 if (Rect.IndexOf("[") != -1)

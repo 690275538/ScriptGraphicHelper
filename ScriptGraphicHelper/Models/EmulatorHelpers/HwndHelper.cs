@@ -44,8 +44,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
 
             DmProxy.Hwnd = -1;
             HwndConfig config = new HwndConfig();
-            await config.ShowDialog(new Avalonia.Controls.Window());
-            int i = 0;
+            await config.ShowDialog(MainWindow.Instance);
             var task = Task.Run(() =>
             {
                 List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();

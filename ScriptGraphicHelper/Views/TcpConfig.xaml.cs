@@ -23,7 +23,7 @@ namespace ScriptGraphicHelper.Views
         }
 
         public static string Address { get; set; } = string.Empty;
-        public static int Port { get; set; } = -1;
+        public static int Port { get; set; } = 5678;
 
         private void WindowOpened(object sender, EventArgs e)
         {
@@ -31,7 +31,7 @@ namespace ScriptGraphicHelper.Views
             var address = this.FindControl<TextBox>("Address");
             address.Text = Address != string.Empty ? Address : "192.168.0.";
             var port = this.FindControl<TextBox>("Port");
-            port.Text = Port != -1 ? Port.ToString() : "0";
+            port.Text = Port.ToString();
             if (Title == "AJ≈‰÷√")
             {
                 port.IsVisible = false;

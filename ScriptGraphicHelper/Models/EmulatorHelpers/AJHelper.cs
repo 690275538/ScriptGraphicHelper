@@ -65,12 +65,12 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
             TcpConfig tcpConfig = new();
             TcpConfig.Port = 9317;
             tcpConfig.Title = "AJ配置";
-            await tcpConfig.ShowDialog(new Avalonia.Controls.Window());
+            await tcpConfig.ShowDialog(MainWindow.Instance);
 
             string address = TcpConfig.Address;
             int port = TcpConfig.Port;
 
-            var task = Task.Run(() =>
+            var task = Task.Run(async() =>
             {
                 List<KeyValuePair<int, string>> result = new();
 
@@ -104,7 +104,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                                     0x32,0x7D,0x7D
                                 };
 
-                                networkStream.WriteAsync(send);
+                                await networkStream.WriteAsync(send);
 
                                 result.Add(new KeyValuePair<int, string>(key: 0, value: deviceName));
                                 IsInit = true;
