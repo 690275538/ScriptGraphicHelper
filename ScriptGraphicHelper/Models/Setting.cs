@@ -4,8 +4,8 @@
     {
         public static Setting Instance { get; set; } = new();
 
-        public double Width { get; set; } = 1450;
-        public double Height { get; set; } = 850;
+        public double Width { get; set; } = 1800;
+        public double Height { get; set; } = 870;
         public int SimSelectedIndex { get; set; } = 0;
         public int FormatSelectedIndex { get; set; } = 0;
         public bool AddRange { get; set; } = false;

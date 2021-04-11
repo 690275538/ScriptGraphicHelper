@@ -2,6 +2,7 @@
     x:Class="ScriptGraphicHelper.Panels.Controls"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:cv="using:ScriptGraphicHelper.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="using:Avalonia.Xaml.Interactivity"
     xmlns:ic="using:Avalonia.Xaml.Interactions.Core"
@@ -9,6 +10,10 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
     mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <cv:ScaleFactorConverter x:Key="ScaleFactor" />
+    </UserControl.Resources>
 
     <UserControl.Styles>
         <Style Selector="Button">
@@ -22,7 +27,10 @@
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
             Orientation="Vertical">
-            <StackPanel Margin="0,0,0,10" Orientation="Horizontal">
+            <StackPanel
+                Margin="0,0,0,10"
+                Orientation="Horizontal"
+                ToolTip.Tip="模式配置">
                 <Image Width="24" Height="24">
                     <Image.Source>
                         <svg:SvgImage Source="/Assets/mode.svg" />
@@ -94,7 +102,10 @@
                 Command="{Binding Test_Click}">
                 测试
             </Button>
-            <StackPanel Margin="0,7" Orientation="Horizontal">
+            <StackPanel
+                Margin="0,7"
+                Orientation="Horizontal"
+                ToolTip.Tip="相似度">
                 <Image Width="24" Height="24">
                     <Image.Source>
                         <svg:SvgImage Source="/Assets/sim.svg" />
@@ -117,16 +128,19 @@
                         BorderThickness="0"
                         FontSize="14"
                         SelectedIndex="{Binding SimSelectedIndex, Mode=TwoWay}">
-                        <ComboBoxItem>100</ComboBoxItem>
-                        <ComboBoxItem>95</ComboBoxItem>
-                        <ComboBoxItem>90</ComboBoxItem>
-                        <ComboBoxItem>85</ComboBoxItem>
-                        <ComboBoxItem>80</ComboBoxItem>
+                        <ComboBoxItem>100%</ComboBoxItem>
+                        <ComboBoxItem>95%</ComboBoxItem>
+                        <ComboBoxItem>90%</ComboBoxItem>
+                        <ComboBoxItem>85%</ComboBoxItem>
+                        <ComboBoxItem>80%</ComboBoxItem>
                         <ComboBoxItem>自定义</ComboBoxItem>
                     </ComboBox>
                 </Border>
             </StackPanel>
-            <StackPanel Margin="0,7" Orientation="Horizontal">
+            <StackPanel
+                Margin="0,7"
+                Orientation="Horizontal"
+                ToolTip.Tip="测试结果">
                 <Image Width="24" Height="24">
                     <Image.Source>
                         <svg:SvgImage Source="/Assets/test.svg" />
@@ -148,7 +162,10 @@
                         Text="{Binding TestResult, Mode=TwoWay}" />
                 </Border>
             </StackPanel>
-            <StackPanel Margin="0,7" Orientation="Horizontal">
+            <StackPanel
+                Margin="0,7"
+                Orientation="Horizontal"
+                ToolTip.Tip="生成格式">
                 <Image Width="24" Height="24">
                     <Image.Source>
                         <svg:SvgImage Source="/Assets/format.svg" />
@@ -188,7 +205,46 @@
                     </ComboBox>
                 </Border>
             </StackPanel>
-            <StackPanel Margin="0,7" Orientation="Horizontal">
+            <StackPanel
+                Margin="0,7"
+                Orientation="Horizontal"
+                ToolTip.Tip="缩放系数">
+                <Image Width="24" Height="24">
+                    <Image.Source>
+                        <svg:SvgImage Source="/Assets/microscope.svg" />
+                    </Image.Source>
+                </Image>
+                <Border
+                    Margin="9,0"
+                    BorderBrush="#666666"
+                    BorderThickness="0,0,0,1"
+                    CornerRadius="0">
+                    <ComboBox
+                        Width="95"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        HorizontalContentAlignment="Center"
+                        VerticalContentAlignment="Center"
+                        Background="Transparent"
+                        BorderBrush="#666666"
+                        BorderThickness="0"
+                        FontSize="14"
+                        SelectedIndex="{Binding ScaleFactor, Mode=TwoWay, Converter={StaticResource ScaleFactor}}">
+                        <ComboBoxItem>40%</ComboBoxItem>
+                        <ComboBoxItem>60%</ComboBoxItem>
+                        <ComboBoxItem>80%</ComboBoxItem>
+                        <ComboBoxItem>100%</ComboBoxItem>
+                        <ComboBoxItem>150%</ComboBoxItem>
+                        <ComboBoxItem>200%</ComboBoxItem>
+                        <ComboBoxItem>250%</ComboBoxItem>
+                        <ComboBoxItem>300%</ComboBoxItem>
+                    </ComboBox>
+                </Border>
+            </StackPanel>
+            <StackPanel
+                Margin="0,7"
+                Orientation="Horizontal"
+                ToolTip.Tip="框选范围">
                 <Image Width="24" Height="24">
                     <Image.Source>
                         <svg:SvgImage Source="/Assets/rect.svg" />
@@ -245,7 +301,8 @@
                 BorderBrush="#666666"
                 IsReadOnly="True"
                 Text="{Binding CreateStr, Mode=TwoWay}"
-                TextWrapping="Wrap" />
+                TextWrapping="Wrap"
+                ToolTip.Tip="生成字符串" />
             <Button
                 Name="CreateStrCopy"
                 Width="130"

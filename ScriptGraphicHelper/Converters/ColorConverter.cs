@@ -15,7 +15,12 @@ namespace ScriptGraphicHelper.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            string str = (string)value;
+            if (str.IndexOf('#') == -1)
+            {
+                str = "#" + str;
+            }
+            return Color.Parse(str.PadRight(7, '0'));
         }
     }
     class Color2BrushConverter : IValueConverter
@@ -28,7 +33,8 @@ namespace ScriptGraphicHelper.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            throw new NotImplementedException();
+            Brush brush = (Brush)value;
+            return Color.Parse(brush.ToString());
         }
     }
 }

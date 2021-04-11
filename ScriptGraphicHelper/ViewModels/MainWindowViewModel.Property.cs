@@ -4,6 +4,7 @@ using Avalonia.Media.Imaging;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.ViewModels.Core;
+using System;
 using System.Collections.ObjectModel;
 
 namespace ScriptGraphicHelper.ViewModels
@@ -51,8 +52,8 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     DataGrid_IsVisible = false;
                     ImgMargin = new Thickness(170, 20, 340, 20);
-                    ColorInfo.Width = ImgWidth;
-                    ColorInfo.Height = ImgHeight;
+                    ColorInfo.Width = ImgDrawWidth;
+                    ColorInfo.Height = ImgDrawHeight;
                 }
                 else
                 {
@@ -110,17 +111,51 @@ namespace ScriptGraphicHelper.ViewModels
         }
 
         private double imgWidth = 0;
-        public double ImgWidth
+        private double ImgWidth
         {
             get => imgWidth;
-            set => this.RaiseAndSetIfChanged(ref imgWidth, value);
+            set
+            {
+                imgWidth = value;
+                ImgDrawWidth = Math.Floor(value * ScaleFactor);
+            }
         }
 
         private double imgHeight = 0;
-        public double ImgHeight
+        private double ImgHeight
         {
             get => imgHeight;
-            set => this.RaiseAndSetIfChanged(ref imgHeight, value);
+            set
+            {
+                imgHeight = value;
+                ImgDrawHeight = Math.Floor(value * ScaleFactor);
+            }
+        }
+
+        private double imgDrawWidth = 0;
+        public double ImgDrawWidth
+        {
+            get => imgDrawWidth;
+            set => this.RaiseAndSetIfChanged(ref imgDrawWidth, value);
+        }
+
+        private double imgDrawHeight = 0;
+        public double ImgDrawHeight
+        {
+            get => imgDrawHeight;
+            set => this.RaiseAndSetIfChanged(ref imgDrawHeight, value);
+        }
+
+        private double scaleFactor = 1.0;
+        public double ScaleFactor
+        {
+            get => scaleFactor;
+            set
+            {
+                ImgDrawWidth = Math.Floor(ImgWidth * value);
+                ImgDrawHeight = Math.Floor(ImgHeight * value);
+                this.RaiseAndSetIfChanged(ref scaleFactor, value);
+            }
         }
 
         private WriteableBitmap loupeWriteBmp;

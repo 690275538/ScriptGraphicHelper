@@ -13,8 +13,8 @@
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
                 <Image
                     Name="Img"
-                    Width="{Binding ImgWidth, Mode=TwoWay}"
-                    Height="{Binding ImgHeight, Mode=TwoWay}"
+                    Width="{Binding ImgDrawWidth, Mode=TwoWay}"
+                    Height="{Binding ImgDrawHeight, Mode=TwoWay}"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Top"
 					 PointerEnter="Img_PointerEnter"

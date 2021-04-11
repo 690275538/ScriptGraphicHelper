@@ -2,31 +2,35 @@
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using ScriptGraphicHelper.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Bitmap = System.Drawing.Bitmap;
+using Color = Avalonia.Media.Color;
 
 namespace ScriptGraphicHelper.Models
 {
-    public class ImgEditorHelper
+    public static class ImgEditorHelper
     {
-        public WriteableBitmap DrawBitmap { get; private set; }
-        private int Width;
-        private int Height;
-        private int RowStride;
-        private List<byte> Data = new();
+        private static int Width;
+        private static int Height;
+        private static int RowStride;
+        private static List<byte> Data = new();
 
-        public ImgEditorHelper(Range range, byte[] data)
+        public static WriteableBitmap Init(Range range, byte[] data)
         {
             Width = (int)(range.Right - range.Left + 1);
             Height = (int)(range.Bottom - range.Top + 1);
             Data = data.ToList();
-            DrawBitmap = new WriteableBitmap(new PixelSize(Width, Height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Opaque);
-            var drawBmpData = DrawBitmap.Lock();
+            WriteableBitmap drawBitmap = new WriteableBitmap(new PixelSize(Width, Height), new Vector(96, 96), Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+            var drawBmpData = drawBitmap.Lock();
             unsafe
             {
                 var ptr = (byte*)drawBmpData.Address;
@@ -44,46 +48,52 @@ namespace ScriptGraphicHelper.Models
             }
             RowStride = drawBmpData.RowBytes;
             drawBmpData.Dispose();
+            return drawBitmap;
         }
 
-        public void SetPixel(int x, int y, Color color)
+        public static async Task SetPixel(this WriteableBitmap drawBitmap, int x, int y, Color color)
         {
-            if (x >= 0 && y >= 0 && x < Width && y < Height)
+            await Task.Run(() =>
             {
-                var drawBmpData = DrawBitmap.Lock();
-                unsafe
+                if (x >= 0 && y >= 0 && x < Width && y < Height)
                 {
-                    var ptr = (byte*)drawBmpData.Address;
-                    int k = y * drawBmpData.RowBytes * x * 4;
-                    ptr[k] = color.B;
-                    ptr[k + 1] = color.G;
-                    ptr[k + 2] = color.R;
-                    ptr[k + 3] = 255;
+                    using (var drawBmpData = drawBitmap.Lock())
+                    {
+                        unsafe
+                        {
+                            var ptr = (byte*)drawBmpData.Address;
+                            int k = y * drawBmpData.RowBytes + x * 4;
+                            ptr[k] = color.B;
+                            ptr[k + 1] = color.G;
+                            ptr[k + 2] = color.R;
+                            ptr[k + 3] = 255;
+                        }
+                    }
                 }
-                drawBmpData.Dispose();
-            }
+            });
         }
 
-        public byte[] GetPixel(int x, int y)
+        public static async Task<Color> GetPixel(this WriteableBitmap drawBitmap, int x, int y)
         {
-            var result = new byte[3];
-            if (x >= 0 && y >= 0 && x < Width && y < Height)
-            {
-                var drawBmpData = DrawBitmap.Lock();
-                unsafe
-                {
-                    var ptr = (byte*)drawBmpData.Address;
-                    int k = y * drawBmpData.RowBytes * x * 4;
-                    result[2] = ptr[k];
-                    result[1] = ptr[k + 1];
-                    result[0] = ptr[k + 2];
-                }
-                drawBmpData.Dispose();
-            }
-            return result;
+            return await Task.Run(() =>
+             {
+                 if (x >= 0 && y >= 0 && x < Width && y < Height)
+                 {
+                     using (var drawBmpData = drawBitmap.Lock())
+                     {
+                         unsafe
+                         {
+                             var ptr = (byte*)drawBmpData.Address;
+                             int k = y * drawBmpData.RowBytes + x * 4;
+                             return Color.FromRgb(ptr[k + 2], ptr[k + 1], ptr[k]);
+                         }
+                     }
+                 }
+                 return Colors.White;
+             });
         }
 
-        public async void SetPixels(Color src, Color dest, int offset, bool reverse)
+        public static async void SetPixels(this WriteableBitmap drawBitmap, Color src, Color dest, int offset, bool reverse)
         {
             await Task.Run(() =>
             {
@@ -92,10 +102,10 @@ namespace ScriptGraphicHelper.Models
 
                     byte srcR = src.R; byte srcG = src.G; byte srcB = src.B;
                     byte destR = dest.R; byte destG = dest.G; byte destB = dest.B;
-                    int similarity = (int)(255 - 255 * (offset / 100.0));
+                    int similarity = (int)(255 - 255 * ((100 - offset) / 100.0));
 
                     int step = 0;
-                    var drawBmpData = DrawBitmap.Lock();
+                    var drawBmpData = drawBitmap.Lock();
                     unsafe
                     {
                         var ptr = (byte*)drawBmpData.Address;
@@ -122,7 +132,7 @@ namespace ScriptGraphicHelper.Models
                     int similarity = (int)(255 - 255 * ((100 - offset) / 100.0));
 
                     int step = 0;
-                    var drawBmpData = DrawBitmap.Lock();
+                    var drawBmpData = drawBitmap.Lock();
                     unsafe
                     {
                         var ptr = (byte*)drawBmpData.Address;
@@ -145,9 +155,9 @@ namespace ScriptGraphicHelper.Models
             });
         }
 
-        public WriteableBitmap CutImg()
+        public static WriteableBitmap CutImg(this WriteableBitmap drawBitmap)
         {
-            var drawBmpData = DrawBitmap.Lock();
+            var drawBmpData = drawBitmap.Lock();
             unsafe
             {
                 var ptr = (byte*)drawBmpData.Address;
@@ -238,13 +248,13 @@ namespace ScriptGraphicHelper.Models
                         }
                     }
                     drawBmpData.Dispose();
-                    return CutImg(range);
+                    return CutImg(drawBitmap, range);
                 }
-                return DrawBitmap;
+                return drawBitmap;
             }
         }
 
-        public WriteableBitmap CutImg(Range range)
+        public static WriteableBitmap CutImg(this WriteableBitmap drawBitmap, Range range)
         {
             int left = (int)range.Left;
             int top = (int)range.Top;
@@ -252,9 +262,9 @@ namespace ScriptGraphicHelper.Models
             int bottom = (int)range.Bottom;
             Width = right - left + 1;
             Height = bottom - top + 1;
-            var bitmap = new WriteableBitmap(new PixelSize(Width, Height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Opaque);
+            var bitmap = new WriteableBitmap(new PixelSize(Width, Height), new Vector(96, 96), Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
             var bmpData = bitmap.Lock();
-            var drawBmpData = DrawBitmap.Lock();
+            var drawBmpData = drawBitmap.Lock();
             unsafe
             {
                 var bmpPtr = (byte*)bmpData.Address;
@@ -282,14 +292,13 @@ namespace ScriptGraphicHelper.Models
             RowStride = bmpData.RowBytes;
             drawBmpData.Dispose();
             bmpData.Dispose();
-            DrawBitmap = bitmap;
-            return DrawBitmap;
+            return bitmap;
         }
 
-        public WriteableBitmap ResetImg()
+        public static WriteableBitmap ResetImg()
         {
-            DrawBitmap = new WriteableBitmap(new PixelSize(Width, Height), new Vector(96, 96), PixelFormat.Bgra8888, AlphaFormat.Opaque);
-            var drawBmpData = DrawBitmap.Lock();
+            var bitmap = new WriteableBitmap(new PixelSize(Width, Height), new Vector(96, 96), Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+            var drawBmpData = bitmap.Lock();
             unsafe
             {
                 var ptr = (byte*)drawBmpData.Address;
@@ -307,8 +316,35 @@ namespace ScriptGraphicHelper.Models
             }
             RowStride = drawBmpData.RowBytes;
             drawBmpData.Dispose();
-            return DrawBitmap;
+            return bitmap;
         }
 
+        public static Bitmap GetBitmap(this WriteableBitmap drawBitmap)
+        {
+            drawBitmap.CutImg(new Range(0, 0, Width - 1, Height - 1));
+            var bitmap = new Bitmap(Width, Height, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+            var data = bitmap.LockBits(new Rectangle(System.Drawing.Point.Empty, bitmap.Size), ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format24bppRgb);
+
+            unsafe
+            {
+                byte* ptr = (byte*)data.Scan0;
+                for (int i = 0; i < bitmap.Height; i++)
+                {
+                    int step_1 = i * data.Stride;
+                    int step_2 = i * RowStride;
+                    for (int j = 0; j < bitmap.Width; j++)
+                    {
+                        ptr[step_1] = Data[step_2];
+                        ptr[step_1 + 1] = Data[step_2 + 1];
+                        ptr[step_1 + 2] = Data[step_2 + 2];
+                        step_1 += 3;
+                        step_2 += 4;
+                    }
+                }
+            }
+
+            bitmap.UnlockBits(data);
+            return bitmap;
+        }
     }
 }

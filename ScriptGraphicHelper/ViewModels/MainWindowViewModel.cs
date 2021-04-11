@@ -62,7 +62,6 @@ namespace ScriptGraphicHelper.ViewModels
                     RectMargin = new Thickness(StartPoint.X, StartPoint.Y, 0, 0);
                     Rect_IsVisible = true;
                 }
-
             }
         });
 
@@ -90,10 +89,10 @@ namespace ScriptGraphicHelper.ViewModels
                     else
                         LoupeMargin = new Thickness(point.X + 20, point.Y + 20, 0, 0);
 
-                    var imgPoint = eventArgs.GetPosition((Image)parameters.Sender);
-
-                    PointX = Math.Floor(imgPoint.X);
-                    PointY = Math.Floor(imgPoint.Y);
+                    var position = eventArgs.GetPosition((Image)parameters.Sender);
+                    var imgPoint = new Point(Math.Floor(position.X / ScaleFactor), Math.Floor(position.Y / ScaleFactor));
+                    PointX = (int)imgPoint.X;
+                    PointY = (int)imgPoint.Y;
 
                     int sx = (int)PointX - 7;
                     int sy = (int)PointY - 7;
@@ -128,12 +127,13 @@ namespace ScriptGraphicHelper.ViewModels
                 if (Rect_IsVisible)
                 {
                     var eventArgs = (PointerEventArgs)parameters.EventArgs;
-                    var point = eventArgs.GetPosition((Image)parameters.Sender);
-                    int sx = (int)(point.X - RectWidth);
-                    int sy = (int)(point.Y - rectHeight);
+                    var position = eventArgs.GetPosition((Image)parameters.Sender);
+                    var point = new Point(Math.Floor(position.X / ScaleFactor), Math.Floor(position.Y / ScaleFactor));
+                    int sx = (int)(point.X - Math.Floor(RectWidth / ScaleFactor));
+                    int sy = (int)(point.Y - Math.Floor(rectHeight / ScaleFactor));
                     if (RectWidth > 10 && rectHeight > 10)
                     {
-                        Rect = string.Format("[{0},{1},{2},{3}]", sx, sy, (int)point.X, (int)point.Y);
+                        Rect = string.Format("[{0},{1},{2},{3}]", sx, sy, point.X, point.Y);
                     }
                     else
                     {
@@ -142,7 +142,7 @@ namespace ScriptGraphicHelper.ViewModels
                         if (FormatSelectedIndex == FormatMode.anchorsFindStr || FormatSelectedIndex == FormatMode.anchorsCompareStr)
                         {
                             AnchorType anchor = AnchorType.None;
-                            double quarterWidth = imgWidth / 4;
+                            double quarterWidth = imgDrawWidth / 4;
                             if (sx > quarterWidth * 3)
                             {
                                 anchor = AnchorType.Right;
@@ -157,8 +157,8 @@ namespace ScriptGraphicHelper.ViewModels
                             }
                             if (ColorInfos.Count == 0)
                             {
-                                ColorInfo.Width = ImgWidth;
-                                ColorInfo.Height = ImgHeight;
+                                ColorInfo.Width = ImgDrawWidth;
+                                ColorInfo.Height = ImgDrawHeight;
                             }
                             ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchor, sx, sy, color));
                         }
@@ -299,10 +299,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             try
             {
-                string[] result = new string[] { @"C:\Users\PC\Documents\leidian\Pictures\test.png" };
-
                 OpenFileName ofn = new();
-
                 ofn.structSize = Marshal.SizeOf(ofn);
                 ofn.filter = "Î»Í¼ÎÄ¼þ (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
                 ofn.file = new string(new char[256]);
@@ -584,15 +581,14 @@ namespace ScriptGraphicHelper.ViewModels
         public async void CutImg_Click()
         {
             Range range = GetRange();
-            await new ImgEditor(range,GraphicHelper.GetRectData(range)).ShowDialog(MainWindow.Instance);
-            
+            await new ImgEditor(range, GraphicHelper.GetRectData(range)).ShowDialog(MainWindow.Instance);
         }
 
         private Range GetRange()
         {
             //if (ColorInfos.Count == 0)
             //{
-            //    return new Range(0, 0, ImgWidth, ImgHeight);
+            //    return new Range(0, 0, ImgWidth - 1, ImgHeight - 1);
             //}
             if (Rect != string.Empty)
             {
