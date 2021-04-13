@@ -169,11 +169,9 @@ namespace ScriptGraphicHelper.Models
                 byte[] lbColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
                 site = (Height - 1) * RowStride + (Width - 1) * 4;
                 byte[] rbColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
-
-
+                Range range = new(0, 0, Width - 1, Height - 1);
                 if (ltColor.SequenceEqual(rtColor) && ltColor.SequenceEqual(lbColor) && ltColor.SequenceEqual(rbColor))
                 {
-                    Range range = new(0, 0, Width - 1, Height - 1);
                     for (int i = 0; i < Height; i++)
                     {
                         int num = 0;
@@ -247,10 +245,9 @@ namespace ScriptGraphicHelper.Models
                             break;
                         }
                     }
-                    drawBmpData.Dispose();
-                    return CutImg(drawBitmap, range);
                 }
-                return drawBitmap;
+                drawBmpData.Dispose();
+                return CutImg(drawBitmap, range);
             }
         }
 

@@ -10,7 +10,7 @@
     d:DesignHeight="450"
     d:DesignWidth="800"
     mc:Ignorable="d">
-        <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+        <ScrollViewer AllowAutoHide="False" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" Padding="0,0,16,16">
                 <Image
                     Name="Img"
                     Width="{Binding ImgDrawWidth, Mode=TwoWay}"

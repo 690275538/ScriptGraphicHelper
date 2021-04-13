@@ -52,8 +52,8 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     DataGrid_IsVisible = false;
                     ImgMargin = new Thickness(170, 20, 340, 20);
-                    ColorInfo.Width = ImgDrawWidth;
-                    ColorInfo.Height = ImgDrawHeight;
+                    ColorInfo.Width = ImgWidth;
+                    ColorInfo.Height = imgHeight;
                 }
                 else
                 {
