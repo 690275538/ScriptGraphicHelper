@@ -78,7 +78,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                 for (int i = 0; i < 20; i++)
                 {
                     Task.Delay(100).Wait();
-                    PipeCmd("-s " + DeviceInfos[index].Value + " pull /sdcard/screenshot.png " + BmpPath);
+                    PipeCmd("-s " + DeviceInfos[index].Value + " pull /sdcard/screenshot.png ./Assets/Adb/Screenshot/" + BmpName);
                     Task.Delay(100).Wait();
                     if (File.Exists(BmpPath))
                     {
