@@ -150,7 +150,7 @@ namespace ScriptGraphicHelper.Models
                     }
                 }
             }
-            colorStr[1] = colorStr[1].Trim(',');
+            colorStr[1] = colorStr[1] ?? string.Empty.Trim(',');
             string result = diyFormat.FindStrFormat;
             if (result.IndexOf("{ImportInfo}") != -1)
             {

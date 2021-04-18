@@ -48,6 +48,7 @@ namespace ScriptGraphicHelper.Models
                 new XyEmulatorHelper(),
                 new MoblieTcpHelper(),
                 new AJHelper(),
+                new AdbHelper(),
                 new HwndHelper()
             };
             Result = new ObservableCollection<string>();

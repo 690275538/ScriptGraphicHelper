@@ -91,11 +91,12 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         {
             string ThePath = Path + "dnconsole.exe";
 
-            if (select) { 
-                ThePath = Path + "ld.exe"; 
+            if (select)
+            {
+                ThePath = Path + "ld.exe";
             }
 
-            if (Name == "雷神模拟器" )
+            if (Name == "雷神模拟器")
             {
                 if (!select)
                 {

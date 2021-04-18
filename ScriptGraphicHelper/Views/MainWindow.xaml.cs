@@ -7,7 +7,6 @@ using Newtonsoft.Json;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
@@ -41,7 +40,7 @@ namespace ScriptGraphicHelper.Views
             this.Handle = this.PlatformImpl.Handle.Handle;
             this.ClientSize = new Size(Setting.Instance.Width, Setting.Instance.Height);
             Timer.Tick += new EventHandler(HintMessage_Closed);
-            Timer.Interval = new TimeSpan(0, 0, 5);
+            Timer.Interval = new TimeSpan(0, 0, 8);
             Timer.Start();
         }
 

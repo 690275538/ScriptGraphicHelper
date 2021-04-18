@@ -93,6 +93,7 @@
                     Items="{Binding ColorInfos, Mode=TwoWay}"
                     LoadingRow="DataGrid_LoadingRow"
                     RowHeight="40"
+					DragDrop.AllowDrop="True"
                     SelectedIndex="{Binding DataGridSelectedIndex, Mode=TwoWay}"
                     SelectionMode="Single">
                     <DataGrid.Columns>

@@ -2,15 +2,12 @@
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using ScriptGraphicHelper.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
-using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using Bitmap = System.Drawing.Bitmap;
 using Color = Avalonia.Media.Color;

@@ -1,5 +1,6 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
@@ -24,6 +25,7 @@ namespace ScriptGraphicHelper.Views
 
         public static string Address { get; set; } = string.Empty;
         public static int Port { get; set; } = 5678;
+        public bool IsTapped { get; set; } = false;
 
         private void WindowOpened(object sender, EventArgs e)
         {
@@ -38,17 +40,51 @@ namespace ScriptGraphicHelper.Views
                 var tb = this.FindControl<TextBlock>("Description");
                 tb.Text = "需要开启autojs的悬浮窗!";
                 tb.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
-                Height = Height - 20;
+                Height -= 20;
+            }
+            else if (Title == "Adb无线调试")
+            {
+                var btn = this.FindControl<Button>("Skip");
+                btn.IsVisible = true;
+                Height += 50;
             }
         }
 
-        private void Btn_Tapped(object sender, RoutedEventArgs e)
+        private void Ok_Tapped(object sender, RoutedEventArgs e)
         {
+            IsTapped = true;
             var address = this.FindControl<TextBox>("Address");
             Address = address.Text.Trim();
             var port = this.FindControl<TextBox>("Port");
             Port = int.Parse(port.Text.Trim());
             this.Close();
         }
+
+        private void Skip_Tapped(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void Window_KeyDown(object sender, KeyEventArgs e)
+        {
+            Key key = e.Key;
+            switch (key)
+            {
+                case Key.Enter:
+                    IsTapped = true;
+                    var address = this.FindControl<TextBox>("Address");
+                    Address = address.Text.Trim();
+                    var port = this.FindControl<TextBox>("Port");
+                    Port = int.Parse(port.Text.Trim());
+                    this.Close();
+                    break;
+
+                case Key.Escape: this.Close(); break;
+
+                default: break;
+            }
+            e.Handled = true;
+        }
+
     }
 }

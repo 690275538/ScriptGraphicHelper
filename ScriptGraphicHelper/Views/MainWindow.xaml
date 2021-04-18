@@ -10,7 +10,7 @@
     xmlns:ica="using:ScriptGraphicHelper.ViewModels.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:ScriptGraphicHelper.ViewModels"
-    Title="综合图色助手 V1.2.3.1"
+    Title="综合图色助手 V1.2.5"
     Width="1800"
     Height="870"
     Closing="Window_Closing"
@@ -36,11 +36,18 @@
             Command="{Binding Key_AddColorInfo}"
             CommandParameter="D"
             Gesture="D" />
-        <KeyBinding Command="{Binding ColorInfo_Clear_Click}" Gesture="F1" />
-        <KeyBinding Command="{Binding ColorInfo_Import_Click}" Gesture="F2" />
-        <KeyBinding Command="{Binding SetConfig_Click}" Gesture="F3" />
+        <KeyBinding Command="{Binding Key_ColorInfo_Clear}" Gesture="F1" />
+        <KeyBinding Command="{Binding Key_SetConfig}" Gesture="F2" />
+        <KeyBinding
+            Command="{Binding Key_ScaleFactorChanged}"
+            CommandParameter="Add"
+            Gesture="Add" />
+        <KeyBinding
+            Command="{Binding Key_ScaleFactorChanged}"
+            CommandParameter="Subtract"
+            Gesture="Subtract" />
+        <KeyBinding Command="{Binding Key_GetClipboardData}" Gesture="Ctrl+V" />
     </Window.KeyBindings>
-
     <Design.DataContext>
         <vm:MainWindowViewModel />
     </Design.DataContext>
@@ -106,19 +113,20 @@
         </StackPanel>
         <Border
             Name="HintMessage"
-            Width="360"
+            Width="650"
             Height="45"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Background="#cdcdcd"
-            CornerRadius="5">
+            CornerRadius="5"
+            DragDrop.AllowDrop="True">
             <TextBlock
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
                 FontSize="16"
                 FontWeight="Normal"
                 Foreground="#303030"
-                Text="F1清空列表, F2导入数据, F3更改配置" />
+                Text="F1清空列表, F2更改配置,方向键微调鼠标, ＋/-缩放图片, Ctrl+V导入图片或数据" />
         </Border>
 
     </Grid>

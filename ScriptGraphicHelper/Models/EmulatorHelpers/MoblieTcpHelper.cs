@@ -7,7 +7,6 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -60,7 +59,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
             {
                 List<KeyValuePair<int, string>> result = new();
 
-                if (address != string.Empty && port != -1)
+                if (tcpConfig.IsTapped && address != string.Empty && port != -1)
                 {
                     try
                     {

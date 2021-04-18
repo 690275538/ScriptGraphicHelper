@@ -29,13 +29,13 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                 for (int i = 0; i < resultArray.Length; i++)
                 {
                     string[] LineArray = resultArray[i].Split(',');
-                    if (LineArray.Length>=4)
+                    if (LineArray.Length >= 4)
                     {
                         result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[1]));
                     }
                 }
                 return result;
-            });   
+            });
             return await task;
         }
 

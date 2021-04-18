@@ -7,9 +7,10 @@
     <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationIcon>Assets\ico.ico</ApplicationIcon>
-    <ApplicationManifest>app.manifest</ApplicationManifest>
-    <Version>1.2.0.10</Version>
+    <Version>1.2.5</Version>
     <NeutralLanguage></NeutralLanguage>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <RepositoryType>https://gitee.com/yiszza/ScriptGraphicHelper</RepositoryType>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -27,6 +28,22 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
+    <AvaloniaResource Remove="Assets\Adb\adb.exe" />
+    <AvaloniaResource Remove="Assets\Adb\AdbWinApi.dll" />
+    <AvaloniaResource Remove="Assets\Adb\AdbWinUsbApi.dll" />
+    <AvaloniaResource Remove="Assets\aiming.cur" />
+    <AvaloniaResource Remove="Assets\diyFormat.json" />
+    <AvaloniaResource Remove="Assets\DmServer\clrcompression.dll" />
+    <AvaloniaResource Remove="Assets\DmServer\clrjit.dll" />
+    <AvaloniaResource Remove="Assets\DmServer\coreclr.dll" />
+    <AvaloniaResource Remove="Assets\DmServer\DmServer.exe" />
+    <AvaloniaResource Remove="Assets\DmServer\grpc_csharp_ext.x86.dll" />
+    <AvaloniaResource Remove="Assets\DmServer\mscordaccore.dll" />
+    <AvaloniaResource Remove="Assets\screenshotHelper.js" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Assets\aiming.svg" />
+    <None Remove="Assets\ico.ico" />
     <None Remove="Views\ImgEditor.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -77,8 +94,22 @@
     <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-preview.3.21167.2" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\DmServer\DmServer.csproj" />
     <ProjectReference Include="..\DmService\DmService.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\DmServer\mscordaccore.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\DmServer\grpc_csharp_ext.x86.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="Assets\DmServer\coreclr.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="App.xaml.cs">
@@ -111,9 +142,24 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <AvaloniaResource Update="Assets\aiming.svg">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </AvaloniaResource>
+    <None Update="Assets\Adb\adb.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Adb\AdbWinApi.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\Adb\AdbWinUsbApi.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DmServer\clrcompression.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DmServer\clrjit.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Assets\DmServer\DmServer.exe">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="使用说明.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
@@ -123,10 +169,10 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\diyFormat.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="Assets\screenshotHelper.js">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 </Project>

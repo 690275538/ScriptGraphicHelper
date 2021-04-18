@@ -1,5 +1,4 @@
 using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -157,8 +156,8 @@ namespace ScriptGraphicHelper.ViewModels
                             }
                             if (ColorInfos.Count == 0)
                             {
-                                ColorInfo.Width = ImgDrawWidth;
-                                ColorInfo.Height = ImgDrawHeight;
+                                ColorInfo.Width = ImgWidth;
+                                ColorInfo.Height = ImgHeight;
                             }
                             ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchor, sx, sy, color));
                         }
@@ -260,8 +259,6 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                string[] result = new string[] { @"C:\Users\PC\Documents\leidian\Pictures\test.png" };
-
                 OpenFileName ofn = new OpenFileName();
 
                 ofn.structSize = Marshal.SizeOf(ofn);
@@ -457,30 +454,111 @@ namespace ScriptGraphicHelper.ViewModels
             DataGridHeight = (ColorInfos.Count + 1) * 40;
         });
 
-        public async void Rect_Copy_Click()
+        public ICommand Key_ScaleFactorChanged => new Command((param) =>
         {
-            try
+            var num = ScaleFactor switch
             {
-                await Application.Current.Clipboard.SetTextAsync(Rect);
-            }
-            catch (Exception ex)
+                0.4 => 0,
+                0.6 => 1,
+                0.8 => 2,
+                1.0 => 3,
+                1.5 => 4,
+                2.0 => 5,
+                2.5 => 6,
+                3.0 => 7,
+                _ => 3
+            };
+
+            if (param.ToString() == "Add")
             {
-                Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
+                num++;
             }
+            else
+            {
+                num--;
+            }
+            num = Math.Min(num, 7);
+            num = Math.Max(num, 0);
+            ScaleFactor = num switch
+            {
+                0 => 0.4,
+                1 => 0.6,
+                2 => 0.8,
+                3 => 1.0,
+                4 => 1.5,
+                5 => 2.0,
+                6 => 2.5,
+                7 => 3.0,
+                _ => 1.0
+            };
+
+        });
+
+        public async void Key_GetClipboardData()
+        {
+            string[] type = await Application.Current.Clipboard.GetFormatsAsync();
+
+            if (type[0] != "Text")
+            {
+                object data = await Application.Current.Clipboard.GetDataAsync(DataFormats.FileNames);
+                if (data != null)
+                {
+                    try
+                    {
+                        string fileName = string.Join("", ((List<string>)data).ToArray());
+                        var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                        Img = new Bitmap(stream);
+                        stream.Position = 0;
+                        SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                        GraphicHelper.KeepScreen(sKBitmap);
+                        sKBitmap.Dispose();
+                        stream.Dispose();
+                    }
+                    catch (Exception e)
+                    {
+                        Win32Api.MessageBox(e.Message, uType: 48);
+                    }
+                }
+            }
+            else
+            {
+                try
+                {
+                    string data = await Application.Current.Clipboard.GetTextAsync();
+                    ColorInfos.Clear();
+
+                    int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
+                    int sim = sims[SimSelectedIndex];
+                    if (sim == 0)
+                    {
+                        sim = Setting.Instance.DiySim;
+                    }
+                    var result = DataImportHelper.Import(data);
+
+                    double similarity = (255 - 255 * (sim / 100.0)) / 2;
+                    for (int i = 0; i < result.Count; i++)
+                    {
+                        if (GraphicHelper.CompareColor(new byte[] { result[i].Color.R, result[i].Color.G, result[i].Color.B }, similarity, (int)result[i].Point.X, (int)result[i].Point.Y, 0))
+                        {
+                            result[i].IsChecked = true;
+                        }
+                        ColorInfos.Add(result[i]);
+                    }
+                    DataGridHeight = (ColorInfos.Count + 1) * 40;
+                }
+                catch { }
+
+            }
+
         }
 
-        public void Rect_Clear_Click()
-        {
-            Rect = string.Empty;
-        }
-
-        public void ColorInfo_Clear_Click()
+        public void Key_ColorInfo_Clear()
         {
             ColorInfos.Clear();
             DataGridHeight = 40;
         }
 
-        public async void SetConfig_Click()
+        public async void Key_SetConfig()
         {
             var config = new Config();
             var setting = Setting.Instance;
@@ -496,6 +574,24 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 ResetEmulatorOptions_Click();
             }
+        }
+
+        public async void Rect_Copy_Click()
+        {
+            try
+            {
+                await Application.Current.Clipboard.SetTextAsync(Rect);
+            }
+            catch (Exception ex)
+            {
+                Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
+            }
+        }
+
+
+        public void Rect_Clear_Click()
+        {
+            Rect = string.Empty;
         }
 
         public async void Point_Copy_Click()
@@ -534,39 +630,6 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
-        public async void ColorInfo_Import_Click()
-        {
-            try
-            {
-                var dataImport = new DataImport();
-                await dataImport.ShowDialog(MainWindow.Instance);
-                ColorInfos.Clear();
-
-                int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
-                int sim = sims[SimSelectedIndex];
-                if (sim == 0)
-                {
-                    sim = Setting.Instance.DiySim;
-                }
-
-                var result = DataImportHelper.Import(dataImport.ImportString);
-
-                double similarity = (255 - 255 * (sim / 100.0)) / 2;
-                for (int i = 0; i < result.Count; i++)
-                {
-                    if (GraphicHelper.CompareColor(new byte[] { result[i].Color.R, result[i].Color.G, result[i].Color.B }, similarity, (int)result[i].Point.X, (int)result[i].Point.Y, 0))
-                    {
-                        result[i].IsChecked = true;
-                    }
-                    ColorInfos.Add(result[i]);
-                }
-                DataGridHeight = (ColorInfos.Count + 1) * 40;
-            }
-            catch (Exception e)
-            {
-                Win32Api.MessageBox("导入失败: " + e.ToString());
-            }
-        }
 
         public void ColorInfo_SelectItemClear_Click()
         {

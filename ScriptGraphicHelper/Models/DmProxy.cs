@@ -25,7 +25,7 @@ namespace ScriptGraphicHelper.Models
         public static int Mode { get; set; } = 0;
 
 
-        private static string Path = AppDomain.CurrentDomain.BaseDirectory + "DmServer.exe";
+        private static string Path = AppDomain.CurrentDomain.BaseDirectory + "Assets\\DmServer\\DmServer.exe";
         public static bool ServerExists()
         {
 

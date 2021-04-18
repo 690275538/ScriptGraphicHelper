@@ -70,11 +70,11 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
             string address = TcpConfig.Address;
             int port = TcpConfig.Port;
 
-            var task = Task.Run(async() =>
+            var task = Task.Run(async () =>
             {
                 List<KeyValuePair<int, string>> result = new();
 
-                if (address != string.Empty && port != -1)
+                if (tcpConfig.IsTapped && address != string.Empty && port != -1)
                 {
                     try
                     {

@@ -8,8 +8,10 @@
     Width="250"
     Height="240"
     Icon="/Assets/ico.ico"
+    KeyDown="Window_KeyDown"
     Opened="WindowOpened"
     mc:Ignorable="d">
+
     <Grid Background="#333333">
 
         <StackPanel>
@@ -65,15 +67,27 @@
                 </Border>
             </StackPanel>
             <Button
+                Name="Skip"
                 Width="210"
                 Height="40"
-                Margin="20,30"
+                Margin="20,30,20,0"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
                 HorizontalContentAlignment="Center"
                 VerticalContentAlignment="Center"
-                Content="确认"
-                Tapped="Btn_Tapped" />
+                Content="跳过"
+                IsVisible="False"
+                Tapped="Skip_Tapped" />
         </StackPanel>
+        <Button
+            Width="210"
+            Height="40"
+            Margin="20"
+            HorizontalAlignment="Left"
+            VerticalAlignment="Bottom"
+            HorizontalContentAlignment="Center"
+            VerticalContentAlignment="Center"
+            Content="确认"
+            Tapped="Ok_Tapped" />
     </Grid>
 </Window>

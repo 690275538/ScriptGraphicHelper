@@ -1,5 +1,4 @@
-﻿using Avalonia;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
@@ -8,11 +7,7 @@ using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace ScriptGraphicHelper.ViewModels
@@ -135,7 +130,7 @@ namespace ScriptGraphicHelper.ViewModels
                 if (Win32Api.GetSaveFileName(ofn))
                 {
                     string fileName = ofn.file;
-                    if (fileName.IndexOf("bmp")!=-1)
+                    if (fileName.IndexOf("bmp") != -1)
                     {
                         var bitmap = DrawBitmap.GetBitmap();
                         bitmap.Save(fileName, System.Drawing.Imaging.ImageFormat.Bmp);

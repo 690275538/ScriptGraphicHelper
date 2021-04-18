@@ -9,7 +9,7 @@ namespace ScriptGraphicHelper.Models
     {
         public static ObservableCollection<ColorInfo> Import(string str)
         {
-            if (str.IndexOf("dm")!=-1) str = str.Substring(str.IndexOf("dm"));
+            if (str.IndexOf("dm") != -1) str = str.Substring(str.IndexOf("dm"));
             else if (str.IndexOf("anjian") != -1) str = str.Substring(str.IndexOf("anjian"));
             else if (str.IndexOf("cd") != -1) str = str.Substring(str.IndexOf("cd"));
             else if (str.IndexOf("autojs") != -1) str = str.Substring(str.IndexOf("autojs"));
