@@ -64,11 +64,6 @@
                 BorderBrush="#666666"
                 Command="{Binding ScreenShot_Click}">
                 截图
-                <Button.ContextMenu>
-                    <ContextMenu>
-                        <MenuItem Command="{Binding ResetEmulatorOptions_Click}" Header="重置选择" />
-                    </ContextMenu>
-                </Button.ContextMenu>
             </Button>
             <Button
                 Name="Load"

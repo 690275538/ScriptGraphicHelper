@@ -58,6 +58,14 @@
 
 
     <Grid Background="#303030">
+        <Grid.ContextMenu>
+            <ContextMenu>
+                <MenuItem Command="{Binding ResetEmulatorOptions_Click}" Header="重置模式" />
+                <MenuItem Command="{Binding Key_SetConfig}" Header="打开配置" />
+                <MenuItem Command="{Binding Key_GetClipboardData}" Header="导入数据" />
+                <MenuItem Command="{Binding Key_ColorInfo_Clear}" Header="清空列表" />
+            </ContextMenu>
+        </Grid.ContextMenu>
         <Panels:Controls
             Margin="20,20,10,20"
             VerticalAlignment="Top"
