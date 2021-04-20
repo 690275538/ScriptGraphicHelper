@@ -7,10 +7,12 @@
     <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationIcon>Assets\ico.ico</ApplicationIcon>
-    <Version>1.2.5</Version>
+    <Version>1.2.5.1</Version>
     <NeutralLanguage></NeutralLanguage>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RepositoryType>https://gitee.com/yiszza/ScriptGraphicHelper</RepositoryType>
+    <Authors>yiszza</Authors>
+    <Company>ScriptGraphicHelper</Company>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -27,6 +29,9 @@
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
+   <ItemGroup>
+  <RdXmlFile Include="rd.xml" />
+ </ItemGroup>
   <ItemGroup>
     <AvaloniaResource Remove="Assets\Adb\adb.exe" />
     <AvaloniaResource Remove="Assets\Adb\AdbWinApi.dll" />
@@ -91,7 +96,7 @@
     <PackageReference Include="Grpc.Net.Client" Version="2.35.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-preview.3.21167.2" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-preview.4.21213.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DmService\DmService.csproj" />

@@ -12,8 +12,11 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Input;
 using Image = Avalonia.Controls.Image;
 using Point = Avalonia.Point;
@@ -473,9 +476,20 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 num++;
             }
-            else
+            else if (param.ToString() == "Subtract")
             {
                 num--;
+            }
+            else
+            {
+                if (num == 0)
+                {
+                    num = 7;
+                }
+                else
+                {
+                    num--;
+                }
             }
             num = Math.Min(num, 7);
             num = Math.Max(num, 0);
@@ -496,16 +510,14 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Key_GetClipboardData()
         {
-            string[] type = await Application.Current.Clipboard.GetFormatsAsync();
-
-            if (type[0] != "Text")
+            try
             {
-                object data = await Application.Current.Clipboard.GetDataAsync(DataFormats.FileNames);
-                if (data != null)
+                string fileName = await Win32Api.GetFileNameAsync();
+                System.Drawing.Bitmap bmp;
+                if (fileName != string.Empty)
                 {
-                    try
+                    if (fileName.IndexOf(".bmp") != -1 || fileName.IndexOf(".png") != -1 || fileName.IndexOf(".jpg") != -1)
                     {
-                        string fileName = string.Join("", ((List<string>)data).ToArray());
                         var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
                         Img = new Bitmap(stream);
                         stream.Position = 0;
@@ -514,42 +526,55 @@ namespace ScriptGraphicHelper.ViewModels
                         sKBitmap.Dispose();
                         stream.Dispose();
                     }
-                    catch (Exception e)
-                    {
-                        Win32Api.MessageBox(e.Message, uType: 48);
-                    }
                 }
-            }
-            else
-            {
-                try
+                else if ((bmp = await Win32Api.GetBitmapAsync()) != null)
                 {
-                    string data = await Application.Current.Clipboard.GetTextAsync();
-                    ColorInfos.Clear();
-
-                    int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
-                    int sim = sims[SimSelectedIndex];
-                    if (sim == 0)
+                    var data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
+                    unsafe
                     {
-                        sim = Setting.Instance.DiySim;
+                        var ptr = data.Scan0;
+                        var array = new byte[bmp.Width * bmp.Height * 4];
+                        Marshal.Copy(ptr, array, 0, array.Length);
+                        SKBitmap sKBitmap = new(new SKImageInfo(bmp.Width, bmp.Height));
+                        Marshal.Copy(array, 0, sKBitmap.GetPixels(), array.Length);
+                        GraphicHelper.KeepScreen(sKBitmap);
+                        Img = new Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Unpremul, sKBitmap.GetPixels(), new PixelSize(bmp.Width, bmp.Height), new Vector(96, 96), sKBitmap.RowBytes);
+                        sKBitmap.Dispose();
+                        bmp.UnlockBits(data);
+                        bmp.Dispose();
                     }
-                    var result = DataImportHelper.Import(data);
-
-                    double similarity = (255 - 255 * (sim / 100.0)) / 2;
-                    for (int i = 0; i < result.Count; i++)
-                    {
-                        if (GraphicHelper.CompareColor(new byte[] { result[i].Color.R, result[i].Color.G, result[i].Color.B }, similarity, (int)result[i].Point.X, (int)result[i].Point.Y, 0))
-                        {
-                            result[i].IsChecked = true;
-                        }
-                        ColorInfos.Add(result[i]);
-                    }
-                    DataGridHeight = (ColorInfos.Count + 1) * 40;
                 }
-                catch { }
+                else
+                {
+                    string text = await Win32Api.GetTextAsync();
+                    if (text != string.Empty)
+                    {
+                        ColorInfos.Clear();
+                        int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
+                        int sim = sims[SimSelectedIndex];
+                        if (sim == 0)
+                        {
+                            sim = Setting.Instance.DiySim;
+                        }
+                        var result = DataImportHelper.Import(text);
 
+                        double similarity = (255 - 255 * (sim / 100.0)) / 2;
+                        for (int i = 0; i < result.Count; i++)
+                        {
+                            if (GraphicHelper.CompareColor(new byte[] { result[i].Color.R, result[i].Color.G, result[i].Color.B }, similarity, (int)result[i].Point.X, (int)result[i].Point.Y, 0))
+                            {
+                                result[i].IsChecked = true;
+                            }
+                            ColorInfos.Add(result[i]);
+                        }
+                        DataGridHeight = (ColorInfos.Count + 1) * 40;
+                    }
+                }
             }
-
+            catch (Exception e)
+            {
+                Win32Api.MessageBox(e.Message, uType: 48);
+            }
         }
 
         public void Key_ColorInfo_Clear()

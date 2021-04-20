@@ -10,7 +10,7 @@
     xmlns:ica="using:ScriptGraphicHelper.ViewModels.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:ScriptGraphicHelper.ViewModels"
-    Title="综合图色助手 V1.2.5"
+    Title="综合图色助手 V1.2.5.1"
     Width="1800"
     Height="870"
     Closing="Window_Closing"
@@ -46,6 +46,10 @@
             Command="{Binding Key_ScaleFactorChanged}"
             CommandParameter="Subtract"
             Gesture="Subtract" />
+        <KeyBinding
+            Command="{Binding Key_ScaleFactorChanged}"
+            CommandParameter="Tab"
+            Gesture="Tab" />
         <KeyBinding Command="{Binding Key_GetClipboardData}" Gesture="Ctrl+V" />
     </Window.KeyBindings>
     <Design.DataContext>
@@ -126,7 +130,7 @@
                 FontSize="16"
                 FontWeight="Normal"
                 Foreground="#303030"
-                Text="F1清空列表, F2更改配置,方向键微调鼠标, ＋/-缩放图片, Ctrl+V导入图片或数据" />
+                Text="F1清空列表, F2更改配置,方向键微调鼠标, Tab/＋/-缩放图片, Ctrl+V导入图片或数据" />
         </Border>
 
     </Grid>
