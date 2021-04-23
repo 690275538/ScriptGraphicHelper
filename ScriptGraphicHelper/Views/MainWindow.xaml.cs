@@ -13,7 +13,7 @@ using System.IO;
 
 namespace ScriptGraphicHelper.Views
 {
-    public class MainWindow : Window
+    public class MainWindow : FluentWindow
     {
         public static MainWindow Instance { get; private set; }
         public IntPtr Handle { get; private set; }
@@ -86,6 +86,11 @@ namespace ScriptGraphicHelper.Views
                 default: break;
             }
             e.Handled = true;
+        }
+
+        private void TitleBar_DragMove(object sender, PointerPressedEventArgs e)
+        {
+            this.BeginMoveDrag(e);
         }
     }
 }

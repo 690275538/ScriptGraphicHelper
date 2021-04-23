@@ -4,6 +4,7 @@ using Avalonia.Media.Imaging;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.ViewModels.Core;
+using ScriptGraphicHelper.Views;
 using System;
 using System.Collections.ObjectModel;
 
@@ -51,14 +52,14 @@ namespace ScriptGraphicHelper.ViewModels
                 if (value == FormatMode.anchorsFindStr || value == FormatMode.anchorsCompareStr)
                 {
                     DataGrid_IsVisible = false;
-                    ImgMargin = new Thickness(170, 20, 340, 20);
+                    ImgMargin = new Thickness(170, 55, 340, 20);
                     ColorInfo.Width = ImgWidth;
                     ColorInfo.Height = imgHeight;
                 }
                 else
                 {
                     DataGrid_IsVisible = true;
-                    ImgMargin = new Thickness(170, 20, 280, 20);
+                    ImgMargin = new Thickness(170, 55, 280, 20);
                 }
             }
         }
@@ -91,6 +92,31 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref emulatorInfo, value);
         }
 
+        private int titleBarWidth;
+        public int TitleBarWidth
+        {
+            get => titleBarWidth;
+            set => this.RaiseAndSetIfChanged(ref titleBarWidth, value);
+        }
+
+        private TabItems<TabItem> tabItems = new TabItems<TabItem>();
+        public TabItems<TabItem> TabItems
+        {
+            get => tabItems;
+            set => this.RaiseAndSetIfChanged(ref tabItems, value);
+        }
+
+        private int tabControlSelectedIndex;
+        public int TabControlSelectedIndex
+        {
+            get => tabControlSelectedIndex;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref tabControlSelectedIndex, value);
+                Img = TabItems[value].Img;
+            }
+        }
+
         private Bitmap img;
         public Bitmap Img
         {
@@ -103,7 +129,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
-        private Thickness imgMargin = new Thickness(170, 20, 280, 20);
+        private Thickness imgMargin = new Thickness(170, 55, 280, 20);
         public Thickness ImgMargin
         {
             get => imgMargin;
@@ -253,4 +279,5 @@ namespace ScriptGraphicHelper.ViewModels
         }
 
     }
+
 }

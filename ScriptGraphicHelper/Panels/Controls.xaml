@@ -20,6 +20,9 @@
             <Setter Property="FontWeight" Value="Medium" />
             <Setter Property="Background" Value="#666666" />
         </Style>
+        <Style Selector="Button /template/ ContentPresenter">
+            <Setter Property="CornerRadius" Value="3" />
+        </Style>
     </UserControl.Styles>
 
     <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">

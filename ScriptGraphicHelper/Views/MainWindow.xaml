@@ -1,4 +1,4 @@
-<Window
+<FluentWindow
     x:Class="ScriptGraphicHelper.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -11,8 +11,9 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="using:ScriptGraphicHelper.ViewModels"
     Title="综合图色助手 V1.2.5.1"
-    Width="1800"
+    Width="1730"
     Height="870"
+    CanResize="True"
     Closing="Window_Closing"
     Cursor="{Binding WindowCursor, Mode=TwoWay}"
     FontSize="14"
@@ -22,6 +23,12 @@
     Opened="Window_Opened"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
+
+    <FluentWindow.Styles>
+        <Style Selector="TitleBar:fullscreen">
+            <Setter Property="Background" Value="#7f000000" />
+        </Style>
+    </FluentWindow.Styles>
 
     <Window.KeyBindings>
         <KeyBinding
@@ -57,17 +64,22 @@
     </Design.DataContext>
 
 
-    <Grid Background="#303030">
+    <Grid Background="#252525">
         <Grid.ContextMenu>
             <ContextMenu>
-                <MenuItem Command="{Binding ResetEmulatorOptions_Click}" Header="重置模式" />
+                <MenuItem Command="{Binding ResetEmulatorOptions_Click}" Header="重置模式选择" />
+                <MenuItem Command="{Binding Key_GetClipboardData}" Header="导入图片或数据" />
                 <MenuItem Command="{Binding Key_SetConfig}" Header="打开配置" />
-                <MenuItem Command="{Binding Key_GetClipboardData}" Header="导入数据" />
                 <MenuItem Command="{Binding Key_ColorInfo_Clear}" Header="清空列表" />
+                <MenuItem
+                    Command="{Binding Key_ScaleFactorChanged}"
+                    CommandParameter="Tab"
+                    Header="缩放图片" />
             </ContextMenu>
         </Grid.ContextMenu>
+        <Panels:TitleBar VerticalAlignment="Top" PointerPressed="TitleBar_DragMove" />
         <Panels:Controls
-            Margin="20,20,10,20"
+            Margin="20,55,10,20"
             VerticalAlignment="Top"
             HorizontalContentAlignment="Left" />
         <Panels:Img
@@ -75,7 +87,7 @@
             VerticalAlignment="Top"
             HorizontalContentAlignment="Left" />
         <Panels:ColorInfos
-            Margin="10,20,20,20"
+            Margin="10,55,20,20"
             VerticalAlignment="Top"
             HorizontalContentAlignment="Right" />
 
@@ -127,11 +139,11 @@
             Name="HintMessage"
             Width="650"
             Height="45"
+            Margin="0,35,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Background="#cdcdcd"
-            CornerRadius="5"
-            DragDrop.AllowDrop="True">
+            CornerRadius="5">
             <TextBlock
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
@@ -143,5 +155,5 @@
 
     </Grid>
 
-</Window>
+</FluentWindow>
 

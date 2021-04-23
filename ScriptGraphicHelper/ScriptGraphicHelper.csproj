@@ -48,7 +48,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Remove="Assets\aiming.svg" />
+    <None Remove="Assets\close.svg" />
     <None Remove="Assets\ico.ico" />
+    <None Remove="Assets\image.svg" />
+    <None Remove="Panels\TitleBar.xaml" />
     <None Remove="Views\ImgEditor.xaml" />
   </ItemGroup>
   <ItemGroup>
@@ -62,6 +65,9 @@
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
     <AvaloniaXaml Include="Panels\Img.xaml">
+      <Generator>MSBuild:Compile</Generator>
+    </AvaloniaXaml>
+    <AvaloniaXaml Include="Panels\TitleBar.xaml">
       <Generator>MSBuild:Compile</Generator>
     </AvaloniaXaml>
     <AvaloniaXaml Include="Views\Config.xaml">
@@ -125,6 +131,9 @@
     </Compile>
     <Compile Update="Panels\Img.xaml.cs">
       <DependentUpon>Img.xaml</DependentUpon>
+    </Compile>
+    <Compile Update="Panels\TitleBar.xaml.cs">
+      <DependentUpon>TitleBar.xaml</DependentUpon>
     </Compile>
     <Compile Update="Views\Config.xaml.cs">
       <DependentUpon>Config.xaml</DependentUpon>

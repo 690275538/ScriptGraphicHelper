@@ -228,6 +228,14 @@ namespace ScriptGraphicHelper.ViewModels
             try
             {
                 Img = await EmulatorHelper.ScreenShot();
+
+                var item = new TabItem(Img);
+                item.Command = new Command((param) =>
+                {
+                    TabItems.Remove(item);
+                });
+                TabItems.Add(item);
+                TabControlSelectedIndex = TabItems.Count - 1;
             }
             catch (Exception e)
             {
@@ -283,6 +291,14 @@ namespace ScriptGraphicHelper.ViewModels
                     GraphicHelper.KeepScreen(sKBitmap);
                     sKBitmap.Dispose();
                     stream.Dispose();
+
+                    var item = new TabItem(Img);
+                    item.Command = new Command((param) =>
+                    {
+                        TabItems.Remove(item);
+                    });
+                    TabItems.Add(item);
+                    TabControlSelectedIndex = TabItems.Count - 1;
                 }
             }
             catch (Exception e)
@@ -525,6 +541,14 @@ namespace ScriptGraphicHelper.ViewModels
                         GraphicHelper.KeepScreen(sKBitmap);
                         sKBitmap.Dispose();
                         stream.Dispose();
+
+                        var item = new TabItem(Img);
+                        item.Command = new Command((param) =>
+                        {
+                            TabItems.Remove(item);
+                        });
+                        TabItems.Add(item);
+                        TabControlSelectedIndex = TabItems.Count - 1;
                     }
                 }
                 else if ((bmp = await Win32Api.GetBitmapAsync()) != null)
@@ -542,6 +566,14 @@ namespace ScriptGraphicHelper.ViewModels
                         sKBitmap.Dispose();
                         bmp.UnlockBits(data);
                         bmp.Dispose();
+
+                        var item = new TabItem(Img);
+                        item.Command = new Command((param) =>
+                        {
+                            TabItems.Remove(item);
+                        });
+                        TabItems.Add(item);
+                        TabControlSelectedIndex = TabItems.Count - 1;
                     }
                 }
                 else
