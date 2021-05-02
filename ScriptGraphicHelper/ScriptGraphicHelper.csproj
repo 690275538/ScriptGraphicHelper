@@ -49,8 +49,10 @@
   <ItemGroup>
     <None Remove="Assets\aiming.svg" />
     <None Remove="Assets\close.svg" />
+    <None Remove="Assets\fullscreen.svg" />
     <None Remove="Assets\ico.ico" />
     <None Remove="Assets\image.svg" />
+    <None Remove="Assets\minsize.svg" />
     <None Remove="Panels\TitleBar.xaml" />
     <None Remove="Views\ImgEditor.xaml" />
   </ItemGroup>
@@ -93,16 +95,16 @@
     <None Include="..\.editorconfig" Link=".editorconfig" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
-    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.0" />
+    <PackageReference Include="Avalonia" Version="0.10.2" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.2" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.2" />
+    <PackageReference Include="Avalonia.ReactiveUI" Version="0.10.2" />
     <PackageReference Include="Avalonia.Svg.Skia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.2" />
     <PackageReference Include="Grpc.Net.Client" Version="2.35.0" />
     <PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1-beta1" />
-    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-preview.4.21213.2" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.DotNet.ILCompiler" Version="6.0.0-preview.5.21227.8" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DmService\DmService.csproj" />

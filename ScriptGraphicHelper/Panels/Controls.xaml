@@ -56,7 +56,13 @@
                         BorderThickness="0"
                         FontSize="14"
                         Items="{Binding EmulatorInfo, Mode=TwoWay}"
-                        SelectedIndex="{Binding EmulatorSelectedIndex, Mode=TwoWay}" />
+                        SelectedIndex="{Binding EmulatorSelectedIndex, Mode=TwoWay}">
+                        <i:Interaction.Behaviors>
+                            <ic:EventTriggerBehavior EventName="Tapped">
+                                <icc:InvokeCommandAction Command="{Binding GetTcpList}" />
+                            </ic:EventTriggerBehavior>
+                        </i:Interaction.Behaviors>
+                    </ComboBox>
                 </Border>
             </StackPanel>
             <Button

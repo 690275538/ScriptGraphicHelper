@@ -48,7 +48,7 @@ namespace ScriptGraphicHelper.Models
 
         public Bitmap Img { get; set; }
 
-        public ICommand Command { get; set; }
+        public ICommand? Command { get; set; }
 
         public TabItem(Bitmap img)
         {

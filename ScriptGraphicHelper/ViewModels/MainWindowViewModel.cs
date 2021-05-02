@@ -2,9 +2,11 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Converters;
 using ScriptGraphicHelper.Models;
+using ScriptGraphicHelper.Models.EmulatorHelpers;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels.Core;
 using ScriptGraphicHelper.Views;
@@ -183,6 +185,22 @@ namespace ScriptGraphicHelper.ViewModels
         public ICommand Img_PointerEnter => new Command((param) => Loupe_IsVisible = true);
 
         public ICommand Img_PointerLeave => new Command((param) => Loupe_IsVisible = false);
+
+
+        public ICommand GetTcpList => new Command(async(param) =>
+        {
+            if (EmulatorHelper.Select != -1 && EmulatorHelper.Helpers[EmulatorHelper.Select].GetType() == typeof(MoblieTcpHelper))
+            {
+                var helper = EmulatorHelper.Helpers[EmulatorHelper.Select] as MoblieTcpHelper;
+                var result = new ObservableCollection<string>();
+                EmulatorHelper.Info = await helper.GetList();
+                foreach (var item in EmulatorHelper.Info)
+                {
+                    result.Add(item.Value);
+                }
+                EmulatorInfo = result;
+            }
+        });
 
         public async void Emulator_Selected(int value)
         {

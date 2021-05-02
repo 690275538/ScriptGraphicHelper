@@ -16,10 +16,5 @@ namespace ScriptGraphicHelper.Panels
         {
             AvaloniaXamlLoader.Load(this);
         }
-
-        private void ColorInfos_DataContextChanged(object sender, EventArgs e)
-        {
-            Debug.WriteLine("222ee2");
-        }
     }
 }

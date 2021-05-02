@@ -74,7 +74,7 @@ namespace ScriptGraphicHelper.Models
                 Result.Clear();
                 Info.Clear();
                 Helpers.Clear();
-
+                Select = -1;
                 State = EmlatorState.None;
             }
             catch { }

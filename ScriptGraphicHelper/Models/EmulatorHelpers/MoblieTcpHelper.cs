@@ -6,7 +6,13 @@ using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Diagnostics;
+using System.Linq;
+using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -18,100 +24,169 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
         public static byte Ping { get; set; } = 1;
         public static byte ScreenShot { get; set; } = 2;
     }
+
+    public class TcpClientInfo
+    {
+        public TcpClient Client { get; set; }
+        public string Info { get; set; } = string.Empty;
+
+        public TcpClientInfo(TcpClient client, NetworkStream stream, string info)
+        {
+            Client = client;
+            Info = info;
+        }
+    }
+
     class MoblieTcpHelper : BaseEmulatorHelper
     {
         public override string Path { get; set; } = "TCP连接";
         public override string Name { get; set; } = "TCP连接";
 
-        private TcpClient MyTcpClient;
+        private TcpListener Listener;
 
-        private NetworkStream MyNetworkStream;
+        public List<TcpClientInfo> TcpClientInfos { get; set; } = new List<TcpClientInfo>();
 
-        private bool IsInit = false;
         public override void Dispose()
         {
-            if (IsInit)
+            try
             {
-                try
-                {
-                    IsInit = false;
-                    MyNetworkStream.WriteByte(MessageType.Stop);
-                    MyNetworkStream.Close();
-                    MyTcpClient.Close();
-                }
-                catch { };
+                Listener.Stop();
             }
+            catch { };
 
         }
         public override bool IsStart(int ldIndex)
         {
             return true;
         }
-        public override async Task<List<KeyValuePair<int, string>>> ListAll()
+
+
+        private static string GetLocalIPAddress()
         {
+            using var s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+            s.Bind(new IPEndPoint(IPAddress.Any, 0));
+            s.Connect("www.baidu.com", 0);
+            var ipaddr = s.LocalEndPoint as IPEndPoint;
+            return ipaddr.Address.ToString();
+        }
 
-            TcpConfig tcpConfig = new();
-            await tcpConfig.ShowDialog(MainWindow.Instance);
+        private void ConnectCallback(IAsyncResult ar)
+        {
+            TcpListener listener = (TcpListener)ar.AsyncState;
 
-            string address = TcpConfig.Address;
-            int port = TcpConfig.Port;
-            var task = Task.Run(() =>
+            if (listener.Server == null || !listener.Server.IsBound)
             {
-                List<KeyValuePair<int, string>> result = new();
+                return;
+            }
 
-                if (tcpConfig.IsTapped && address != string.Empty && port != -1)
+            TcpClient client = listener.EndAcceptTcpClient(ar);
+            try
+            {
+                NetworkStream stream = client.GetStream();
+                byte[] buf = new byte[256];
+                for (int i = 0; i < 40; i++)
                 {
-                    try
+                    Task.Delay(100).Wait();
+                    if (stream.DataAvailable)
                     {
-                        MyTcpClient = new TcpClient(address, port);
-                        MyNetworkStream = MyTcpClient.GetStream();
-                        byte[] buf = new byte[256];
-                        for (int i = 0; i < 40; i++)
-                        {
-                            Task.Delay(100).Wait();
-                            if (MyNetworkStream.DataAvailable)
-                            {
-                                int length = MyNetworkStream.Read(buf, 0, 256);
-                                string info = Encoding.UTF8.GetString(buf, 0, length);
-                                result.Add(new KeyValuePair<int, string>(key: 0, value: info));
-                                IsInit = true;
-                                return result;
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        Win32Api.MessageBox(e.Message);
+                        int length = stream.Read(buf, 0, 256);
+                        string info = Encoding.UTF8.GetString(buf, 0, length);
+                        TcpClientInfos.Add(new TcpClientInfo(client, stream, info));
+                        Listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), Listener);
+                        return;
                     }
                 }
-                result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
+            }
+            catch (Exception e)
+            {
+                Win32Api.MessageBox(e.Message);
+            }
+        }
+
+        public override async Task<List<KeyValuePair<int, string>>> ListAll()
+        {
+            var address = GetLocalIPAddress();
+
+            TcpConfig tcpConfig = new();
+            TcpConfig.Address = address;
+
+            await tcpConfig.ShowDialog(MainWindow.Instance);
+
+            int port = TcpConfig.Port;
+
+            Listener = new TcpListener(IPAddress.Parse(address), port);
+            Listener.Start();
+
+            Listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), Listener);
+
+            var task = Task.Run(() =>
+            {
+                var result = new List<KeyValuePair<int, string>>
+                {
+                    new KeyValuePair<int, string>(key: 0, value: "null")
+                };
+                return result;
+            });
+
+            return await task;
+        }
+
+        public async Task<List<KeyValuePair<int, string>>> GetList()
+        {
+            var task = Task.Run(() =>
+            {
+                var result = new List<KeyValuePair<int, string>>();
+                for (int i = 0; i < TcpClientInfos.Count; i++)
+                {
+                    var clientInfo = TcpClientInfos[i];
+                    if (GetTcpState(i))
+                    {
+                        result.Add(new KeyValuePair<int, string>(result.Count, TcpClientInfos[i].Info));
+                    }
+                    else
+                    {
+                        TcpClientInfos.Remove(clientInfo);
+                        break;
+                    }
+                }
                 return result;
             });
             return await task;
         }
 
-        private bool GetTcpState()
+
+        private bool GetTcpState(int index)
         {
-            MyNetworkStream.WriteByte(MessageType.Ping);
-            for (int i = 0; i < 40; i++)
+            try
             {
-                Task.Delay(50).Wait();
-                byte[] _ = new byte[9];
-                if (MyNetworkStream.DataAvailable)
+                var stream = TcpClientInfos[index].Client.GetStream();
+                for (int j = 0; j < 20; j++)
                 {
-                    int length = MyNetworkStream.Read(_, 0, 1);
-                    if (length == 1)
+                    stream.WriteByte(MessageType.Ping);
+                    for (int i = 0; i < 10; i++)
                     {
-                        if (_[0] == MessageType.Ping)
+                        Task.Delay(50).Wait();
+                        byte[] _ = new byte[9];
+                        if (stream.DataAvailable)
                         {
-                            return true;
-                        }
-                        else if (_[0] == MessageType.Stop)
-                        {
-                            return false;
+                            int length = stream.Read(_, 0, 1);
+                            if (length == 1)
+                            {
+                                if (_[0] == MessageType.Ping)
+                                {
+                                    return true;
+                                }
+                                else if (_[0] == MessageType.Stop)
+                                {
+                                    return false;
+                                }
+                            }
                         }
                     }
                 }
+            }
+            catch (Exception e){
+                Win32Api.MessageBox(e.Message);
             }
             return false;
         }
@@ -136,28 +211,29 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
             return src;
         }
 
-        public override async Task<Bitmap> ScreenShot(int Index)
+        public override async Task<Bitmap> ScreenShot(int index)
         {
             var task = Task.Run(() =>
             {
                 try
                 {
-                    if (!GetTcpState())
+                    var stream = TcpClientInfos[index].Client.GetStream();
+                    if (!GetTcpState(index))
                     {
                         throw new Exception("Tcp已断开连接! 请重新连接");
                     }
-                    MyNetworkStream.WriteByte(MessageType.ScreenShot);
+                    stream.WriteByte(MessageType.ScreenShot);
 
                     int offset = 0;
                     byte[] info = new byte[4];
                     for (int i = 0; i < 100; i++)
                     {
                         Task.Delay(100).Wait();
-                        if (MyNetworkStream.DataAvailable)
+                        if (stream.DataAvailable)
                         {
                             while (offset < 4)
                             {
-                                int len = MyNetworkStream.Read(info, offset, 4 - offset);
+                                int len = stream.Read(info, offset, 4 - offset);
                                 offset += 4;
                             }
                             break;
@@ -172,7 +248,7 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
 
                     while (offset < length)
                     {
-                        int len = MyNetworkStream.Read(data, offset, length - offset);
+                        int len = stream.Read(data, offset, length - offset);
                         offset += len;
                     }
 

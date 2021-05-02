@@ -1,7 +1,10 @@
 using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Controls.Primitives;
 using Avalonia.Input;
+using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Styling;
 using Avalonia.Threading;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Models;
@@ -13,13 +16,18 @@ using System.IO;
 
 namespace ScriptGraphicHelper.Views
 {
-    public class MainWindow : FluentWindow
+    public class MainWindow : Window
     {
         public static MainWindow Instance { get; private set; }
         public IntPtr Handle { get; private set; }
 
+
         public MainWindow()
         {
+            ExtendClientAreaToDecorationsHint = true;
+            ExtendClientAreaTitleBarHeightHint = -1;
+            ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
+
             Instance = this;
             InitializeComponent();
 #if DEBUG
@@ -91,6 +99,28 @@ namespace ScriptGraphicHelper.Views
         private void TitleBar_DragMove(object sender, PointerPressedEventArgs e)
         {
             this.BeginMoveDrag(e);
+        }
+
+        private void Minsize_Tapped(object sender, RoutedEventArgs e)
+        {
+            WindowState = WindowState.Minimized;
+        }
+
+        private void Fullscreen_Tapped(object sender, RoutedEventArgs e)
+        {
+            if (WindowState == WindowState.FullScreen)
+            {
+                WindowState = WindowState.Normal;
+            }
+            else
+            {
+                WindowState = WindowState.FullScreen;
+            }
+        }
+
+        private void Close_Tapped(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

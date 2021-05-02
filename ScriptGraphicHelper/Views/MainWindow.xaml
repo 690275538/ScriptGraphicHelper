@@ -1,14 +1,12 @@
-<FluentWindow
+<Window
     x:Class="ScriptGraphicHelper.Views.MainWindow"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:Panels="clr-namespace:ScriptGraphicHelper.Panels;assembly=ScriptGraphicHelper"
-    xmlns:cv="using:ScriptGraphicHelper.Converters"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="using:Avalonia.Xaml.Interactivity"
-    xmlns:ic="using:Avalonia.Xaml.Interactions.Core"
-    xmlns:ica="using:ScriptGraphicHelper.ViewModels.Core"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
     xmlns:vm="using:ScriptGraphicHelper.ViewModels"
     Title="综合图色助手 V1.2.5.1"
     Width="1730"
@@ -21,14 +19,9 @@
     Icon="/Assets/ico.ico"
     KeyDown="Window_KeyDown"
     Opened="Window_Opened"
+    SystemDecorations="BorderOnly"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
-
-    <FluentWindow.Styles>
-        <Style Selector="TitleBar:fullscreen">
-            <Setter Property="Background" Value="#7f000000" />
-        </Style>
-    </FluentWindow.Styles>
 
     <Window.KeyBindings>
         <KeyBinding
@@ -63,8 +56,7 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-
-    <Grid Background="#252525">
+    <Grid Background="#2d2d30">
         <Grid.ContextMenu>
             <ContextMenu>
                 <MenuItem Command="{Binding ResetEmulatorOptions_Click}" Header="重置模式选择" />
@@ -77,7 +69,16 @@
                     Header="缩放图片" />
             </ContextMenu>
         </Grid.ContextMenu>
-        <Panels:TitleBar VerticalAlignment="Top" PointerPressed="TitleBar_DragMove" />
+
+        <Panels:TitleBar VerticalAlignment="Top" PointerPressed="TitleBar_DragMove">
+            <Panels:TitleBar.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="最小化" Tapped="Minsize_Tapped" />
+                    <MenuItem Header="全屏/还原" Tapped="Fullscreen_Tapped" />
+                    <MenuItem Header="关闭" Tapped="Close_Tapped" />
+                </ContextMenu>
+            </Panels:TitleBar.ContextMenu>
+        </Panels:TitleBar>
         <Panels:Controls
             Margin="20,55,10,20"
             VerticalAlignment="Top"
@@ -139,7 +140,7 @@
             Name="HintMessage"
             Width="650"
             Height="45"
-            Margin="0,35,0,0"
+            Margin="0,30,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Background="#cdcdcd"
@@ -153,7 +154,85 @@
                 Text="F1清空列表, F2更改配置,方向键微调鼠标, Tab/＋/-缩放图片, Ctrl+V导入图片或数据" />
         </Border>
 
+        <StackPanel
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Orientation="Horizontal">
+            <Button
+                Width="46"
+                Height="30"
+                Padding="15,0,15,0"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                Tapped="Minsize_Tapped">
+                <Image
+                    Width="16"
+                    Height="16"
+                    VerticalAlignment="Center">
+                    <Image.Source>
+                        <svg:SvgImage Source="/Assets/minsize.svg" />
+                    </Image.Source>
+                </Image>
+                <Button.Styles>
+                    <Style Selector="Button /template/ ContentPresenter">
+                        <Setter Property="CornerRadius" Value="0" />
+                    </Style>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                        <Setter Property="Background" Value="#ffffff" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+            <Button
+                Width="46"
+                Height="30"
+                Padding="15,0,15,0"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                Tapped="Fullscreen_Tapped">
+                <Image
+                    Width="16"
+                    Height="16"
+                    VerticalAlignment="Center">
+                    <Image.Source>
+                        <svg:SvgImage Source="/Assets/fullscreen.svg" />
+                    </Image.Source>
+                </Image>
+                <Button.Styles>
+                    <Style Selector="Button /template/ ContentPresenter">
+                        <Setter Property="CornerRadius" Value="0" />
+                    </Style>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                        <Setter Property="Background" Value="#ffffff" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+            <Button
+                Width="46"
+                Height="30"
+                Padding="15,0,15,0"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                Tapped="Close_Tapped">
+                <Image
+                    Width="16"
+                    Height="16"
+                    VerticalAlignment="Center">
+                    <Image.Source>
+                        <svg:SvgImage Source="/Assets/close.svg" />
+                    </Image.Source>
+                </Image>
+                <Button.Styles>
+                    <Style Selector="Button /template/ ContentPresenter">
+                        <Setter Property="CornerRadius" Value="0" />
+                    </Style>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                        <Setter Property="Background" Value="#bfe81123" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+        </StackPanel>
+
     </Grid>
 
-</FluentWindow>
+</Window>
 

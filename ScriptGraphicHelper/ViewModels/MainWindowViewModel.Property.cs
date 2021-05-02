@@ -1,12 +1,15 @@
 ﻿using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.ViewModels.Core;
 using ScriptGraphicHelper.Views;
+using SkiaSharp;
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 
 namespace ScriptGraphicHelper.ViewModels
 {
@@ -113,7 +116,24 @@ namespace ScriptGraphicHelper.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref tabControlSelectedIndex, value);
-                Img = TabItems[value].Img;
+                if (value != -1)
+                {
+                    Img = TabItems[value].Img;
+                    MemoryStream stream = new MemoryStream();
+                    Img.Save(stream);
+                    stream.Position = 0;
+                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    GraphicHelper.KeepScreen(sKBitmap);
+                    sKBitmap.Dispose();
+                    stream.Dispose();
+                }
+                else
+                {
+                    SKBitmap sKBitmap = new SKBitmap(1, 1);
+                    GraphicHelper.KeepScreen(sKBitmap);
+                    Img = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(1, 1), new Vector(96, 96), sKBitmap.RowBytes);
+                    sKBitmap.Dispose();
+                }
             }
         }
 
