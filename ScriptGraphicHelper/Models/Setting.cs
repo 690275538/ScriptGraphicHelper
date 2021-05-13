@@ -19,5 +19,14 @@
         public string Ldpath3 { get; set; } = string.Empty;
         public string Ldpath4 { get; set; } = string.Empty;
         public string Ldpath64 { get; set; } = string.Empty;
+        public GetColorInfosConfig GetColorInfosConfig { get; set; } = new GetColorInfosConfig();
+
+    }
+
+    public class GetColorInfosConfig
+    {
+        public int ModeSelectedIndex { get; set; } = 0;
+        public int Threshold { get; set; } = 12;
+        public int Size { get; set; } = -1;
     }
 }

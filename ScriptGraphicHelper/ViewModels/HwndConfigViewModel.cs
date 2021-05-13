@@ -22,15 +22,15 @@ namespace ScriptGraphicHelper.ViewModels
         }
 
 
-        private ObservableCollection<MovieCategory> hwndInfos = new ObservableCollection<MovieCategory>();
-        public ObservableCollection<MovieCategory> HwndInfos
+        private ObservableCollection<MoveCategory> hwndInfos = new ObservableCollection<MoveCategory>();
+        public ObservableCollection<MoveCategory> HwndInfos
         {
             get => hwndInfos;
             set => this.RaiseAndSetIfChanged(ref hwndInfos, value);
         }
 
-        private MovieCategory selectedItem;
-        public MovieCategory SelectedItem
+        private MoveCategory selectedItem;
+        public MoveCategory SelectedItem
         {
             get => selectedItem;
             set
@@ -71,7 +71,7 @@ namespace ScriptGraphicHelper.ViewModels
 
         public HwndConfigViewModel(HwndConfig hwndConfig)
         {
-            hwndInfos = new ObservableCollection<MovieCategory>();
+            hwndInfos = new ObservableCollection<MoveCategory>();
             ConfigWindow = hwndConfig;
         }
 
@@ -114,11 +114,11 @@ namespace ScriptGraphicHelper.ViewModels
             int hwnd = DmProxy.GetMousePointWindow();
             int parentHwnd = DmProxy.GetWindow(hwnd, 7);
             var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-            HwndInfos.Add(new MovieCategory(parentHwnd, DmProxy.GetWindowTitle(parentHwnd), DmProxy.GetWindowClass(parentHwnd)));
+            HwndInfos.Add(new MoveCategory(parentHwnd, DmProxy.GetWindowTitle(parentHwnd), DmProxy.GetWindowClass(parentHwnd)));
             EnumWindows(parentHwnd, HwndInfos[0]);
         });
 
-        private void EnumWindows(int parentHwd, MovieCategory movieCategory)
+        private void EnumWindows(int parentHwd, MoveCategory movieCategory)
         {
             string[] hwnds = DmProxy.EnumWindow(parentHwd, "", "", 4).Split(',');
             for (int i = 0; i < hwnds.Length; i++)
@@ -126,7 +126,7 @@ namespace ScriptGraphicHelper.ViewModels
                 if (hwnds[i].Trim() != "")
                 {
                     int hwnd = int.Parse(hwnds[i].Trim());
-                    movieCategory.Movies.Add(new MovieCategory(hwnd, DmProxy.GetWindowTitle(hwnd), DmProxy.GetWindowClass(hwnd)));
+                    movieCategory.Movies.Add(new MoveCategory(hwnd, DmProxy.GetWindowTitle(hwnd), DmProxy.GetWindowClass(hwnd)));
                     EnumWindows(hwnd, movieCategory.Movies[i]);
                 }
             }

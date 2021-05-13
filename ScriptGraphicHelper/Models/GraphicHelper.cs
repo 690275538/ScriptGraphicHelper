@@ -283,7 +283,7 @@ namespace ScriptGraphicHelper.Models
             string[] findColors = colorString.Split(',');
             if (findColors.Length != 0)
             {
-                for (byte i = 0; i < findColors.Length; i++)
+                for (int i = 0; i < findColors.Length; i++)
                 {
                     string[] findColor = findColors[i].Split('|');
                     byte[] findRGB = { 0, 0, 0 };

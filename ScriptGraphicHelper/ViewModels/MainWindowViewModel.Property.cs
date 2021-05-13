@@ -5,7 +5,6 @@ using Avalonia.Platform;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.ViewModels.Core;
-using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
 using System.Collections.ObjectModel;
@@ -288,7 +287,14 @@ namespace ScriptGraphicHelper.ViewModels
         public int DataGridHeight
         {
             get => dataGridHeight;
-            set => this.RaiseAndSetIfChanged(ref dataGridHeight, value);
+            set
+            {
+                if (value > 1000)
+                {
+                    value = 1000;
+                }
+                this.RaiseAndSetIfChanged(ref dataGridHeight, value);
+            }
         }
 
         private bool dataGrid_IsVisible = true;

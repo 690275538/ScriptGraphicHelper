@@ -1,13 +1,8 @@
-﻿using Avalonia.Input;
-using Avalonia.Threading;
-using ScriptGraphicHelper.Views;
+﻿using ScriptGraphicHelper.Views;
 using System;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Reactive.Disposables;
 using System.Runtime.InteropServices;
-using System.Runtime.InteropServices.ComTypes;
 using System.Text;
 using System.Threading.Tasks;
 

@@ -6,13 +6,8 @@ using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
-using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -185,7 +180,8 @@ namespace ScriptGraphicHelper.Models.EmulatorHelpers
                     }
                 }
             }
-            catch (Exception e){
+            catch (Exception e)
+            {
                 Win32Api.MessageBox(e.Message);
             }
             return false;

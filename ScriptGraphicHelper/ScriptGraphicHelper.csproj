@@ -7,7 +7,7 @@
     <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
     <Platforms>AnyCPU;x64</Platforms>
     <ApplicationIcon>Assets\ico.ico</ApplicationIcon>
-    <Version>1.2.5.1</Version>
+    <Version>1.2.7</Version>
     <NeutralLanguage></NeutralLanguage>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <RepositoryType>https://gitee.com/yiszza/ScriptGraphicHelper</RepositoryType>
@@ -28,33 +28,6 @@
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
-  </ItemGroup>
-   <ItemGroup>
-  <RdXmlFile Include="rd.xml" />
- </ItemGroup>
-  <ItemGroup>
-    <AvaloniaResource Remove="Assets\Adb\adb.exe" />
-    <AvaloniaResource Remove="Assets\Adb\AdbWinApi.dll" />
-    <AvaloniaResource Remove="Assets\Adb\AdbWinUsbApi.dll" />
-    <AvaloniaResource Remove="Assets\aiming.cur" />
-    <AvaloniaResource Remove="Assets\diyFormat.json" />
-    <AvaloniaResource Remove="Assets\DmServer\clrcompression.dll" />
-    <AvaloniaResource Remove="Assets\DmServer\clrjit.dll" />
-    <AvaloniaResource Remove="Assets\DmServer\coreclr.dll" />
-    <AvaloniaResource Remove="Assets\DmServer\DmServer.exe" />
-    <AvaloniaResource Remove="Assets\DmServer\grpc_csharp_ext.x86.dll" />
-    <AvaloniaResource Remove="Assets\DmServer\mscordaccore.dll" />
-    <AvaloniaResource Remove="Assets\screenshotHelper.js" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Remove="Assets\aiming.svg" />
-    <None Remove="Assets\close.svg" />
-    <None Remove="Assets\fullscreen.svg" />
-    <None Remove="Assets\ico.ico" />
-    <None Remove="Assets\image.svg" />
-    <None Remove="Assets\minsize.svg" />
-    <None Remove="Panels\TitleBar.xaml" />
-    <None Remove="Views\ImgEditor.xaml" />
   </ItemGroup>
   <ItemGroup>
     <AvaloniaXaml Include="App.xaml">

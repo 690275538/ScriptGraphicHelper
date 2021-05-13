@@ -29,6 +29,15 @@ namespace ScriptGraphicHelper.Models
             Anchor = AnchorType.None;
         }
 
+        public ColorInfo(int index, int x, int y, Color color)
+        {
+            Index = index;
+            Point = new Point(x, y);
+            Color = color;
+            IsChecked = true;
+            Anchor = AnchorType.None;
+        }
+
         public ColorInfo(int index, AnchorType anchor, int x, int y, byte[] color)
         {
             Index = index;

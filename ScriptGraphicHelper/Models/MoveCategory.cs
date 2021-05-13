@@ -3,7 +3,7 @@
 
 namespace ScriptGraphicHelper.Models
 {
-    public class MovieCategory
+    public class MoveCategory
     {
         public int Hwnd { get; set; }
 
@@ -12,30 +12,30 @@ namespace ScriptGraphicHelper.Models
         public string ClassName { get; set; }
 
         public string Info { get; set; }
-        public ObservableCollection<MovieCategory> Movies { get; set; } = new ObservableCollection<MovieCategory>();
+        public ObservableCollection<MoveCategory> Movies { get; set; } = new ObservableCollection<MoveCategory>();
 
-        public MovieCategory(int hwnd, string title, string className, params MovieCategory[] movies)
+        public MoveCategory(int hwnd, string title, string className, params MoveCategory[] movies)
         {
             Hwnd = hwnd;
             Title = title;
             ClassName = className;
             Info = string.Format("[{0}][{1}][{2}]", hwnd, title, className);
-            Movies = new ObservableCollection<MovieCategory>(movies);
+            Movies = new ObservableCollection<MoveCategory>(movies);
         }
-        public MovieCategory(int hwnd, string title, string className)
+        public MoveCategory(int hwnd, string title, string className)
         {
             Hwnd = hwnd;
             Title = title;
             ClassName = className;
             Info = string.Format("[{0}][{1}][{2}]", hwnd, title, className);
         }
-        public MovieCategory()
+        public MoveCategory()
         {
             Hwnd = -1;
             Title = "";
             ClassName = "";
             Info = string.Format("[{0}][{1}][{2}]", Hwnd, Title, ClassName);
-            Movies = new ObservableCollection<MovieCategory>();
+            Movies = new ObservableCollection<MoveCategory>();
         }
     }
 }

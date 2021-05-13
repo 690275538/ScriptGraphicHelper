@@ -2,7 +2,6 @@ using Avalonia;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
-using Avalonia.Threading;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Converters;
 using ScriptGraphicHelper.Models;
@@ -14,11 +13,9 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Windows.Input;
 using Image = Avalonia.Controls.Image;
 using Point = Avalonia.Point;
@@ -187,7 +184,7 @@ namespace ScriptGraphicHelper.ViewModels
         public ICommand Img_PointerLeave => new Command((param) => Loupe_IsVisible = false);
 
 
-        public ICommand GetTcpList => new Command(async(param) =>
+        public ICommand GetTcpList => new Command(async (param) =>
         {
             if (EmulatorHelper.Select != -1 && EmulatorHelper.Helpers[EmulatorHelper.Select].GetType() == typeof(MoblieTcpHelper))
             {
@@ -289,7 +286,7 @@ namespace ScriptGraphicHelper.ViewModels
             try
             {
                 OpenFileName ofn = new OpenFileName();
-
+                ofn.hwnd = MainWindow.Instance.Handle;
                 ofn.structSize = Marshal.SizeOf(ofn);
                 ofn.filter = "位图文件 (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
                 ofn.file = new string(new char[256]);
@@ -334,6 +331,8 @@ namespace ScriptGraphicHelper.ViewModels
             try
             {
                 OpenFileName ofn = new();
+
+                ofn.hwnd = MainWindow.Instance.Handle;
                 ofn.structSize = Marshal.SizeOf(ofn);
                 ofn.filter = "位图文件 (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
                 ofn.file = new string(new char[256]);
@@ -358,6 +357,7 @@ namespace ScriptGraphicHelper.ViewModels
         {
             if (Img != null && ColorInfos.Count > 0)
             {
+                TestResult = "测试中";
                 int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
                 if (FormatSelectedIndex == FormatMode.compareStr || FormatSelectedIndex == FormatMode.anjianCompareStr || FormatSelectedIndex == FormatMode.cdCompareStr || FormatSelectedIndex == FormatMode.diyCompareStr)
                 {
@@ -719,7 +719,16 @@ namespace ScriptGraphicHelper.ViewModels
         public async void CutImg_Click()
         {
             Range range = GetRange();
-            await new ImgEditor(range, GraphicHelper.GetRectData(range)).ShowDialog(MainWindow.Instance);
+            var colorInfos = new List<ColorInfo>();
+            var imgEditor = new ImgEditor(range, GraphicHelper.GetRectData(range));
+            await imgEditor.ShowDialog(MainWindow.Instance);
+            if (ImgEditor.Result_ACK && ImgEditor.ResultColorInfos != null && ImgEditor.ResultColorInfos.Count != 0)
+            {
+                ColorInfos = new ObservableCollection<ColorInfo>(ImgEditor.ResultColorInfos);
+                ImgEditor.ResultColorInfos.Clear();
+                ImgEditor.Result_ACK = false;
+                DataGridHeight = (ColorInfos.Count + 1) * 40;
+            }
         }
 
         private Range GetRange()

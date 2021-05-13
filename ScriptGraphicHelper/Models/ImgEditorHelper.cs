@@ -152,6 +152,10 @@ namespace ScriptGraphicHelper.Models
             });
         }
 
+
+        public static int StartX { get; set; } = 0;
+        public static int StartY { get; set; } = 0;
+
         public static WriteableBitmap CutImg(this WriteableBitmap drawBitmap)
         {
             var drawBmpData = drawBitmap.Lock();
@@ -254,6 +258,10 @@ namespace ScriptGraphicHelper.Models
             int top = (int)range.Top;
             int right = (int)range.Right;
             int bottom = (int)range.Bottom;
+
+            StartX += left;
+            StartY += top;
+
             Width = right - left + 1;
             Height = bottom - top + 1;
             var bitmap = new WriteableBitmap(new PixelSize(Width, Height), new Vector(96, 96), Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
@@ -339,6 +347,217 @@ namespace ScriptGraphicHelper.Models
 
             bitmap.UnlockBits(data);
             return bitmap;
+        }
+
+        public async static Task<List<ColorInfo>> GetColorInfos(this WriteableBitmap drawBitmap, int size, int threshold)
+        {
+            return await Task.Run(() =>
+            {
+                var result = new List<ColorInfo>();
+                var temps = new List<ColorInfo>();
+                var drawBmpData = drawBitmap.Lock();
+                unsafe
+                {
+                    bool isIgnore = false;
+                    var ignoreColor = new byte[] { 255, 0, 0 };
+                    var ptr = (byte*)drawBmpData.Address;
+                    int site = 0;
+                    byte[] ltColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+                    site = (Width - 1) * 4;
+                    byte[] rtColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+                    site = (Height - 1) * RowStride;
+                    byte[] lbColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+                    site = (Height - 1) * RowStride + (Width - 1) * 4;
+                    byte[] rbColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+
+                    if (ltColor.SequenceEqual(rtColor) && ltColor.SequenceEqual(lbColor) && ltColor.SequenceEqual(rbColor))
+                    {
+                        isIgnore = true;
+                        ignoreColor = ltColor;
+                    }
+
+                    for (int y = 1; y < Height - 1; y++)
+                    {
+                        for (int x = 1; x < Width - 1; x++)
+                        {
+                            int[] location = new int[]
+                            {
+                                y * RowStride + x * 4,
+                                (y - 1) * RowStride + (x - 1) * 4,
+                                (y - 1) * RowStride + x * 4,
+                                (y - 1) * RowStride + (x+ 1) * 4,
+                                y * RowStride + (x - 1) * 4,
+                                y * RowStride + (x + 1) * 4,
+                                (y + 1) * RowStride + (x - 1) * 4,
+                                (y + 1) * RowStride + x * 4,
+                                (y + 1) * RowStride + (x + 1) * 4
+                            };
+
+                            byte r = ptr[location[0] + 2];
+                            byte g = ptr[location[0] + 1];
+                            byte b = ptr[location[0]];
+
+                            if (isIgnore && b == ignoreColor[0] && g == ignoreColor[1] && r == ignoreColor[2])
+                            {
+                                continue;
+                            }
+                            bool isBreak = false;
+                            for (int i = 1; i < 9; i++)
+                            {
+                                if (Math.Abs(b - ptr[location[i]]) > threshold || Math.Abs(g - ptr[location[i] + 1]) > threshold || Math.Abs(r - ptr[location[i] + 2]) > threshold)
+                                {
+                                    isBreak = true;
+                                }
+                            }
+                            if (!isBreak)
+                            {
+                                temps.Add(new ColorInfo(temps.Count, x, y, new byte[] { r, g, b }));
+                            }
+                        }
+                    }
+
+                    if (temps.Count == 0)
+                    {
+                        drawBmpData.Dispose();
+                        return result;
+                    }
+
+                    if (size == -1 || size > temps.Count)
+                    {
+                        size = temps.Count;
+                    }
+
+                    result.Add(new ColorInfo(result.Count, StartX + (int)temps[0].Point.X, StartY + (int)temps[0].Point.Y, temps[0].Color));
+
+                    int[] randoms = GetRandoms(temps.Count, size - 1);
+
+                    foreach (var rd in randoms)
+                    {
+                        var temp = temps[rd];
+                        int x = (int)temp.Point.X;
+                        int y = (int)temp.Point.Y;
+                        result.Add(new ColorInfo(result.Count, StartX + x, StartY + y, temp.Color));
+
+                        int location = y * RowStride + x * 4;
+                        ptr[location] = 0x1A;
+                        ptr[location + 1] = 0xB1;
+                        ptr[location + 2] = 0xF9;
+
+                    }
+
+                    drawBmpData.Dispose();
+                    return result;
+                }
+            });
+        }
+
+
+        public async static Task<List<ColorInfo>> GetAllColorInfos(this WriteableBitmap drawBitmap, int size)
+        {
+            return await Task.Run(() =>
+            {
+                var result = new List<ColorInfo>();
+                var temps = new List<ColorInfo>();
+
+                var drawBmpData = drawBitmap.Lock();
+                unsafe
+                {
+                    bool isIgnore = false;
+                    var ignoreColor = new byte[] { 255, 0, 0 };
+                    var ptr = (byte*)drawBmpData.Address;
+                    int site = 0;
+                    byte[] ltColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+                    site = (Width - 1) * 4;
+                    byte[] rtColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+                    site = (Height - 1) * RowStride;
+                    byte[] lbColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+                    site = (Height - 1) * RowStride + (Width - 1) * 4;
+                    byte[] rbColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+
+                    if (ltColor.SequenceEqual(rtColor) && ltColor.SequenceEqual(lbColor) && ltColor.SequenceEqual(rbColor))
+                    {
+                        isIgnore = true;
+                        ignoreColor = ltColor;
+                    }
+
+                    for (int y = 0; y < Height; y++)
+                    {
+                        int location = y * RowStride;
+                        for (int x = 0; x < Width; x++, location += 4)
+                        {
+                            byte r = ptr[location + 2];
+                            byte g = ptr[location + 1];
+                            byte b = ptr[location];
+
+                            if (isIgnore && b == ignoreColor[0] && g == ignoreColor[1] && r == ignoreColor[2])
+                            {
+                                continue;
+                            }
+                            temps.Add(new ColorInfo(temps.Count, x, y, new byte[] { r, g, b }));
+                        }
+                    }
+
+                    if (temps.Count == 0)
+                    {
+                        drawBmpData.Dispose();
+                        return result;
+                    }
+
+                    if (size == -1 || size > temps.Count)
+                    {
+                        size = temps.Count;
+                    }
+
+                    result.Add(new ColorInfo(result.Count, StartX + (int)temps[0].Point.X, StartY + (int)temps[0].Point.Y, temps[0].Color));
+
+                    int[] randoms = GetRandoms(temps.Count, size - 1);
+
+                    foreach (var rd in randoms)
+                    {
+                        var temp = temps[rd];
+                        int x = (int)temp.Point.X;
+                        int y = (int)temp.Point.Y;
+                        result.Add(new ColorInfo(result.Count, StartX + x, StartY + y, temp.Color));
+
+                        int location = y * RowStride + x * 4;
+                        ptr[location] = 0x1A;
+                        ptr[location + 1] = 0xB1;
+                        ptr[location + 2] = 0xF9;
+
+                    }
+
+                    drawBmpData.Dispose();
+                    return result;
+                }
+            });
+        }
+
+        public static int[] GetRandoms(int maxValue, int len)
+        {
+
+            int[] result = new int[len];
+            int[] values = new int[maxValue];
+
+            for (int i = 0; i < values.Length; i++)
+            {
+                values[i] = i;
+            }
+
+            if (len >= maxValue)
+            {
+                return values;
+            }
+
+            for (int i = 0; i < len; i++)
+            {
+                int rd = new Random().Next(1, maxValue);
+                result[i] = values[rd];
+                values[rd] = values[maxValue - 1];
+                values[maxValue - 1] = result[i];
+                maxValue--;
+            }
+
+            return result;
         }
     }
 }
