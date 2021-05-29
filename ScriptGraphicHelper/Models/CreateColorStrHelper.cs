@@ -457,7 +457,7 @@ namespace ScriptGraphicHelper.Models
                         {
                             result += string.Format("\"{0}\",", "autojs");
                         }
-                        result += firstPoint.X.ToString() + "," + firstPoint.Y.ToString() + "\",#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "\",[";
+                        result += firstPoint.X.ToString() + "," + firstPoint.Y.ToString() + ",\"#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "\",[";
                     }
                     else
                     {

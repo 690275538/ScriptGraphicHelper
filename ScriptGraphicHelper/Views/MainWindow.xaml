@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
     xmlns:vm="using:ScriptGraphicHelper.ViewModels"
-    Title="综合图色助手 V1.2.5.1"
+    Title="综合图色助手"
     Width="1730"
     Height="870"
     CanResize="True"
@@ -122,13 +122,23 @@
                 Width="241"
                 Background="#666666"
                 Orientation="Horizontal">
-                <TextBlock Margin="10,3,0,8" Foreground="#bbbbbb">x</TextBlock>
+                <TextBlock
+                    Margin="15,3,0,8"
+                    FontSize="18"
+                    Foreground="#bbbbbb">
+                    x
+                </TextBlock>
                 <TextBlock
                     Width="80"
                     Margin="10,8,0,8"
                     FontSize="16"
                     Text="{Binding PointX, Mode=TwoWay}" />
-                <TextBlock Margin="20,3,0,8" Foreground="#bbbbbb">y</TextBlock>
+                <TextBlock
+                    Margin="20,3,0,8"
+                    FontSize="18"
+                    Foreground="#bbbbbb">
+                    y
+                </TextBlock>
                 <TextBlock
                     Width="80"
                     Margin="10,8,0,8"

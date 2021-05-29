@@ -94,9 +94,8 @@ namespace ScriptGraphicHelper.ViewModels
                     var imgPoint = new Point(Math.Floor(position.X / ScaleFactor), Math.Floor(position.Y / ScaleFactor));
                     PointX = (int)imgPoint.X;
                     PointY = (int)imgPoint.Y;
-
-                    int sx = (int)PointX - 7;
-                    int sy = (int)PointY - 7;
+                    int sx = PointX - 7;
+                    int sy = PointY - 7;
                     List<byte[]> colors = new List<byte[]>();
                     for (int j = 0; j < 15; j++)
                     {
@@ -134,7 +133,7 @@ namespace ScriptGraphicHelper.ViewModels
                     int sy = (int)(point.Y - Math.Floor(rectHeight / ScaleFactor));
                     if (RectWidth > 10 && rectHeight > 10)
                     {
-                        Rect = string.Format("[{0},{1},{2},{3}]", sx, sy, point.X, point.Y);
+                        Rect = string.Format("[{0},{1},{2},{3}]", sx, sy, Math.Min(point.X, ImgWidth - 1), Math.Min(point.Y, ImgHeight - 1));
                     }
                     else
                     {
@@ -663,7 +662,6 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
-
         public void Rect_Clear_Click()
         {
             Rect = string.Empty;
@@ -705,6 +703,26 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
+        public void ColorInfo_Reset_Click()
+        {
+            var temp = new ObservableCollection<ColorInfo>();
+
+            foreach (var colorInfo in ColorInfos)
+            {
+                int x = (int)colorInfo.Point.X;
+                int y = (int)colorInfo.Point.Y;
+                byte[] color = GraphicHelper.GetPixel(x, y);
+                colorInfo.Color = Color.FromRgb(color[0], color[1], color[2]);
+                if (x >= ImgWidth || y >= ImgHeight)
+                {
+                    colorInfo.IsChecked = false;
+                }
+                temp.Add(colorInfo);
+            }
+
+            ColorInfos = temp;
+
+        }
 
         public void ColorInfo_SelectItemClear_Click()
         {

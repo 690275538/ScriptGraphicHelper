@@ -20,7 +20,6 @@
         <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
             <Grid>
                 <DataGrid
-					ScrollViewer.VerticalScrollBarVisibility="Visible"
                     Height="{Binding DataGridHeight, Mode=TwoWay}"
                     AutoGenerateColumns="False"
                     CanUserResizeColumns="False"
@@ -30,6 +29,7 @@
                     Items="{Binding ColorInfos, Mode=TwoWay}"
                     LoadingRow="DataGrid_LoadingRow"
                     RowHeight="40"
+                    ScrollViewer.VerticalScrollBarVisibility="Visible"
                     SelectedIndex="{Binding DataGridSelectedIndex, Mode=TwoWay}"
                     SelectionMode="Single">
                     <DataGrid.Columns>
@@ -219,8 +219,8 @@
                 </DataGrid>
                 <Grid.ContextMenu>
                     <ContextMenu>
-                        <MenuItem Command="{Binding ColorInfo_Clear_Click}" Header="清空列表" />
-                        <MenuItem Command="{Binding ColorInfo_Import_Click}" Header="导入数据" />
+                        <MenuItem Command="{Binding ColorInfo_Reset_Click}" Header="坐标重置颜色" />
+                        <MenuItem Command="{Binding Key_ColorInfo_Clear}" Header="清空列表" />
                         <MenuItem Command="{Binding ColorInfo_SelectItemClear_Click}" Header="删除选中行" />
                         <MenuItem Command="{Binding Point_Copy_Click}" Header="复制坐标" />
                         <MenuItem Command="{Binding Color_Copy_Click}" Header="复制颜色值" />

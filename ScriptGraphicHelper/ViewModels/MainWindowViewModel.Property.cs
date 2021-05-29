@@ -224,15 +224,15 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref loupeMargin, value);
         }
 
-        private double pointX = 0;
-        public double PointX
+        private int pointX = 0;
+        public int PointX
         {
             get => pointX;
             set => this.RaiseAndSetIfChanged(ref pointX, value);
         }
 
-        private double pointY = 0;
-        public double PointY
+        private int pointY = 0;
+        public int PointY
         {
             get => pointY;
             set => this.RaiseAndSetIfChanged(ref pointY, value);
