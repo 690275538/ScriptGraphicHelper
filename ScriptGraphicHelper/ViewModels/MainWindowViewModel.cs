@@ -1,11 +1,12 @@
 using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Converters;
 using ScriptGraphicHelper.Models;
-using ScriptGraphicHelper.Models.EmulatorHelpers;
+using ScriptGraphicHelper.Models.ScreenshotHelpers;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels.Core;
 using ScriptGraphicHelper.Views;
@@ -20,6 +21,7 @@ using System.Windows.Input;
 using Image = Avalonia.Controls.Image;
 using Point = Avalonia.Point;
 using Range = ScriptGraphicHelper.Models.Range;
+using TabItem = ScriptGraphicHelper.Models.TabItem;
 
 namespace ScriptGraphicHelper.ViewModels
 {
@@ -45,7 +47,7 @@ namespace ScriptGraphicHelper.ViewModels
             Loupe_IsVisible = false;
             Rect_IsVisible = false;
             EmulatorSelectedIndex = -1;
-            EmulatorInfo = EmulatorHelper.Init();
+            EmulatorInfo = ScreenshotHelperBridge.Init();
         }
 
         private Point StartPoint;
@@ -185,12 +187,12 @@ namespace ScriptGraphicHelper.ViewModels
 
         public ICommand GetTcpList => new Command(async (param) =>
         {
-            if (EmulatorHelper.Select != -1 && EmulatorHelper.Helpers[EmulatorHelper.Select].GetType() == typeof(MoblieTcpHelper))
+            if (ScreenshotHelperBridge.Select != -1 && ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select].GetType() == typeof(MoblieTcpHelper))
             {
-                var helper = EmulatorHelper.Helpers[EmulatorHelper.Select] as MoblieTcpHelper;
+                var helper = ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select] as MoblieTcpHelper;
                 var result = new ObservableCollection<string>();
-                EmulatorHelper.Info = await helper.GetList();
-                foreach (var item in EmulatorHelper.Info)
+                ScreenshotHelperBridge.Info = await helper.GetList();
+                foreach (var item in ScreenshotHelperBridge.Info)
                 {
                     result.Add(item.Value);
                 }
@@ -202,29 +204,29 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                if (EmulatorHelper.State == EmlatorState.success)
+                if (ScreenshotHelperBridge.State == EmlatorState.success)
                 {
-                    EmulatorHelper.Index = EmulatorSelectedIndex;
+                    ScreenshotHelperBridge.Index = EmulatorSelectedIndex;
                 }
-                else if (EmulatorHelper.State == EmlatorState.Waiting)
+                else if (ScreenshotHelperBridge.State == EmlatorState.Waiting)
                 {
                     WindowCursor = new Cursor(StandardCursorType.Wait);
-                    EmulatorHelper.Changed(EmulatorSelectedIndex);
-                    EmulatorInfo = await EmulatorHelper.GetAll();
+                    ScreenshotHelperBridge.Changed(EmulatorSelectedIndex);
+                    EmulatorInfo = await ScreenshotHelperBridge.GetAll();
                     EmulatorSelectedIndex = -1;
                 }
-                else if (EmulatorHelper.State == EmlatorState.Starting)
+                else if (ScreenshotHelperBridge.State == EmlatorState.Starting)
                 {
-                    EmulatorHelper.State = EmlatorState.success;
+                    ScreenshotHelperBridge.State = EmlatorState.success;
                 }
             }
             catch (Exception e)
             {
                 EmulatorSelectedIndex = -1;
-                EmulatorHelper.Dispose();
+                ScreenshotHelperBridge.Dispose();
                 EmulatorInfo.Clear();
-                EmulatorInfo = EmulatorHelper.Init();
-                Win32Api.MessageBox(e.Message);
+                EmulatorInfo = ScreenshotHelperBridge.Init();
+                MainWindow.MessageBoxAsync(e.Message);
             }
             WindowCursor = new Cursor(StandardCursorType.Arrow);
 
@@ -233,15 +235,15 @@ namespace ScriptGraphicHelper.ViewModels
         public async void ScreenShot_Click()
         {
             WindowCursor = new Cursor(StandardCursorType.Wait);
-            if (EmulatorHelper.Select == -1 || EmulatorHelper.Index == -1)
+            if (ScreenshotHelperBridge.Select == -1 || ScreenshotHelperBridge.Index == -1)
             {
-                Win32Api.MessageBox("请先配置 -> (模拟器/tcp/句柄)");
+                MainWindow.MessageBoxAsync("请先配置 -> (模拟器/tcp/句柄)");
                 WindowCursor = new Cursor(StandardCursorType.Arrow);
                 return;
             }
             try
             {
-                Img = await EmulatorHelper.ScreenShot();
+                Img = await ScreenshotHelperBridge.ScreenShot();
 
                 var item = new TabItem(Img);
                 item.Command = new Command((param) =>
@@ -253,7 +255,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception e)
             {
-                Win32Api.MessageBox(e.Message);
+                MainWindow.MessageBoxAsync(e.Message);
             }
 
 
@@ -262,13 +264,13 @@ namespace ScriptGraphicHelper.ViewModels
 
         public void ResetEmulatorOptions_Click()
         {
-            if (EmulatorHelper.State == EmlatorState.Starting || EmulatorHelper.State == EmlatorState.success)
+            if (ScreenshotHelperBridge.State == EmlatorState.Starting || ScreenshotHelperBridge.State == EmlatorState.success)
             {
                 EmulatorSelectedIndex = -1;
             }
-            EmulatorHelper.Dispose();
+            ScreenshotHelperBridge.Dispose();
             EmulatorInfo.Clear();
-            EmulatorInfo = EmulatorHelper.Init();
+            EmulatorInfo = ScreenshotHelperBridge.Init();
         }
 
         public async void TurnRight_Click()
@@ -280,76 +282,54 @@ namespace ScriptGraphicHelper.ViewModels
             Img = await GraphicHelper.TurnRight();
         }
 
-        public void Load_Click()
+        public async void Load_Click()
         {
-            try
+            var dlg = new OpenFileDialog
             {
-                OpenFileName ofn = new OpenFileName();
-                ofn.hwnd = MainWindow.Instance.Handle;
-                ofn.structSize = Marshal.SizeOf(ofn);
-                ofn.filter = "位图文件 (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
-                ofn.file = new string(new char[256]);
-                ofn.maxFile = ofn.file.Length;
-                ofn.fileTitle = new string(new char[64]);
-                ofn.maxFileTitle = ofn.fileTitle.Length;
-                ofn.title = "请选择文件";
-
-                if (Win32Api.GetOpenFileName(ofn))
+                Title = "请选择文件",
+                AllowMultiple = false,
+                Filters = new List<FileDialogFilter>
                 {
-                    string fileName = ofn.file;
-
-                    var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                    Img = new Bitmap(stream);
-                    stream.Position = 0;
-                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
-                    GraphicHelper.KeepScreen(sKBitmap);
-                    sKBitmap.Dispose();
-                    stream.Dispose();
-
-                    var item = new TabItem(Img);
-                    item.Command = new Command((param) =>
+                    new FileDialogFilter
                     {
-                        TabItems.Remove(item);
-                    });
-                    TabItems.Add(item);
-                    TabControlSelectedIndex = TabItems.Count - 1;
+                        Name = "bmp"
+                    },
+                    new FileDialogFilter
+                    {
+                        Name = "png"
+                    },
+                    new FileDialogFilter
+                    {
+                        Name = "jpg"
+                    },
+                    new FileDialogFilter
+                    {
+                        Name = "jpeg"
+                    }
                 }
-            }
-            catch (Exception e)
+            };
+            var fileName = await dlg.ShowAsync(MainWindow.Instance);
+            var stream = new FileStream(fileName[0], FileMode.Open, FileAccess.Read);
+            Img = new Bitmap(stream);
+            stream.Position = 0;
+            SKBitmap sKBitmap = SKBitmap.Decode(stream);
+            GraphicHelper.KeepScreen(sKBitmap);
+            sKBitmap.Dispose();
+            stream.Dispose();
+
+            var item = new TabItem(Img);
+            item.Command = new Command((param) =>
             {
-                Win32Api.MessageBox(e.Message, uType: 48);
-            }
+                TabItems.Remove(item);
+            });
+            TabItems.Add(item);
+            TabControlSelectedIndex = TabItems.Count - 1;
         }
 
         public void Save_Click()
         {
-            if (Img == null)
-            {
-                return;
-            }
-            try
-            {
-                OpenFileName ofn = new();
 
-                ofn.hwnd = MainWindow.Instance.Handle;
-                ofn.structSize = Marshal.SizeOf(ofn);
-                ofn.filter = "位图文件 (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
-                ofn.file = new string(new char[256]);
-                ofn.maxFile = ofn.file.Length;
-                ofn.fileTitle = new string(new char[64]);
-                ofn.maxFileTitle = ofn.fileTitle.Length;
-                ofn.title = "保存文件";
-                ofn.defExt = ".png";
-                if (Win32Api.GetSaveFileName(ofn))
-                {
-                    string fileName = ofn.file;
-                    Img.Save(fileName);
-                }
-            }
-            catch (Exception e)
-            {
-                Win32Api.MessageBox(e.Message, uType: 48);
-            }
+
         }
 
         public void Test_Click()
@@ -365,7 +345,7 @@ namespace ScriptGraphicHelper.ViewModels
                     var result = GraphicHelper.CompareColorEx(str.Trim('"'), sims[SimSelectedIndex]);
                     if (!result.Result)
                     {
-                        Win32Api.MessageBox(result.ErrorMessage);
+                        MainWindow.MessageBoxAsync(result.ErrorMessage);
                     }
                     TestResult = result.Result.ToString();
                 }
@@ -378,7 +358,7 @@ namespace ScriptGraphicHelper.ViewModels
                     var result = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sims[SimSelectedIndex]);
                     if (!result.Result)
                     {
-                        Win32Api.MessageBox(result.ErrorMessage);
+                        MainWindow.MessageBoxAsync(result.ErrorMessage);
                     }
                     TestResult = result.Result.ToString();
                 }
@@ -404,7 +384,7 @@ namespace ScriptGraphicHelper.ViewModels
                     string[] strArray = str.Split("\",\"");
                     if (strArray[1].Length <= 3)
                     {
-                        Win32Api.MessageBox("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
+                        MainWindow.MessageBoxAsync("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
                         TestResult = "error";
                         return;
                     }
@@ -446,7 +426,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception ex)
             {
-                Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
+                MainWindow.MessageBoxAsync("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
             }
         }
 
@@ -543,86 +523,65 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Key_GetClipboardData()
         {
-            try
+            var formats = await Application.Current.Clipboard.GetFormatsAsync();
+            string fileName = string.Empty;
+            if (Array.IndexOf(formats, "FileNameW") != -1)
             {
-                string fileName = await Win32Api.GetFileNameAsync();
-                System.Drawing.Bitmap bmp;
-                if (fileName != string.Empty)
-                {
-                    if (fileName.IndexOf(".bmp") != -1 || fileName.IndexOf(".png") != -1 || fileName.IndexOf(".jpg") != -1)
-                    {
-                        var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                        Img = new Bitmap(stream);
-                        stream.Position = 0;
-                        SKBitmap sKBitmap = SKBitmap.Decode(stream);
-                        GraphicHelper.KeepScreen(sKBitmap);
-                        sKBitmap.Dispose();
-                        stream.Dispose();
-
-                        var item = new TabItem(Img);
-                        item.Command = new Command((param) =>
-                        {
-                            TabItems.Remove(item);
-                        });
-                        TabItems.Add(item);
-                        TabControlSelectedIndex = TabItems.Count - 1;
-                    }
-                }
-                else if ((bmp = await Win32Api.GetBitmapAsync()) != null)
-                {
-                    var data = bmp.LockBits(new System.Drawing.Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly, PixelFormat.Format32bppArgb);
-                    unsafe
-                    {
-                        var ptr = data.Scan0;
-                        var array = new byte[bmp.Width * bmp.Height * 4];
-                        Marshal.Copy(ptr, array, 0, array.Length);
-                        SKBitmap sKBitmap = new(new SKImageInfo(bmp.Width, bmp.Height));
-                        Marshal.Copy(array, 0, sKBitmap.GetPixels(), array.Length);
-                        GraphicHelper.KeepScreen(sKBitmap);
-                        Img = new Bitmap(Avalonia.Platform.PixelFormat.Bgra8888, Avalonia.Platform.AlphaFormat.Unpremul, sKBitmap.GetPixels(), new PixelSize(bmp.Width, bmp.Height), new Vector(96, 96), sKBitmap.RowBytes);
-                        sKBitmap.Dispose();
-                        bmp.UnlockBits(data);
-                        bmp.Dispose();
-
-                        var item = new TabItem(Img);
-                        item.Command = new Command((param) =>
-                        {
-                            TabItems.Remove(item);
-                        });
-                        TabItems.Add(item);
-                        TabControlSelectedIndex = TabItems.Count - 1;
-                    }
-                }
-                else
-                {
-                    string text = await Win32Api.GetTextAsync();
-                    if (text != string.Empty)
-                    {
-                        ColorInfos.Clear();
-                        int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
-                        int sim = sims[SimSelectedIndex];
-                        if (sim == 0)
-                        {
-                            sim = Setting.Instance.DiySim;
-                        }
-                        var result = DataImportHelper.Import(text);
-
-                        double similarity = (255 - 255 * (sim / 100.0)) / 2;
-                        for (int i = 0; i < result.Count; i++)
-                        {
-                            if (GraphicHelper.CompareColor(new byte[] { result[i].Color.R, result[i].Color.G, result[i].Color.B }, similarity, (int)result[i].Point.X, (int)result[i].Point.Y, 0))
-                            {
-                                result[i].IsChecked = true;
-                            }
-                            ColorInfos.Add(result[i]);
-                        }
-                        DataGridHeight = (ColorInfos.Count + 1) * 40;
-                    }
-                }
+                fileName = (string)await Application.Current.Clipboard.GetDataAsync("FileNameW");
             }
-            catch (Exception e)
+            else if (Array.IndexOf(formats, "FileName") != -1)
             {
-                Win32Api.MessageBox(e.Message, uType: 48);
+                fileName = (string)await Application.Current.Clipboard.GetDataAsync("FileName");
+            }
+            else if (Array.IndexOf(formats, "FileNames") != -1)
+            {
+                var fileNames = (List<string>)await Application.Current.Clipboard.GetDataAsync("FileNames");
+                fileName = fileNames[0];
+            }
+
+            if (fileName.IndexOf(".bmp") != -1 || fileName.IndexOf(".png") != -1 || fileName.IndexOf(".jpg") != -1)
+            {
+                var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                Img = new Bitmap(stream);
+                stream.Position = 0;
+                SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                GraphicHelper.KeepScreen(sKBitmap);
+                sKBitmap.Dispose();
+                stream.Dispose();
+
+                var item = new TabItem(Img);
+                item.Command = new Command((param) =>
+                {
+                    TabItems.Remove(item);
+                });
+                TabItems.Add(item);
+                TabControlSelectedIndex = TabItems.Count - 1;
+            }
+            else
+            {
+                string text = await Application.Current.Clipboard.GetTextAsync();
+                if (text != string.Empty)
+                {
+                    ColorInfos.Clear();
+                    int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
+                    int sim = sims[SimSelectedIndex];
+                    if (sim == 0)
+                    {
+                        sim = Setting.Instance.DiySim;
+                    }
+                    var result = DataImportHelper.Import(text);
+
+                    double similarity = (255 - 255 * (sim / 100.0)) / 2;
+                    for (int i = 0; i < result.Count; i++)
+                    {
+                        if (GraphicHelper.CompareColor(new byte[] { result[i].Color.R, result[i].Color.G, result[i].Color.B }, similarity, (int)result[i].Point.X, (int)result[i].Point.Y, 0))
+                        {
+                            result[i].IsChecked = true;
+                        }
+                        ColorInfos.Add(result[i]);
+                    }
+                    DataGridHeight = (ColorInfos.Count + 1) * 40;
+                }
             }
         }
 
@@ -658,7 +617,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception ex)
             {
-                Win32Api.MessageBox("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
+                MainWindow.MessageBoxAsync("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
             }
         }
 
@@ -681,7 +640,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception ex)
             {
-                Win32Api.MessageBox("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
+                MainWindow.MessageBoxAsync("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
             }
         }
 
@@ -699,7 +658,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception ex)
             {
-                Win32Api.MessageBox("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
+                MainWindow.MessageBoxAsync("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
             }
         }
 
@@ -732,21 +691,6 @@ namespace ScriptGraphicHelper.ViewModels
             }
             ColorInfos.RemoveAt(DataGridSelectedIndex);
             DataGridHeight = (ColorInfos.Count + 1) * 40;
-        }
-
-        public async void CutImg_Click()
-        {
-            Range range = GetRange();
-            var colorInfos = new List<ColorInfo>();
-            var imgEditor = new ImgEditor(range, GraphicHelper.GetRectData(range));
-            await imgEditor.ShowDialog(MainWindow.Instance);
-            if (ImgEditor.Result_ACK && ImgEditor.ResultColorInfos != null && ImgEditor.ResultColorInfos.Count != 0)
-            {
-                ColorInfos = new ObservableCollection<ColorInfo>(ImgEditor.ResultColorInfos);
-                ImgEditor.ResultColorInfos.Clear();
-                ImgEditor.Result_ACK = false;
-                DataGridHeight = (ColorInfos.Count + 1) * 40;
-            }
         }
 
         private Range GetRange()

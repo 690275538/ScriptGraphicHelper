@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using ScriptGraphicHelper.ViewModels;
 using ScriptGraphicHelper.Views;
+using System;
 
 namespace ScriptGraphicHelper
 {
@@ -15,6 +16,7 @@ namespace ScriptGraphicHelper
 
         public override void OnFrameworkInitializationCompleted()
         {
+
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.MainWindow = new MainWindow

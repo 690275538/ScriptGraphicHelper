@@ -130,7 +130,7 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     SKBitmap sKBitmap = new SKBitmap(1, 1);
                     GraphicHelper.KeepScreen(sKBitmap);
-                    Img = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(1, 1), new Vector(96, 96), sKBitmap.RowBytes);
+                    Img = new Bitmap(GraphicHelper.PxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(1, 1), new Vector(96, 96), sKBitmap.RowBytes);
                     sKBitmap.Dispose();
                 }
             }

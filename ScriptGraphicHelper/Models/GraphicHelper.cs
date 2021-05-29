@@ -31,7 +31,8 @@ namespace ScriptGraphicHelper.Models
     {
         public static int Width { get; set; } = 0;
         public static int Height { get; set; } = 0;
-        public static int FormatSize { get; set; }
+        public static int PixelStride { get; set; }
+        public static PixelFormat PxFormat { get; set; }
         public static int RowStride { get; set; }
         public static byte[] ScreenData { get; set; }
 
@@ -41,13 +42,13 @@ namespace ScriptGraphicHelper.Models
             Height = bitmap.Height;
             ScreenData = new byte[bitmap.RowBytes * Height];
             RowStride = bitmap.RowBytes;
-            FormatSize = bitmap.RowBytes / Width;
+            PixelStride = bitmap.RowBytes / Width;
+            PxFormat = bitmap.ColorType == SKColorType.Rgba8888 ? PixelFormat.Rgba8888 : PixelFormat.Bgra8888;
             Marshal.Copy(bitmap.GetPixels(), ScreenData, 0, ScreenData.Length);
         }
 
         public static byte[] GetRectData(Range range)
         {
-
             int sx = (int)range.Left;
             int sy = (int)range.Top;
             int ex = (int)range.Right;
@@ -82,7 +83,7 @@ namespace ScriptGraphicHelper.Models
                 {
                     for (int i = Height - 1; i >= 0; i--)
                     {
-                        int location = j * FormatSize + i * RowStride;
+                        int location = j * PixelStride + i * RowStride;
                         data[step] = ScreenData[location];
                         data[step + 1] = ScreenData[location + 1];
                         data[step + 2] = ScreenData[location + 2];
@@ -93,7 +94,7 @@ namespace ScriptGraphicHelper.Models
                 SKBitmap sKBitmap = new(new SKImageInfo(Height, Width));
                 Marshal.Copy(data, 0, sKBitmap.GetPixels(), data.Length);
                 KeepScreen(sKBitmap);
-                var bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Unpremul, sKBitmap.GetPixels(), new PixelSize(Width, Height), new Vector(96, 96), sKBitmap.RowBytes);
+                var bitmap = new Bitmap(PxFormat, AlphaFormat.Unpremul, sKBitmap.GetPixels(), new PixelSize(Width, Height), new Vector(96, 96), sKBitmap.RowBytes);
                 sKBitmap.Dispose();
                 return bitmap;
             });
@@ -107,10 +108,19 @@ namespace ScriptGraphicHelper.Models
             {
                 if (x < Width && y < Height)
                 {
-                    int location = x * FormatSize + y * RowStride;
-                    retRGB[0] = ScreenData[location + 2];
-                    retRGB[1] = ScreenData[location + 1];
-                    retRGB[2] = ScreenData[location];
+                    int location = x * PixelStride + y * RowStride;
+                    if (PxFormat == PixelFormat.Bgra8888)
+                    {
+                        retRGB[0] = ScreenData[location + 2];
+                        retRGB[1] = ScreenData[location + 1];
+                        retRGB[2] = ScreenData[location];
+                    }
+                    else if (PxFormat == PixelFormat.Rgba8888)
+                    {
+                        retRGB[0] = ScreenData[location];
+                        retRGB[1] = ScreenData[location + 1];
+                        retRGB[2] = ScreenData[location + 2];
+                    }
                 }
             }
             catch
@@ -327,14 +337,14 @@ namespace ScriptGraphicHelper.Models
 
             for (int i = startY; i <= endY; i++)
             {
-                int location = startX * FormatSize + RowStride * i;
                 for (int j = startX; j <= endX; j++)
                 {
-                    if (Math.Abs(ScreenData[location + 2] - findR) <= similarity)
+                    byte[] GetRGB = GetPixel(j, i);
+                    if (Math.Abs(GetRGB[2] - findR) <= similarity)
                     {
-                        if (Math.Abs(ScreenData[location + 1] - findG) <= similarity)
+                        if (Math.Abs(GetRGB[1] - findG) <= similarity)
                         {
-                            if (Math.Abs(ScreenData[location] - findB) <= similarity)
+                            if (Math.Abs(GetRGB[0] - findB) <= similarity)
                             {
                                 var compareResult = CompareColorEx(compareColorString, sim, j, i);
                                 if (compareResult.Result)
@@ -344,7 +354,6 @@ namespace ScriptGraphicHelper.Models
                             }
                         }
                     }
-                    location += FormatSize;
                 }
             }
             return new Point(-1, -1);

@@ -277,13 +277,6 @@
                 </Border>
             </StackPanel>
             <Button
-                Width="130"
-                Margin="0,10,0,7"
-                HorizontalContentAlignment="Center"
-                Command="{Binding CutImg_Click}">
-                裁图
-            </Button>
-            <Button
                 Name="Create"
                 Width="130"
                 Margin="0,10,0,7"
