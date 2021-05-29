@@ -4,15 +4,19 @@
 
 &nbsp;
 
-# 功能
+**多平台分支**
 
-- 模拟器模式: 调用模拟器命令行进行截图, 无需手动连接adb(适用于雷电、夜神、逍遥)
-- tcp连接模式: 与设备通过tcp通信进行截图(需要安装截图助手.apk)
-- aj连接模式: 调用aj的vscode tcp端口进行截图(需要开启aj的悬浮窗)
-- adb连接模式: 与设备通过adb进行截图(usb/wifi)
-- 句柄模式: 调用大漠进行前后台截图
-- 支持大漠、按键、触动、autojs、easyclick 以及自定义的格式代码生成
-- 多分辨率适配的测试和代码生成(锚点格式)
+&nbsp;
+
+ **与AOT分支的不同**
+
+无法进行AOT编译, 暂不支持句柄模式和图像编辑功能(后期可能会以dll的形式来支持win))
+
+win: 支持
+
+mac:  支持, debug阶段(aj连接模式, tcp模式)
+
+linux: 未支持
 
 &nbsp;
 
@@ -29,19 +33,4 @@
 
 &nbsp;
 
-由于[runtimelab](https://github.com/dotnet/runtimelab/tree/feature/NativeAOT)的AOT编译目前不支持WPF, 所以此分支是基于[avalonia](https://github.com/AvaloniaUI/Avalonia)框架重构的实验性分支
-
-句柄模式由gRPC方案实现, 原因是AOT编译目前不支持32位以及com互操作, 而大漠的com对象是32位的
-
-&nbsp;
-
-&nbsp;
-
-# AOT编译流程
-
-
-
-在项目文件csproj所在目录打开终端, 运行
-
-`dotnet publish -c Release -r win-x64`
 

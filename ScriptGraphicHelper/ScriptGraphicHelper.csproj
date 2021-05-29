@@ -72,13 +72,13 @@
 		<None Include="..\.editorconfig" Link=".editorconfig" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="0.10.2" />
-		<PackageReference Include="Avalonia.Desktop" Version="0.10.2" />
-		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.2" />
-		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.2" />
-		<PackageReference Include="Avalonia.Svg.Skia" Version="0.10.0" />
-		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.2" />
-		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+		<PackageReference Include="Avalonia" Version="0.10.999-cibuild0014036-beta" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.999-cibuild0014036-beta" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.999-cibuild0014036-beta" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.999-cibuild0014036-beta" />
+		<PackageReference Include="Avalonia.Svg.Skia" Version="0.10.5.3" />
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.5.1" />
+		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-s390x.1.20553.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 	<ItemGroup>
@@ -121,6 +121,9 @@
 		<None Update="Assets\aiming.cur">
 			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
 		</None>
+		<None Update="libmouse.dll">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="使用说明.txt">
@@ -134,11 +137,16 @@
 		</None>
 	</ItemGroup>
 
-	<ItemGroup Condition=" '$(Configuration)' == 'MacOS-build' ">
+	<ItemGroup Condition=" '$(Configuration)' == 'osx-publish' ">
+		<None Update="libmouse.dylib">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup Condition=" '$(Configuration)' == 'osx-publish' ">
 		<PackageReference Include="Dotnet.Bundle" Version="*" />
 	</ItemGroup>
 
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|MacOS-build' ">
+	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|osx-publish' ">
 		<UseAppHost>true</UseAppHost>
 		<CFBundleName>ScriptGraphicHelper</CFBundleName>
 		<!-- Also defines .app file name -->

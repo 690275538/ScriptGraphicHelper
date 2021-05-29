@@ -6,6 +6,7 @@ using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -56,13 +57,16 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
 
 
-        private static string GetLocalIPAddress()
+        public static string GetLocalAddress()
         {
-            using var s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            s.Bind(new IPEndPoint(IPAddress.Any, 0));
-            s.Connect("www.baidu.com", 0);
-            var ipaddr = s.LocalEndPoint as IPEndPoint;
-            return ipaddr.Address.ToString();
+            var addressList = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList;
+            var addresses = addressList.Where(address => address.AddressFamily == AddressFamily.InterNetwork)
+                    .Select(address => address.ToString()).ToArray();
+            if (addresses.Length == 1)
+            {
+                return addresses.First();
+            }
+            return addresses.Where(address => !address.EndsWith(".1")).FirstOrDefault() ?? addresses.FirstOrDefault() ?? string.Empty;
         }
 
         private void ConnectCallback(IAsyncResult ar)
@@ -100,7 +104,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public override async Task<List<KeyValuePair<int, string>>> ListAll()
         {
-            var address = GetLocalIPAddress();
+            var address = GetLocalAddress();
 
             TcpConfig tcpConfig = new();
             TcpConfig.Address = address;
@@ -143,6 +147,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                         TcpClientInfos.Remove(clientInfo);
                         break;
                     }
+                }
+                if (result.Count == 0)
+                {
+                    result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
                 }
                 return result;
             });

@@ -17,6 +17,7 @@ using System.Collections.ObjectModel;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Text;
 using System.Windows.Input;
 using Image = Avalonia.Controls.Image;
 using Point = Avalonia.Point;
@@ -184,7 +185,6 @@ namespace ScriptGraphicHelper.ViewModels
 
         public ICommand Img_PointerLeave => new Command((param) => Loupe_IsVisible = false);
 
-
         public ICommand GetTcpList => new Command(async (param) =>
         {
             if (ScreenshotHelperBridge.Select != -1 && ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select].GetType() == typeof(MoblieTcpHelper))
@@ -204,20 +204,20 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                if (ScreenshotHelperBridge.State == EmlatorState.success)
+                if (ScreenshotHelperBridge.State == LinkState.success)
                 {
                     ScreenshotHelperBridge.Index = EmulatorSelectedIndex;
                 }
-                else if (ScreenshotHelperBridge.State == EmlatorState.Waiting)
+                else if (ScreenshotHelperBridge.State == LinkState.Waiting)
                 {
                     WindowCursor = new Cursor(StandardCursorType.Wait);
                     ScreenshotHelperBridge.Changed(EmulatorSelectedIndex);
                     EmulatorInfo = await ScreenshotHelperBridge.GetAll();
                     EmulatorSelectedIndex = -1;
                 }
-                else if (ScreenshotHelperBridge.State == EmlatorState.Starting)
+                else if (ScreenshotHelperBridge.State == LinkState.Starting)
                 {
-                    ScreenshotHelperBridge.State = EmlatorState.success;
+                    ScreenshotHelperBridge.State = LinkState.success;
                 }
             }
             catch (Exception e)
@@ -264,7 +264,7 @@ namespace ScriptGraphicHelper.ViewModels
 
         public void ResetEmulatorOptions_Click()
         {
-            if (ScreenshotHelperBridge.State == EmlatorState.Starting || ScreenshotHelperBridge.State == EmlatorState.success)
+            if (ScreenshotHelperBridge.State == LinkState.Starting || ScreenshotHelperBridge.State == LinkState.success)
             {
                 EmulatorSelectedIndex = -1;
             }
@@ -292,43 +292,58 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     new FileDialogFilter
                     {
-                        Name = "bmp"
-                    },
-                    new FileDialogFilter
-                    {
-                        Name = "png"
-                    },
-                    new FileDialogFilter
-                    {
-                        Name = "jpg"
-                    },
-                    new FileDialogFilter
-                    {
-                        Name = "jpeg"
+                        Name = "位图文件",
+                        Extensions = { "png", "bmp","jpg"}
                     }
                 }
             };
-            var fileName = await dlg.ShowAsync(MainWindow.Instance);
-            var stream = new FileStream(fileName[0], FileMode.Open, FileAccess.Read);
-            Img = new Bitmap(stream);
-            stream.Position = 0;
-            SKBitmap sKBitmap = SKBitmap.Decode(stream);
-            GraphicHelper.KeepScreen(sKBitmap);
-            sKBitmap.Dispose();
-            stream.Dispose();
-
-            var item = new TabItem(Img);
-            item.Command = new Command((param) =>
+            
+            var fileNames = await dlg.ShowAsync(MainWindow.Instance);
+            if (fileNames.Length!=0)
             {
-                TabItems.Remove(item);
-            });
-            TabItems.Add(item);
-            TabControlSelectedIndex = TabItems.Count - 1;
+                var fileName = fileNames[0];
+                if (fileName != "" && fileName != string.Empty)
+                {
+                    var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
+                    Img = new Bitmap(stream);
+                    stream.Position = 0;
+                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    GraphicHelper.KeepScreen(sKBitmap);
+                    sKBitmap.Dispose();
+                    stream.Dispose();
+
+                    var item = new TabItem(Img);
+                    item.Command = new Command((param) =>
+                    {
+                        TabItems.Remove(item);
+                    });
+                    TabItems.Add(item);
+                    TabControlSelectedIndex = TabItems.Count - 1;
+                }
+            }
         }
 
-        public void Save_Click()
+        public async void Save_Click()
         {
+            var dlg = new SaveFileDialog
+            {
+                InitialFileName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss"),
+                Title = "保存文件",
+                Filters = new List<FileDialogFilter>
+                {
+                    new FileDialogFilter
+                    {
+                        Name = "位图文件",
+                        Extensions = { "png", "bmp","jpg"}
+                    }
+                }
+            };
+            string fileName = await dlg.ShowAsync(MainWindow.Instance);
 
+            if (fileName!=null && fileName != "" && fileName != string.Empty)
+            {
+                Img.Save(fileName);
+            }
 
         }
 
@@ -523,20 +538,16 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Key_GetClipboardData()
         {
-            var formats = await Application.Current.Clipboard.GetFormatsAsync();
+            string[] formats = await Application.Current.Clipboard.GetFormatsAsync();
             string fileName = string.Empty;
-            if (Array.IndexOf(formats, "FileNameW") != -1)
+          
+            if (Array.IndexOf(formats, "FileNames") != -1)
             {
-                fileName = (string)await Application.Current.Clipboard.GetDataAsync("FileNameW");
-            }
-            else if (Array.IndexOf(formats, "FileName") != -1)
-            {
-                fileName = (string)await Application.Current.Clipboard.GetDataAsync("FileName");
-            }
-            else if (Array.IndexOf(formats, "FileNames") != -1)
-            {
-                var fileNames = (List<string>)await Application.Current.Clipboard.GetDataAsync("FileNames");
-                fileName = fileNames[0];
+                var fileNames = (List<string>)await Application.Current.Clipboard.GetDataAsync(DataFormats.FileNames);
+                if (fileNames.Count!=0)
+                {
+                    fileName = fileNames[0];
+                }
             }
 
             if (fileName.IndexOf(".bmp") != -1 || fileName.IndexOf(".png") != -1 || fileName.IndexOf(".jpg") != -1)

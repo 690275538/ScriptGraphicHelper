@@ -43,7 +43,7 @@ namespace ScriptGraphicHelper.Views
             dmRegcode.Text = Setting.Instance.DmRegcode;
         }
 
-        private void Ok_Tapped(object sender, RoutedEventArgs e)
+        private void Ok_Tapped(object sender, Avalonia.Input.TappedEventArgs e)
         {
             try
             {

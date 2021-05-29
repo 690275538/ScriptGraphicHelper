@@ -4,6 +4,7 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
+using System.Reflection;
 
 namespace ScriptGraphicHelper.Views
 {
@@ -29,6 +30,10 @@ namespace ScriptGraphicHelper.Views
         {
             Title = title;
             Message = msg;
+
+            ExtendClientAreaToDecorationsHint = true;
+            ExtendClientAreaTitleBarHeightHint = -1;
+            ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
         }
 
         public MessageBox(string msg) : this("ÌáÊ¾", msg) { }
@@ -39,11 +44,10 @@ namespace ScriptGraphicHelper.Views
             var title = this.FindControl<TextBlock>("Title");
             title.Text = Title;
             var tb = this.FindControl<TextBlock>("Message");
-            tb.Text = Message;
-
+            tb.Text = Message+ "sfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafa";
         }
 
-        private async void Close_Tapped(object sender, RoutedEventArgs e)
+        private async void Close_Tapped(object sender, TappedEventArgs e)
         {
             await Application.Current.Clipboard.SetTextAsync(Message);
             this.Close();

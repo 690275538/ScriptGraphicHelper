@@ -11,16 +11,16 @@ namespace ScriptGraphicHelper.Models.UnmanagedMethods
 
     public static class NativeApi
     {
-        [DllImport("mouse.dll")]
+        [DllImport("mouse")]
         public static extern void Move2Left();
 
-        [DllImport("mouse.dll")]
+        [DllImport("mouse")]
         public static extern void Move2Top();
 
-        [DllImport("mouse.dll")]
+        [DllImport("mouse")]
         public static extern void Move2Right();
 
-        [DllImport("mouse.dll")]
+        [DllImport("mouse")]
         public static extern void Move2Bottom();
     }
 }

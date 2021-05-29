@@ -11,6 +11,7 @@ using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Views
@@ -77,18 +78,6 @@ namespace ScriptGraphicHelper.Views
             string settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json", settingStr);
 
-            try
-            {
-                Process[] processes = Process.GetProcessesByName("DmServer");
-                if (processes.Length > 0)
-                {
-                    for (int i = 0; i < processes.Length; i++)
-                    {
-                        processes[i].Kill();
-                    }
-                }
-            }
-            catch { }
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -110,12 +99,12 @@ namespace ScriptGraphicHelper.Views
             this.BeginMoveDrag(e);
         }
 
-        private void Minsize_Tapped(object sender, RoutedEventArgs e)
+        private void Minsize_Tapped(object sender, TappedEventArgs e)
         {
             WindowState = WindowState.Minimized;
         }
 
-        private void Fullscreen_Tapped(object sender, RoutedEventArgs e)
+        private void Fullscreen_Tapped(object sender, TappedEventArgs e)
         {
             if (WindowState == WindowState.FullScreen)
             {
@@ -127,7 +116,7 @@ namespace ScriptGraphicHelper.Views
             }
         }
 
-        private void Close_Tapped(object sender, RoutedEventArgs e)
+        private void Close_Tapped(object sender, TappedEventArgs e)
         {
             this.Close();
         }

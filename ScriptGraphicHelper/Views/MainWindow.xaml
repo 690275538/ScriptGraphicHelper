@@ -19,7 +19,6 @@
     Icon="/Assets/ico.ico"
     KeyDown="Window_KeyDown"
     Opened="Window_Opened"
-    SystemDecorations="BorderOnly"
     WindowStartupLocation="CenterScreen"
     mc:Ignorable="d">
 
