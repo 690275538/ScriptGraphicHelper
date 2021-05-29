@@ -44,7 +44,7 @@ namespace ScriptGraphicHelper.Views
             var title = this.FindControl<TextBlock>("Title");
             title.Text = Title;
             var tb = this.FindControl<TextBlock>("Message");
-            tb.Text = Message+ "sfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafasfsafsafsafafafafafafafafafa";
+            tb.Text = Message;
         }
 
         private async void Close_Tapped(object sender, TappedEventArgs e)
