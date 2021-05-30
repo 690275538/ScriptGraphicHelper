@@ -11,6 +11,7 @@ namespace ScriptGraphicHelper.Models.UnmanagedMethods
 
     public static class NativeApi
     {
+      
         [DllImport("mouse")]
         public static extern void Move2Left();
 
@@ -22,5 +23,6 @@ namespace ScriptGraphicHelper.Models.UnmanagedMethods
 
         [DllImport("mouse")]
         public static extern void Move2Bottom();
+
     }
 }

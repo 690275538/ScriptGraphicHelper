@@ -52,7 +52,7 @@ namespace ScriptGraphicHelper.Views
             FontWeight = Avalonia.Media.FontWeight.Medium;
         }
 
-        private DispatcherTimer Timer = new DispatcherTimer();
+        private DispatcherTimer Timer = new();
 
         private void Window_Opened(object sender, EventArgs e)
         {

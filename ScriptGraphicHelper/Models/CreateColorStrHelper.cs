@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Converters;
+using ScriptGraphicHelper.Views;
 using System.Collections.ObjectModel;
 using System.IO;
 
@@ -29,7 +30,7 @@ namespace ScriptGraphicHelper.Models
     };
     public static class CreateColorStrHelper
     {
-        public static string Create(FormatMode mode, ObservableCollection<ColorInfo> colorInfos, Range rect = null)
+        public static string Create(FormatMode mode, ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             return mode switch
             {
@@ -40,9 +41,34 @@ namespace ScriptGraphicHelper.Models
                 FormatMode.cdFindStr => CdFindStr(colorInfos, rect),
                 FormatMode.cdCompareStr => CdCompareStr(colorInfos),
                 FormatMode.autojsFindStr => AutojsFindStr(colorInfos, rect),
-                FormatMode.autojsCompareStr => AutojsCompareStr(colorInfos, rect),
+                FormatMode.autojsCompareStr => AutojsCompareStr(colorInfos),
                 FormatMode.ecFindStr => EcFindStr(colorInfos, rect),
-                FormatMode.ecCompareStr => EcCompareStr(colorInfos, rect),
+                FormatMode.ecCompareStr => EcCompareStr(colorInfos),
+                FormatMode.diyFindStr => DiyFindStr(colorInfos, rect),
+                FormatMode.diyCompareStr => DiyCompareStr(colorInfos),
+                FormatMode.anchorsCompareStr => AnchorsCompareStr(colorInfos),
+                FormatMode.anchorsFindStr => AnchorsFindStr(colorInfos, rect),
+                FormatMode.anchorsCompareStr4Test => AnchorsCompareStr4Test(colorInfos),
+                FormatMode.anchorsFindStr4Test => AnchorsCompareStr4Test(colorInfos),
+                FormatMode.findStr4Test => FindStr4Test(colorInfos, rect),
+                _ => CompareStr(colorInfos),
+            };
+        }
+        public static string Create(FormatMode mode, ObservableCollection<ColorInfo> colorInfos)
+        {
+            Range rect = new(0, 0, 0, 0);
+            return mode switch
+            {
+                FormatMode.compareStr => CompareStr(colorInfos),
+                FormatMode.dmFindStr => DmFindStr(colorInfos, rect),
+                FormatMode.anjianFindStr => AnjianFindStr(colorInfos, rect),
+                FormatMode.anjianCompareStr => AnjianCompareStr(colorInfos),
+                FormatMode.cdFindStr => CdFindStr(colorInfos, rect),
+                FormatMode.cdCompareStr => CdCompareStr(colorInfos),
+                FormatMode.autojsFindStr => AutojsFindStr(colorInfos, rect),
+                FormatMode.autojsCompareStr => AutojsCompareStr(colorInfos),
+                FormatMode.ecFindStr => EcFindStr(colorInfos, rect),
+                FormatMode.ecCompareStr => EcCompareStr(colorInfos),
                 FormatMode.diyFindStr => DiyFindStr(colorInfos, rect),
                 FormatMode.diyCompareStr => DiyCompareStr(colorInfos),
                 FormatMode.anchorsCompareStr => AnchorsCompareStr(colorInfos),
@@ -59,7 +85,17 @@ namespace ScriptGraphicHelper.Models
             StreamReader sr = File.OpenText(System.AppDomain.CurrentDomain.BaseDirectory + @"Assets\diyFormat.json");
             string result = sr.ReadToEnd();
             sr.Close();
-            return JsonConvert.DeserializeObject<DiyFormat>(result);
+
+            DiyFormat format;
+
+            format = JsonConvert.DeserializeObject<DiyFormat>(result);
+
+            if (format == null)
+            {
+                MainWindow.MessageBoxAsync("自定义格式错误!");
+            }
+
+            return format ?? new DiyFormat();
         }
 
         public static string DiyCompareStr(ObservableCollection<ColorInfo> colorInfos)
@@ -109,7 +145,7 @@ namespace ScriptGraphicHelper.Models
         {
             DiyFormat diyFormat = GetDiyFormat();
             bool isInit = false;
-            Point startPoint = new Point();
+            Point startPoint = new();
             string[] colorStr = new string[2];
             foreach (ColorInfo colorInfo in colorInfos)
             {
@@ -206,7 +242,7 @@ namespace ScriptGraphicHelper.Models
             string result = string.Empty;
 
             bool inited = false;
-            Point firstPoint = new Point();
+            Point firstPoint = new();
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)
@@ -282,7 +318,7 @@ namespace ScriptGraphicHelper.Models
         {
             string result = string.Empty;
             bool inited = false;
-            Point firstPoint = new Point();
+            Point firstPoint = new();
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)
@@ -318,7 +354,7 @@ namespace ScriptGraphicHelper.Models
         public static string AutojsFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             string result = string.Empty;
-            Point firstPoint = new Point();
+            Point firstPoint = new();
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)
@@ -356,7 +392,7 @@ namespace ScriptGraphicHelper.Models
         public static string EcFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             string result = string.Empty;
-            Point firstPoint = new Point();
+            Point firstPoint = new();
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)
@@ -442,7 +478,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        private static string AutojsCompareStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        private static string AutojsCompareStr(ObservableCollection<ColorInfo> colorInfos)
         {
             string result = string.Empty;
             Point firstPoint = new();
@@ -473,7 +509,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        private static string EcCompareStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        private static string EcCompareStr(ObservableCollection<ColorInfo> colorInfos)
         {
             string result = "\"";
             foreach (ColorInfo colorInfo in colorInfos)
@@ -569,7 +605,7 @@ namespace ScriptGraphicHelper.Models
             string result = string.Empty;
 
             bool inited = false;
-            Point firstPoint = new Point();
+            Point firstPoint = new();
             foreach (ColorInfo colorInfo in colorInfos)
             {
                 if (colorInfo.IsChecked)

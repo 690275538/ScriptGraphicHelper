@@ -54,12 +54,15 @@ namespace ScriptGraphicHelper.Views
                 var ysPath = this.FindControl<TextBox>("YsPath");
                 var xyPath = this.FindControl<TextBox>("XyPath");
                 var dmRegcode = this.FindControl<TextBox>("DmRegcode");
-                Setting.Instance.AddRange = (bool)addRange.IsChecked;
-                Setting.Instance.AddInfo = (bool)addInfo.IsChecked;
-                Setting.Instance.IsOffset = (bool)isOffset.IsChecked;
-                int result = 95;
-                int.TryParse(diySim.Text.Trim(), out result);
-                Setting.Instance.DiySim = result;
+                Setting.Instance.AddRange = addRange.IsChecked ?? false;
+                Setting.Instance.AddInfo = addInfo.IsChecked ?? false;
+                Setting.Instance.IsOffset = isOffset.IsChecked ?? false;
+
+                if(int.TryParse(diySim.Text.Trim(), out int sim))
+                {
+                    Setting.Instance.DiySim = sim;
+                }
+
                 Setting.Instance.YsPath = ysPath.Text ?? string.Empty;
                 Setting.Instance.XyPath = xyPath.Text ?? string.Empty;
                 Setting.Instance.DmRegcode = dmRegcode.Text ?? string.Empty;

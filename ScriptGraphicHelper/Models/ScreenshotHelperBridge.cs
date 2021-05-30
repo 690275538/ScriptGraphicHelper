@@ -36,7 +36,7 @@ namespace ScriptGraphicHelper.Models
             }
         }
 
-        public static List<BaseScreenshotHelper> Helpers = new List<BaseScreenshotHelper>();
+        public static List<BaseScreenshotHelper> Helpers = new();
         public static ObservableCollection<string> Init()
         {
             Helpers = new List<BaseScreenshotHelper>();
@@ -49,7 +49,13 @@ namespace ScriptGraphicHelper.Models
                 Helpers.Add(new LdEmulatorHelper(3));
                 Helpers.Add(new YsEmulatorHelper());
                 Helpers.Add(new XyEmulatorHelper());
+
                 Helpers.Add(new AdbHelper());
+                try
+                {
+                    Helpers.Add(new HwndHelper());
+                }
+                catch { }
             }
 
             Helpers.Add(new MoblieTcpHelper());
@@ -106,7 +112,7 @@ namespace ScriptGraphicHelper.Models
         }
         public async static Task<ObservableCollection<string>> GetAll()
         {
-            ObservableCollection<string> result = new ObservableCollection<string>();
+            ObservableCollection<string> result = new();
             Info = await Helpers[Select].ListAll();
             foreach (var item in Info)
             {

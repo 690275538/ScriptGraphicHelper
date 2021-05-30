@@ -90,7 +90,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                                 string info = Encoding.UTF8.GetString(buf, 8, length - 8);
                                 JObject obj = (JObject)JsonConvert.DeserializeObject(info);
                                 JObject data = (JObject)obj.GetValue("data");
-                                string deviceName = (string)data.GetValue("device_name");
+                                string deviceName = (string)data.GetValue("device_name") ?? string.Empty;
 
                                 byte[] send = new byte[59]
                                 {
@@ -114,7 +114,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     }
                     catch (Exception e)
                     {
-                         MainWindow.MessageBoxAsync(e.Message);
+                        MainWindow.MessageBoxAsync(e.Message);
                     }
                 }
                 result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
@@ -148,7 +148,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             public string id { get; set; } = "screenshotHelper";
             public string name { get; set; } = "screenshotHelper";
             public string command { get; set; } = "run";
-            public string script { get; set; }
+            public string script { get; set; } = string.Empty;
         }
 
         public class RunCommand

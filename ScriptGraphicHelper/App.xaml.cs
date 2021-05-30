@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
+using Avalonia.Platform;
 using ScriptGraphicHelper.ViewModels;
 using ScriptGraphicHelper.Views;
 using System;

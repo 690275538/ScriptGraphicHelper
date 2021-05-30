@@ -340,11 +340,11 @@ namespace ScriptGraphicHelper.Models
                 for (int j = startX; j <= endX; j++)
                 {
                     byte[] GetRGB = GetPixel(j, i);
-                    if (Math.Abs(GetRGB[2] - findR) <= similarity)
+                    if (Math.Abs(GetRGB[0] - findR) <= similarity)
                     {
                         if (Math.Abs(GetRGB[1] - findG) <= similarity)
                         {
-                            if (Math.Abs(GetRGB[0] - findB) <= similarity)
+                            if (Math.Abs(GetRGB[2] - findB) <= similarity)
                             {
                                 var compareResult = CompareColorEx(compareColorString, sim, j, i);
                                 if (compareResult.Result)

@@ -23,7 +23,7 @@ namespace ScriptGraphicHelper.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        private string Title { get; set; } = string.Empty;
+        private new string Title { get; set; } = string.Empty;
         private string Message { get; set; } = string.Empty;
 
         public MessageBox(string title, string msg) : this()

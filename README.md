@@ -4,19 +4,17 @@
 
 &nbsp;
 
-**多平台分支**
+ **与AOT分支的不同**
+
+无法进行AOT编译
 
 &nbsp;
 
- **与AOT分支的不同**
-
-无法进行AOT编译, 暂不支持句柄模式和图像编辑功能(后期可能会以dll的形式来支持win))
-
 win: 支持
 
-mac:  支持, debug阶段(aj连接模式, tcp模式)
+mac:  支持, 测试阶段(aj连接模式, tcp模式)
 
-linux: 未支持
+linux: 未支持, 存在的问题([#427](https://github.com/AvaloniaUI/Avalonia/issues/4427))
 
 &nbsp;
 
@@ -32,5 +30,4 @@ linux: 未支持
 
 
 &nbsp;
-
 

@@ -18,6 +18,7 @@ using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using Image = Avalonia.Controls.Image;
 using Point = Avalonia.Point;
@@ -297,9 +298,9 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                 }
             };
-            
+
             var fileNames = await dlg.ShowAsync(MainWindow.Instance);
-            if (fileNames.Length!=0)
+            if (fileNames.Length != 0)
             {
                 var fileName = fileNames[0];
                 if (fileName != "" && fileName != string.Empty)
@@ -340,14 +341,14 @@ namespace ScriptGraphicHelper.ViewModels
             };
             string fileName = await dlg.ShowAsync(MainWindow.Instance);
 
-            if (fileName!=null && fileName != "" && fileName != string.Empty)
+            if (fileName != null && fileName != "" && fileName != string.Empty)
             {
                 Img.Save(fileName);
             }
 
         }
 
-        public void Test_Click()
+        public async void Test_Click()
         {
             if (Img != null && ColorInfos.Count > 0)
             {
@@ -386,9 +387,10 @@ namespace ScriptGraphicHelper.ViewModels
                     Point result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sims[SimSelectedIndex]);
                     if (result.X >= 0 && result.Y >= 0)
                     {
-                        //Point point = e.Img.TranslatePoint(new Point(result.X, result.Y), e);
-                        //FindResultMargin = new Thickness(point.X - 36, point.Y - 72, 0, 0);
-                        //FindResultVisibility = Visibility.Visible;
+                        FindedPoint_Margin = new Thickness(result.X- 36, result.Y - 69, 0, 0);
+                        FindedPoint_IsVisible = true;
+                        await Task.Delay(2500);
+                        FindedPoint_IsVisible = false;
                     }
                     TestResult = result.ToString();
                 }
@@ -406,6 +408,13 @@ namespace ScriptGraphicHelper.ViewModels
                     string[] _str = strArray[0].Split(",\"");
                     Point result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _str[^1].Trim('"'), strArray[1].Trim('"'), sims[SimSelectedIndex]);
                     TestResult = result.ToString();
+                    if (result.X >= 0 && result.Y >= 0)
+                    {
+                        FindedPoint_Margin = new Thickness(result.X - 36, result.Y -69, 0, 0);
+                        FindedPoint_IsVisible = true;
+                        await Task.Delay(2500);
+                        FindedPoint_IsVisible = false;
+                    }
                 }
             }
         }
@@ -540,11 +549,11 @@ namespace ScriptGraphicHelper.ViewModels
         {
             string[] formats = await Application.Current.Clipboard.GetFormatsAsync();
             string fileName = string.Empty;
-          
+
             if (Array.IndexOf(formats, "FileNames") != -1)
             {
                 var fileNames = (List<string>)await Application.Current.Clipboard.GetDataAsync(DataFormats.FileNames);
-                if (fileNames.Count!=0)
+                if (fileNames.Count != 0)
                 {
                     fileName = fileNames[0];
                 }
@@ -702,6 +711,21 @@ namespace ScriptGraphicHelper.ViewModels
             }
             ColorInfos.RemoveAt(DataGridSelectedIndex);
             DataGridHeight = (ColorInfos.Count + 1) * 40;
+        }
+
+        public async void CutImg_Click()
+        {
+            Range range = GetRange();
+            var colorInfos = new List<ColorInfo>();
+            var imgEditor = new ImgEditor(range, GraphicHelper.GetRectData(range));
+            await imgEditor.ShowDialog(MainWindow.Instance);
+            if (ImgEditor.Result_ACK && ImgEditor.ResultColorInfos != null && ImgEditor.ResultColorInfos.Count != 0)
+            {
+                ColorInfos = new ObservableCollection<ColorInfo>(ImgEditor.ResultColorInfos);
+                ImgEditor.ResultColorInfos.Clear();
+                ImgEditor.Result_ACK = false;
+                DataGridHeight = (ColorInfos.Count + 1) * 40;
+            }
         }
 
         private Range GetRange()

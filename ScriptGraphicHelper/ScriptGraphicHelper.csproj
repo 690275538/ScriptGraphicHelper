@@ -3,7 +3,7 @@
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net5.0</TargetFramework>
 		<Nullable>enable</Nullable>
-		<Platforms>AnyCPU;x64</Platforms>
+		<Platforms>x64;x86</Platforms>
 		<ApplicationIcon>Assets\ico.ico</ApplicationIcon>
 		<Version>1.3.0</Version>
 		<NeutralLanguage></NeutralLanguage>
@@ -13,28 +13,29 @@
 		<Company>ScriptGraphicHelper</Company>
 		<Configurations>Debug;Release;MacOS-build;osx-publish</Configurations>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
-	
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x86'">
+		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	</PropertyGroup>
+
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x86'">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='osx-publish|x64'">
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	</PropertyGroup>
-	
-	
 	<ItemGroup>
 		<AvaloniaResource Include="Assets\**" />
+	</ItemGroup>
+	<ItemGroup>
+	  <AvaloniaResource Remove="Assets\aiming.cur" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Remove="Views\MessageBox.xaml" />
@@ -67,7 +68,14 @@
 		<AvaloniaXaml Include="Views\TcpConfig.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</AvaloniaXaml>
+		<AvaloniaXaml Include="Views\HwndConfig.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</AvaloniaXaml>
+		<AvaloniaXaml Include="Views\ImgEditor.xaml">
+			<Generator>MSBuild:Compile</Generator>
+		</AvaloniaXaml>
 	</ItemGroup>
+
 	<ItemGroup>
 		<None Include="..\.editorconfig" Link=".editorconfig" />
 	</ItemGroup>
@@ -80,7 +88,9 @@
 		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.5.1" />
 		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-s390x.1.20553.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
-	</ItemGroup>
+	</ItemGroup>	 
+	
+	
 	<ItemGroup>
 		<Compile Update="App.xaml.cs">
 			<DependentUpon>App.xaml</DependentUpon>
@@ -97,8 +107,8 @@
 		<Compile Update="Views\Config.xaml.cs">
 			<DependentUpon>Config.xaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\HwndConfigHnwdHwd.xaml.cs">
-			<DependentUpon>HwndConfigHnwdHwd.xaml</DependentUpon>
+		<Compile Update="Views\HwndConfig.xaml.cs">
+			<DependentUpon>HwndConfig.xaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\MainWindow.xaml.cs" />
 		<Compile Update="Views\MessageBox.xaml.cs">
@@ -106,6 +116,9 @@
 		</Compile>
 		<Compile Update="Views\TcpConfig.xaml.cs">
 			<DependentUpon>TcpConfig.xaml</DependentUpon>
+		</Compile>
+		<Compile Update="Views\ImgEditor.xaml.cs">
+			<DependentUpon>ImgEditor.xaml</DependentUpon>
 		</Compile>
 	</ItemGroup>
 	<ItemGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -119,15 +132,32 @@
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\aiming.cur">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="libmouse.dll">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		<None Update="mouse.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
+	<ItemGroup Condition=" '$(Configuration)' == 'Debug' ">
+		<None Update="Assets\Adb\adb.exe">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Adb\AdbWinApi.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\Adb\AdbWinUsbApi.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\aiming.cur">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="mouse.dll">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
 	<ItemGroup>
 		<None Update="使用说明.txt">
-			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 		<None Update="Assets\diyFormat.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -146,7 +176,7 @@
 		<PackageReference Include="Dotnet.Bundle" Version="*" />
 	</ItemGroup>
 
-	<PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|osx-publish' ">
+	<PropertyGroup Condition=" '$(Configuration)' == 'osx-publish' ">
 		<UseAppHost>true</UseAppHost>
 		<CFBundleName>ScriptGraphicHelper</CFBundleName>
 		<!-- Also defines .app file name -->
@@ -160,7 +190,5 @@
 		<NSPrincipalClass>NSApplication</NSPrincipalClass>
 		<NSHighResolutionCapable>true</NSHighResolutionCapable>
 	</PropertyGroup>
-
-	
 
 </Project>

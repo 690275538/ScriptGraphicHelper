@@ -11,16 +11,16 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class AdbHelper : BaseScreenshotHelper
     {
-        public override string Path { get; set; } = AppDomain.CurrentDomain.BaseDirectory + @"Assets\Adb\";
+        public override string Path { get; set; } = AppDomain.CurrentDomain.BaseDirectory + "Assets/Adb/";
         public override string Name { get; set; } = "Adb连接";
         public string BmpPath { get; set; } = string.Empty;
-        private List<KeyValuePair<int, string>> DeviceInfos = new List<KeyValuePair<int, string>>();
+        private List<KeyValuePair<int, string>> DeviceInfos = new();
 
         public AdbHelper()
         {
-            if (!Directory.Exists(Path + "\\Screenshot"))
+            if (!Directory.Exists(Path + "/Screenshot"))
             {
-                Directory.CreateDirectory(Path + "\\Screenshot");
+                Directory.CreateDirectory(Path + "/Screenshot");
             }
         }
 
@@ -38,7 +38,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             });
 
             DeviceInfos.Clear();
-            var config = new TcpConfig();
+            TcpConfig config = new();
             config.Title = "Adb无线调试";
             await config.ShowDialog(MainWindow.Instance);
             if (config.IsTapped && TcpConfig.Port != 9317 && TcpConfig.Port != 5678)
@@ -73,7 +73,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             var task = Task.Run(() =>
             {
                 string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
-                string BmpPath = Path + "\\Screenshot\\" + BmpName;
+                string BmpPath = Path + "/Screenshot/" + BmpName;
                 PipeCmd("-s " + DeviceInfos[index].Value + " shell /system/bin/screencap -p /sdcard/screenshot.png");
                 for (int i = 0; i < 20; i++)
                 {
@@ -112,8 +112,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public string PipeCmd(string theCommand)
         {
-            string path = Path + "adb.exe";
-            ProcessStartInfo start = new ProcessStartInfo(path)
+            string path = Path + "adb";
+            ProcessStartInfo start = new(path)
             {
                 Arguments = theCommand,
                 CreateNoWindow = true,

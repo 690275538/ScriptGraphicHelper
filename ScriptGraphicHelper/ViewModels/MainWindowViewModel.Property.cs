@@ -266,6 +266,20 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref rect_IsVisible, value);
         }
 
+        private Thickness findedPoint_Margin;
+        public Thickness FindedPoint_Margin
+        {
+            get => findedPoint_Margin;
+            set => this.RaiseAndSetIfChanged(ref findedPoint_Margin, value);
+        }
+
+        private bool findedPoint_IsVisible = false;
+        public bool FindedPoint_IsVisible
+        {
+            get => findedPoint_IsVisible;
+            set => this.RaiseAndSetIfChanged(ref findedPoint_IsVisible, value);
+        }
+
         private ObservableCollection<ColorInfo> colorInfos;
         public ObservableCollection<ColorInfo> ColorInfos
         {

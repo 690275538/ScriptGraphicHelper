@@ -32,7 +32,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                         }
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString();
+                    Path = Aimdir.GetValue("InstallDir").ToString()??string.Empty;
                 }
                 else if (version == 1)
                 {
@@ -47,7 +47,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                         }
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString();
+                    Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
                 }
                 else if (version == 2)
                 {
@@ -62,7 +62,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                         }
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString();
+                    Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
                 }
                 else if (version == 3)
                 {
@@ -77,7 +77,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                         }
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString();
+                    Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
                 }
             }
             catch
@@ -108,7 +108,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 }
             }
 
-            ProcessStartInfo start = new ProcessStartInfo(ThePath)
+            ProcessStartInfo start = new(ThePath)
             {
                 Arguments = theCommand,
                 CreateNoWindow = true,
@@ -180,7 +180,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             var task = Task.Run(() =>
             {
                 string[] resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
-                List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
+                List<KeyValuePair<int, string>> result = new();
                 for (int i = 0; i < resultArray.Length; i++)
                 {
                     string[] LineArray = resultArray[i].Split(',');
@@ -215,7 +215,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 }
                 try
                 {
-                    FileStream stream = new FileStream(BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
+                    FileStream stream = new(BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
                     var bitmap = new Bitmap(stream);
                     stream.Position = 0;
                     SKBitmap sKBitmap = SKBitmap.Decode(stream);
@@ -239,7 +239,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             try
             {
-                StreamReader streamReader = new StreamReader(string.Format(@"{0}\vms\config\leidian{1}.config", Path, index), false);
+                StreamReader streamReader = new(string.Format(@"{0}\vms\config\leidian{1}.config", Path, index), false);
                 string ret = streamReader.ReadToEnd();
                 streamReader.Close();
                 JObject jsonObj = JObject.Parse(ret);
