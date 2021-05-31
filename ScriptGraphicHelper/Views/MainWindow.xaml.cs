@@ -9,10 +9,7 @@ using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Views
 {
@@ -89,7 +86,7 @@ namespace ScriptGraphicHelper.Views
                 case Key.Up: NativeApi.Move2Top(); break;
                 case Key.Right: NativeApi.Move2Right(); break;
                 case Key.Down: NativeApi.Move2Bottom(); break;
-                default: break;
+                default: return;
             }
             e.Handled = true;
         }
@@ -99,12 +96,12 @@ namespace ScriptGraphicHelper.Views
             this.BeginMoveDrag(e);
         }
 
-        private void Minsize_Tapped(object sender, TappedEventArgs e)
+        private void Minsize_Tapped(object sender, RoutedEventArgs e)
         {
             WindowState = WindowState.Minimized;
         }
 
-        private void Fullscreen_Tapped(object sender, TappedEventArgs e)
+        private void Fullscreen_Tapped(object sender, RoutedEventArgs e)
         {
             if (WindowState == WindowState.FullScreen)
             {
@@ -116,7 +113,7 @@ namespace ScriptGraphicHelper.Views
             }
         }
 
-        private void Close_Tapped(object sender, TappedEventArgs e)
+        private void Close_Tapped(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

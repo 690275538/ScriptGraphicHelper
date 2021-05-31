@@ -130,10 +130,10 @@ namespace ScriptGraphicHelper.ViewModels
         {
             HwndInfos.Clear();
             Win32Api.SystemParametersInfo(Win32Api.SPI_SETCURSORS, 0, IntPtr.Zero, Win32Api.SPIF_SENDWININICHANGE);
-            int hwnd = Dm.GetMousePointWindow()??-1;
-            int parentHwnd = Dm.GetWindow(hwnd, 7)??-1;
+            int hwnd = Dm.GetMousePointWindow() ?? -1;
+            int parentHwnd = Dm.GetWindow(hwnd, 7) ?? -1;
             var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-            HwndInfos.Add(new MoveCategory(parentHwnd, Dm.GetWindowTitle(parentHwnd)??string.Empty, Dm.GetWindowClass(parentHwnd)??string.Empty));
+            HwndInfos.Add(new MoveCategory(parentHwnd, Dm.GetWindowTitle(parentHwnd) ?? string.Empty, Dm.GetWindowClass(parentHwnd) ?? string.Empty));
             EnumWindows(parentHwnd, HwndInfos[0]);
         });
 

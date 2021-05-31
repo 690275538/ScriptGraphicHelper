@@ -43,7 +43,7 @@ namespace ScriptGraphicHelper.Views
             dmRegcode.Text = Setting.Instance.DmRegcode;
         }
 
-        private void Ok_Tapped(object sender, Avalonia.Input.TappedEventArgs e)
+        private void Ok_Tapped(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -58,7 +58,7 @@ namespace ScriptGraphicHelper.Views
                 Setting.Instance.AddInfo = addInfo.IsChecked ?? false;
                 Setting.Instance.IsOffset = isOffset.IsChecked ?? false;
 
-                if(int.TryParse(diySim.Text.Trim(), out int sim))
+                if (int.TryParse(diySim.Text.Trim(), out int sim))
                 {
                     Setting.Instance.DiySim = sim;
                 }

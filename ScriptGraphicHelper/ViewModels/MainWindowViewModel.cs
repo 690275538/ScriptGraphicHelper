@@ -14,10 +14,8 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Image = Avalonia.Controls.Image;
@@ -285,24 +283,54 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Load_Click()
         {
-            var dlg = new OpenFileDialog
+            try
             {
-                Title = "请选择文件",
-                AllowMultiple = false,
-                Filters = new List<FileDialogFilter>
+                string fileName = string.Empty;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    new FileDialogFilter
+                    OpenFileName ofn = new();
+                    ofn.hwnd = MainWindow.Instance.Handle;
+                    ofn.structSize = Marshal.SizeOf(ofn);
+                    ofn.filter = "位图文件 (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
+                    ofn.file = new string(new char[256]);
+                    ofn.maxFile = ofn.file.Length;
+                    ofn.fileTitle = new string(new char[64]);
+                    ofn.maxFileTitle = ofn.fileTitle.Length;
+                    ofn.title = "请选择文件";
+
+                    if (NativeApi.GetOpenFileName(ofn))
                     {
-                        Name = "位图文件",
-                        Extensions = { "png", "bmp","jpg"}
+                        fileName = ofn.file;
                     }
                 }
-            };
+                else
+                {
+                    var dlg = new OpenFileDialog
+                    {
+                        Title = "请选择文件",
+                        AllowMultiple = false,
+                        Filters = new List<FileDialogFilter>
+                        {
+                            new FileDialogFilter
+                            {
+                                Name = "位图文件",
+                                Extensions = new List<string>()
+                                {
+                                "png",
+                                "bmp",
+                                "jpg"
+                                }
+                            }
+                        }
+                    };
+                    var fileNames = await dlg.ShowAsync(MainWindow.Instance);
+                    if (fileNames.Length != 0)
+                    {
+                        fileName = fileNames[0];
+                    }
+                }
 
-            var fileNames = await dlg.ShowAsync(MainWindow.Instance);
-            if (fileNames.Length != 0)
-            {
-                var fileName = fileNames[0];
                 if (fileName != "" && fileName != string.Empty)
                 {
                     var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
@@ -322,30 +350,74 @@ namespace ScriptGraphicHelper.ViewModels
                     TabControlSelectedIndex = TabItems.Count - 1;
                 }
             }
+            catch (Exception e)
+            {
+                MainWindow.MessageBoxAsync(e.Message);
+            }
         }
 
         public async void Save_Click()
         {
-            var dlg = new SaveFileDialog
+            if (Img == null)
             {
-                InitialFileName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss"),
-                Title = "保存文件",
-                Filters = new List<FileDialogFilter>
-                {
-                    new FileDialogFilter
-                    {
-                        Name = "位图文件",
-                        Extensions = { "png", "bmp","jpg"}
-                    }
-                }
-            };
-            string fileName = await dlg.ShowAsync(MainWindow.Instance);
-
-            if (fileName != null && fileName != "" && fileName != string.Empty)
-            {
-                Img.Save(fileName);
+                return;
             }
 
+            try
+            {
+                string fileName = string.Empty;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                {
+                    OpenFileName ofn = new();
+
+                    ofn.hwnd = MainWindow.Instance.Handle;
+                    ofn.structSize = Marshal.SizeOf(ofn);
+                    ofn.filter = "位图文件 (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
+                    ofn.file = new string(new char[256]);
+                    ofn.maxFile = ofn.file.Length;
+                    ofn.fileTitle = new string(new char[64]);
+                    ofn.maxFileTitle = ofn.fileTitle.Length;
+                    ofn.title = "保存文件";
+                    ofn.defExt = ".png";
+                    if (NativeApi.GetSaveFileName(ofn))
+                    {
+                        fileName = ofn.file;
+                    }
+                }
+                else
+                {
+                    var dlg = new SaveFileDialog
+                    {
+                        InitialFileName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss"),
+                        Title = "保存文件",
+                        Filters = new List<FileDialogFilter>
+                        {
+                            new FileDialogFilter
+                            {
+                                Name = "位图文件",
+                                Extensions = new List<string>()
+                                {
+                                    "png",
+                                    "bmp",
+                                    "jpg"
+                                }
+                            }
+                        }
+                    };
+                    fileName = await dlg.ShowAsync(MainWindow.Instance);
+                }
+
+
+                if (fileName != null && fileName != "" && fileName != string.Empty)
+                {
+                    Img.Save(fileName);
+                }
+            }
+            catch (Exception e)
+            {
+                MainWindow.MessageBoxAsync(e.Message);
+            }
         }
 
         public async void Test_Click()
@@ -387,7 +459,7 @@ namespace ScriptGraphicHelper.ViewModels
                     Point result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sims[SimSelectedIndex]);
                     if (result.X >= 0 && result.Y >= 0)
                     {
-                        FindedPoint_Margin = new Thickness(result.X- 36, result.Y - 69, 0, 0);
+                        FindedPoint_Margin = new Thickness(result.X - 36, result.Y - 69, 0, 0);
                         FindedPoint_IsVisible = true;
                         await Task.Delay(2500);
                         FindedPoint_IsVisible = false;
@@ -410,7 +482,7 @@ namespace ScriptGraphicHelper.ViewModels
                     TestResult = result.ToString();
                     if (result.X >= 0 && result.Y >= 0)
                     {
-                        FindedPoint_Margin = new Thickness(result.X - 36, result.Y -69, 0, 0);
+                        FindedPoint_Margin = new Thickness(result.X - 36, result.Y - 69, 0, 0);
                         FindedPoint_IsVisible = true;
                         await Task.Delay(2500);
                         FindedPoint_IsVisible = false;

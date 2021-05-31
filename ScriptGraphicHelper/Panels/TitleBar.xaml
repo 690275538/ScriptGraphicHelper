@@ -18,7 +18,7 @@
             <TextBlock
                 Margin="1,1,0,0"
                 VerticalAlignment="Center"
-                FontSize="14"
+                FontSize="13"
                 FontWeight="Medium"
                 Foreground="#000000">
                 综合图色助手

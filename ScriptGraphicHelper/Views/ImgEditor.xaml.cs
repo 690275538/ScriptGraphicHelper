@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using ScriptGraphicHelper.Models;
@@ -34,7 +33,7 @@ namespace ScriptGraphicHelper.Views
             AvaloniaXamlLoader.Load(this);
         }
 
-        private void ACK_Tapped(object sender, TappedEventArgs e)
+        private void ACK_Tapped(object sender, RoutedEventArgs e)
         {
             Result_ACK = true;
             Close();

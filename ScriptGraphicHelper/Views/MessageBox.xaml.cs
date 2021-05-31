@@ -4,7 +4,6 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
-using System.Reflection;
 
 namespace ScriptGraphicHelper.Views
 {
@@ -47,7 +46,7 @@ namespace ScriptGraphicHelper.Views
             tb.Text = Message;
         }
 
-        private async void Close_Tapped(object sender, TappedEventArgs e)
+        private async void Close_Tapped(object sender, RoutedEventArgs e)
         {
             await Application.Current.Clipboard.SetTextAsync(Message);
             this.Close();

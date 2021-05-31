@@ -32,7 +32,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                         }
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString()??string.Empty;
+                    Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
                 }
                 else if (version == 1)
                 {

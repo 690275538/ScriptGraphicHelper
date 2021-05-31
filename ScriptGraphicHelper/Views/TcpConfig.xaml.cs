@@ -54,7 +54,7 @@ namespace ScriptGraphicHelper.Views
             }
         }
 
-        private void Ok_Tapped(object sender, TappedEventArgs e)
+        private void Ok_Tapped(object sender, RoutedEventArgs e)
         {
             IsTapped = true;
             var address = this.FindControl<TextBox>("Address");
@@ -64,7 +64,7 @@ namespace ScriptGraphicHelper.Views
             this.Close();
         }
 
-        private void Skip_Tapped(object sender, TappedEventArgs e)
+        private void Skip_Tapped(object sender, RoutedEventArgs e)
         {
             this.Close();
         }

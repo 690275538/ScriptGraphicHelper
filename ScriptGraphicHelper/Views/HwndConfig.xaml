@@ -31,7 +31,7 @@
             Items="{Binding HwndInfos, Mode=TwoWay}"
             SelectedItem="{Binding SelectedItem}">
             <TreeView.DataTemplates>
-                <TreeDataTemplate ItemsSource="{Binding Movies}">
+                <TreeDataTemplate ItemsSource="{Binding Moves}">
                     <TextBlock Text="{Binding Info}" />
                 </TreeDataTemplate>
             </TreeView.DataTemplates>

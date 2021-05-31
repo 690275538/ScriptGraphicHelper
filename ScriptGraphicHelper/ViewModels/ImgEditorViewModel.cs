@@ -4,7 +4,6 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
-using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels.Core;
 using ScriptGraphicHelper.Views;
 using System;
@@ -105,7 +104,8 @@ namespace ScriptGraphicHelper.ViewModels
         public int GetColorInfosModeSelectedIndex
         {
             get => getColorInfosModeSelectedIndex;
-            set {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref getColorInfosModeSelectedIndex, value);
                 Setting.Instance.GetColorInfosConfig.ModeSelectedIndex = value;
             }
@@ -115,7 +115,8 @@ namespace ScriptGraphicHelper.ViewModels
         public int GetColorInfosThreshold
         {
             get => getColorInfosThreshold;
-            set {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref getColorInfosThreshold, value);
                 Setting.Instance.GetColorInfosConfig.Threshold = value;
             }
@@ -125,10 +126,11 @@ namespace ScriptGraphicHelper.ViewModels
         public int GetColorInfosSize
         {
             get => getColorInfosSize;
-            set {
+            set
+            {
                 this.RaiseAndSetIfChanged(ref getColorInfosSize, value);
                 Setting.Instance.GetColorInfosConfig.Size = value;
-            } 
+            }
         }
 
         public ImgEditorViewModel(Models.Range range, byte[] data)

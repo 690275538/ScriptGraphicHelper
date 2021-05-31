@@ -1,7 +1,6 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
-using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
@@ -98,7 +97,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             }
             catch (Exception e)
             {
-                 MainWindow.MessageBoxAsync(e.Message);
+                MainWindow.MessageBoxAsync(e.Message);
             }
         }
 
@@ -190,7 +189,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             }
             catch (Exception e)
             {
-                 MainWindow.MessageBoxAsync(e.Message);
+                MainWindow.MessageBoxAsync(e.Message);
             }
             return false;
         }

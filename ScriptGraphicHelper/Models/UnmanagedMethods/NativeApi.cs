@@ -1,17 +1,11 @@
-﻿using ScriptGraphicHelper.Views;
-using System;
-using System.Drawing;
-using System.Reactive.Disposables;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Runtime.InteropServices;
 
 namespace ScriptGraphicHelper.Models.UnmanagedMethods
 {
 
     public static class NativeApi
     {
-      
+
         [DllImport("mouse")]
         public static extern void Move2Left();
 
@@ -24,5 +18,13 @@ namespace ScriptGraphicHelper.Models.UnmanagedMethods
         [DllImport("mouse")]
         public static extern void Move2Bottom();
 
+
+
+        //由于avalonia的fileDialog在win上会偶发ui阻塞问题, 原因不明, 暂时用win32api替代
+        [DllImport("Comdlg32.dll", CharSet = CharSet.Auto)]
+        public static extern bool GetOpenFileName([In, Out] OpenFileName ofn);
+
+        [DllImport("Comdlg32.dll", SetLastError = true, ThrowOnUnmappableChar = true, CharSet = CharSet.Auto)]
+        public static extern bool GetSaveFileName([In, Out] OpenFileName ofn);
     }
 }

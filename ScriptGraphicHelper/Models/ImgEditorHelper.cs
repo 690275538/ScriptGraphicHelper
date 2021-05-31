@@ -26,7 +26,7 @@ namespace ScriptGraphicHelper.Models
             Width = (int)(range.Right - range.Left + 1);
             Height = (int)(range.Bottom - range.Top + 1);
             Data = data.ToList();
-            WriteableBitmap drawBitmap = new WriteableBitmap(new PixelSize(Width, Height), new Vector(96, 96), Avalonia.Platform.PixelFormat.Bgra8888, AlphaFormat.Premul);
+            WriteableBitmap drawBitmap = new(new PixelSize(Width, Height), new Vector(96, 96), GraphicHelper.PxFormat, AlphaFormat.Premul);
             var drawBmpData = drawBitmap.Lock();
             unsafe
             {

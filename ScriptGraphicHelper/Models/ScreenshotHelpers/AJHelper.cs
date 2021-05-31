@@ -3,7 +3,6 @@ using Avalonia.Media.Imaging;
 using Avalonia.Platform;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
