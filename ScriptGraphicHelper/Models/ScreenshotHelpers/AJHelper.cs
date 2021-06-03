@@ -105,7 +105,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
                                 await networkStream.WriteAsync(send);
 
-                                string mainCode = "threads.start(function () { if (!requestScreenCapture()) { alert(\"请求截图权限失败\");exit();}else { toastLog(\"请求截图权限成功\");}});setInterval(()=>{}, 1000);";
+                                string mainCode = "let _engines = engines.all(); for (let i = 0; i < _engines.length; i++) { if (_engines[i].getSource().toString().indexOf(\"cap_script\") != -1 && _engines[i] != engines.getEngine()) { _engines[i].forceStop(); } } threads.start(function () { if (!requestScreenCapture()) { alert(\"请求截图权限失败\"); exit(); } else { toastLog(\"请求截图权限成功\"); } }); setInterval(() => { }, 1000);";
 
                                 networkStream.Write(GetRunCommandBytes(mainCode, "cap_script"));
 
