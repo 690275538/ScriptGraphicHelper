@@ -10,10 +10,6 @@ function Int2Bytes(num) {
     return bytes;
 }
 
-if (!requestScreenCapture()) {
-    alert("请求截图权限失败");
-    exit();
-}
 
 var serversocket;
 let socket;
@@ -26,7 +22,24 @@ catch (error) {
     serversocket.close();
     exit();
 }
-let img = captureScreen();
+
+
+let engine = null;
+let _engines = engines.all();
+
+for (let i = 0; i < _engines.length; i++) {
+    if (_engines[i].getSource().toString().indexOf("cap_script") != -1) {
+        engine = _engines[i];
+    }
+}
+
+if (engine == null) {
+    alert("获取常驻脚本对象失败, 请在图色助手重新连接aj!");
+    exit();
+}
+
+img = engine.getRuntime().images.captureScreen();
+
 let bytes = images.toBytes(img);
 let stream = socket.getOutputStream();
 let len = Int2Bytes(bytes.length);

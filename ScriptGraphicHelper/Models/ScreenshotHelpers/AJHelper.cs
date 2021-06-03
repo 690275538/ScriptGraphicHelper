@@ -105,6 +105,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
                                 await networkStream.WriteAsync(send);
 
+                                string mainCode = "threads.start(function () { if (!requestScreenCapture()) { alert(\"请求截图权限失败\");exit();}else { toastLog(\"请求截图权限成功\");}});setInterval(()=>{}, 1000);";
+
+                                networkStream.Write(GetRunCommandBytes(mainCode, "cap_script"));
+
                                 result.Add(new KeyValuePair<int, string>(key: 0, value: deviceName));
                                 IsInit = true;
                                 return result;
@@ -144,8 +148,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public class RunData
         {
-            public string id { get; set; } = "screenshotHelper";
-            public string name { get; set; } = "screenshotHelper";
+            public string id { get; set; } = string.Empty;
+            public string name { get; set; } = string.Empty;
             public string command { get; set; } = "run";
             public string script { get; set; } = string.Empty;
         }
@@ -154,21 +158,23 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             public int id { get; set; }
             public string type { get; set; } = "command";
-            public RunData data { get; set; }
+            public RunData? data { get; set; } = null;
         }
 
-        private byte[] GetRunCommandBytes()
-        {
 
+        private byte[] GetRunCommandBytes(string runCode, string id)
+        {
             RunCommand command = new()
             {
                 id = Step,
                 data = new RunData()
                 {
-                    script = RunCode
+                    id = id,
+                    name = id,
+                    script = runCode
                 }
-
             };
+            Step++;
             byte[] data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(command));
             byte[] recv = new byte[data.Length + 8];
             byte[] len = Int2Bytes(data.Length);
@@ -184,7 +190,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             {
                 try
                 {
-                    networkStream.Write(GetRunCommandBytes());
+                    networkStream.Write(GetRunCommandBytes(RunCode, "screenshotHelper"));
 
                     var client = new TcpClient();
                     for (int i = 0; i < 300; i++)
