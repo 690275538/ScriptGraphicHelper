@@ -89,13 +89,14 @@
                                             HorizontalAlignment="Center">
                                             <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}">
                                                 <CheckBox.Styles>
+                                                    <Style Selector="CheckBox:checked">
+                                                        <Setter Property="Foreground" Value="{Binding MarkBrush, Converter={StaticResource color2Brush}}" />
+                                                    </Style>
                                                     <Style Selector="CheckBox:checked Border#NormalRectangle">
-                                                        <Setter Property="FocusAdorner" Value="{Binding Color, Converter={StaticResource color2Brush}}" />
                                                         <Setter Property="Background" Value="{Binding Color, Converter={StaticResource color2Brush}}" />
                                                         <Setter Property="BorderBrush" Value="Transparent" />
                                                         <Setter Property="CornerRadius" Value="2" />
                                                     </Style>
-
                                                 </CheckBox.Styles>
                                             </CheckBox>
                                         </Grid>
@@ -198,6 +199,9 @@
                                             HorizontalAlignment="Center">
                                             <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay}">
                                                 <CheckBox.Styles>
+                                                    <Style Selector="CheckBox:checked">
+                                                        <Setter Property="Foreground" Value="{Binding MarkBrush, Converter={StaticResource color2Brush}}" />
+                                                    </Style>
                                                     <Style Selector="CheckBox:checked Border#NormalRectangle">
                                                         <Setter Property="FocusAdorner" Value="{Binding Color, Converter={StaticResource color2Brush}}" />
                                                         <Setter Property="Background" Value="{Binding Color, Converter={StaticResource color2Brush}}" />
@@ -244,6 +248,7 @@
             </Style>
         </Styles>
         <Style Selector="CheckBox">
+            <Setter Property="Foreground" Value="#000000" />
             <Setter Property="Padding" Value="8,0,0,0" />
             <Setter Property="HorizontalAlignment" Value="Left" />
             <Setter Property="VerticalAlignment" Value="Center" />
@@ -277,7 +282,7 @@
                                     VerticalAlignment="Center"
                                     Opacity="1"
                                     Stretch="Uniform"
-                                    Stroke="#000000"
+                                    Stroke="{TemplateBinding Foreground}"
                                     StrokeThickness="0.8" />
                             </Viewbox>
                         </Grid>

@@ -54,14 +54,14 @@ namespace ScriptGraphicHelper.ViewModels
                 if (value == FormatMode.anchorsFindStr || value == FormatMode.anchorsCompareStr)
                 {
                     DataGrid_IsVisible = false;
-                    ImgMargin = new Thickness(170, 55, 340, 20);
+                    ImgMargin = new Thickness(170, 50, 340, 20);
                     ColorInfo.Width = ImgWidth;
                     ColorInfo.Height = imgHeight;
                 }
                 else
                 {
                     DataGrid_IsVisible = true;
-                    ImgMargin = new Thickness(170, 55, 280, 20);
+                    ImgMargin = new Thickness(170, 50, 280, 20);
                 }
             }
         }
@@ -148,7 +148,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
-        private Thickness imgMargin = new Thickness(170, 55, 280, 20);
+        private Thickness imgMargin = new Thickness(170, 50, 280, 20);
         public Thickness ImgMargin
         {
             get => imgMargin;

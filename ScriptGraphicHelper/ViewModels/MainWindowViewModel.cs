@@ -424,7 +424,6 @@ namespace ScriptGraphicHelper.ViewModels
         {
             if (Img != null && ColorInfos.Count > 0)
             {
-                TestResult = "²âÊÔÖÐ";
                 int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
                 if (FormatSelectedIndex == FormatMode.compareStr || FormatSelectedIndex == FormatMode.anjianCompareStr || FormatSelectedIndex == FormatMode.cdCompareStr || FormatSelectedIndex == FormatMode.diyCompareStr)
                 {
@@ -457,6 +456,9 @@ namespace ScriptGraphicHelper.ViewModels
                     double height = ColorInfo.Height;
                     string str = CreateColorStrHelper.Create(FormatMode.anchorsFindStr4Test, ColorInfos);
                     Point result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sims[SimSelectedIndex]);
+
+                    TestResult = result.ToString();
+
                     if (result.X >= 0 && result.Y >= 0)
                     {
                         FindedPoint_Margin = new Thickness(result.X - 36, result.Y - 69, 0, 0);
@@ -464,7 +466,6 @@ namespace ScriptGraphicHelper.ViewModels
                         await Task.Delay(2500);
                         FindedPoint_IsVisible = false;
                     }
-                    TestResult = result.ToString();
                 }
                 else
                 {
@@ -479,10 +480,12 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                     string[] _str = strArray[0].Split(",\"");
                     Point result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _str[^1].Trim('"'), strArray[1].Trim('"'), sims[SimSelectedIndex]);
+
                     TestResult = result.ToString();
+
                     if (result.X >= 0 && result.Y >= 0)
                     {
-                        FindedPoint_Margin = new Thickness(result.X - 36, result.Y - 69, 0, 0);
+                        FindedPoint_Margin = new(result.X * ScaleFactor - 36, result.Y * ScaleFactor - 69, 0, 0);
                         FindedPoint_IsVisible = true;
                         await Task.Delay(2500);
                         FindedPoint_IsVisible = false;
@@ -511,6 +514,7 @@ namespace ScriptGraphicHelper.ViewModels
                 }
 
                 CreateStr = CreateColorStrHelper.Create(FormatSelectedIndex, ColorInfos, rect);
+                CreateStr_Copy_Click();
             }
         }
 
@@ -528,7 +532,7 @@ namespace ScriptGraphicHelper.ViewModels
 
         public void Clear_Click()
         {
-            if (CreateStr == string.Empty)
+            if (CreateStr == string.Empty && Rect == string.Empty)
             {
                 ColorInfos.Clear();
                 DataGridHeight = 40;

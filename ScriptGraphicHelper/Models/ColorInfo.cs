@@ -16,6 +16,7 @@ namespace ScriptGraphicHelper.Models
         public AnchorType Anchor { get; set; } = AnchorType.None;
         public Point Point { get; set; }
         public Color Color { get; set; }
+        public Color MarkBrush { get; set; } = Colors.Black;
         public bool IsChecked { get; set; } = false;
 
         public ColorInfo() { }
@@ -27,6 +28,11 @@ namespace ScriptGraphicHelper.Models
             Color = Color.FromRgb(color[0], color[1], color[2]);
             IsChecked = true;
             Anchor = AnchorType.None;
+
+            if (Color.R < 0x40 && Color.G < 0x40 && Color.B < 0x40)
+            {
+                MarkBrush = Color.FromRgb(0xcc, 0xcc, 0xcc);
+            }
         }
 
         public ColorInfo(int index, int x, int y, Color color)
@@ -36,6 +42,11 @@ namespace ScriptGraphicHelper.Models
             Color = color;
             IsChecked = true;
             Anchor = AnchorType.None;
+
+            if (Color.R < 0x40 && Color.G < 0x40 && Color.B < 0x40)
+            {
+                MarkBrush = Color.FromRgb(0xcc, 0xcc, 0xcc);
+            }
         }
 
         public ColorInfo(int index, AnchorType anchor, int x, int y, byte[] color)
@@ -45,6 +56,11 @@ namespace ScriptGraphicHelper.Models
             Point = new Point(x, y);
             Color = Color.FromRgb(color[0], color[1], color[2]);
             IsChecked = true;
+
+            if (Color.R < 0x40 && Color.G < 0x40 && Color.B < 0x40)
+            {
+                MarkBrush = Color.FromRgb(0xcc,0xcc,0xcc);
+            }
         }
 
 

@@ -18,7 +18,7 @@
             Name="Message"
             MaxWidth="1600"
             MaxHeight="900"
-            Margin="40,50,40,50"
+            Margin="50"
             HorizontalAlignment="Center"
             VerticalAlignment="Center"
             Foreground="#2d2d30"
@@ -37,7 +37,6 @@
                 Margin="2,5,5,5"
                 VerticalAlignment="Center"
                 FontSize="14"
-                FontWeight="Medium"
                 Foreground="#000000" />
         </StackPanel>
         <Button
@@ -49,8 +48,8 @@
             Background="Transparent"
             Tapped="Close_Tapped">
             <Image
-                Width="16"
-                Height="16"
+                Width="14"
+                Height="14"
                 VerticalAlignment="Center">
                 <Image.Source>
                     <svg:SvgImage Source="/Assets/close.svg" />
@@ -67,8 +66,8 @@
         </Button>
 
         <Button
-            Width="80"
-            Height="40"
+            Width="55"
+            Height="35"
             HorizontalAlignment="Right"
             VerticalAlignment="Bottom"
             HorizontalContentAlignment="Center"

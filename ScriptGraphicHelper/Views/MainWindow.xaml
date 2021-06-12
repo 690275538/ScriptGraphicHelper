@@ -9,8 +9,8 @@
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
     xmlns:vm="using:ScriptGraphicHelper.ViewModels"
     Title="综合图色助手 V1.3.1"
-    Width="1730"
-    Height="870"
+    Width="1720"
+    Height="900"
     CanResize="True"
     Closing="Window_Closing"
     Cursor="{Binding WindowCursor, Mode=TwoWay}"
@@ -79,7 +79,7 @@
             </Panels:TitleBar.ContextMenu>
         </Panels:TitleBar>
         <Panels:Controls
-            Margin="20,55,10,20"
+            Margin="20,50,10,20"
             VerticalAlignment="Top"
             HorizontalContentAlignment="Left" />
         <Panels:Img
@@ -87,7 +87,7 @@
             VerticalAlignment="Top"
             HorizontalContentAlignment="Left" />
         <Panels:ColorInfos
-            Margin="10,55,20,20"
+            Margin="10,50,20,20"
             VerticalAlignment="Top"
             HorizontalContentAlignment="Right" />
 
@@ -149,7 +149,7 @@
             Name="HintMessage"
             Width="650"
             Height="45"
-            Margin="0,40,0,0"
+            Margin="0,30,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
             Background="#cdcdcd"
