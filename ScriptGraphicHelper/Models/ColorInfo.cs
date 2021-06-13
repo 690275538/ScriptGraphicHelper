@@ -31,7 +31,7 @@ namespace ScriptGraphicHelper.Models
 
             if (Color.R < 0x40 && Color.G < 0x40 && Color.B < 0x40)
             {
-                MarkBrush = Color.FromRgb(0xcc, 0xcc, 0xcc);
+                MarkBrush = Color.FromRgb(0xe8, 0xe8, 0xe8);
             }
         }
 
@@ -45,7 +45,7 @@ namespace ScriptGraphicHelper.Models
 
             if (Color.R < 0x40 && Color.G < 0x40 && Color.B < 0x40)
             {
-                MarkBrush = Color.FromRgb(0xcc, 0xcc, 0xcc);
+                MarkBrush = Color.FromRgb(0xe8, 0xe8, 0xe8);
             }
         }
 
@@ -59,7 +59,7 @@ namespace ScriptGraphicHelper.Models
 
             if (Color.R < 0x40 && Color.G < 0x40 && Color.B < 0x40)
             {
-                MarkBrush = Color.FromRgb(0xcc,0xcc,0xcc);
+                MarkBrush = Color.FromRgb(0xe8, 0xe8, 0xe8);
             }
         }
 

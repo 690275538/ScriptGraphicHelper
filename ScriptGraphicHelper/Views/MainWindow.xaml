@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
     xmlns:vm="using:ScriptGraphicHelper.ViewModels"
-    Title="综合图色助手 V1.3.1"
+    Title="综合图色助手 V1.3.2"
     Width="1720"
     Height="900"
     CanResize="True"
@@ -152,7 +152,7 @@
             Margin="0,30,0,0"
             HorizontalAlignment="Center"
             VerticalAlignment="Top"
-            Background="#cdcdcd"
+            Background="#e8e8e8"
             CornerRadius="5">
             <TextBlock
                 HorizontalAlignment="Center"

@@ -9,7 +9,7 @@
     d:DesignWidth="500"
     mc:Ignorable="d">
 
-    <Grid Height="30" Background="#cccccc">
+    <Grid Height="30" Background="#e8e8e8">
         <StackPanel Orientation="Horizontal">
             <Image
                 Width="20"
@@ -19,7 +19,7 @@
                 Margin="1,1,0,0"
                 VerticalAlignment="Center"
                 FontSize="13"
-                FontWeight="Medium"
+                FontWeight="Bold"
                 Foreground="#000000">
                 综合图色助手
             </TextBlock>

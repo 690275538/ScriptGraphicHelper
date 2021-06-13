@@ -92,7 +92,7 @@ namespace ScriptGraphicHelper.Models
 
             if (format == null)
             {
-                MainWindow.MessageBoxAsync("自定义格式错误!");
+                MessageBox.ShowAsync("自定义格式错误!");
             }
 
             return format ?? new DiyFormat();

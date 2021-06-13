@@ -225,7 +225,7 @@ namespace ScriptGraphicHelper.ViewModels
                 ScreenshotHelperBridge.Dispose();
                 EmulatorInfo.Clear();
                 EmulatorInfo = ScreenshotHelperBridge.Init();
-                MainWindow.MessageBoxAsync(e.Message);
+                MessageBox.ShowAsync(e.Message);
             }
             WindowCursor = new Cursor(StandardCursorType.Arrow);
 
@@ -236,7 +236,7 @@ namespace ScriptGraphicHelper.ViewModels
             WindowCursor = new Cursor(StandardCursorType.Wait);
             if (ScreenshotHelperBridge.Select == -1 || ScreenshotHelperBridge.Index == -1)
             {
-                MainWindow.MessageBoxAsync("请先配置 -> (模拟器/tcp/句柄)");
+                MessageBox.ShowAsync("请先配置 -> (模拟器/tcp/句柄)");
                 WindowCursor = new Cursor(StandardCursorType.Arrow);
                 return;
             }
@@ -254,7 +254,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception e)
             {
-                MainWindow.MessageBoxAsync(e.Message);
+                MessageBox.ShowAsync(e.Message);
             }
 
 
@@ -352,7 +352,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception e)
             {
-                MainWindow.MessageBoxAsync(e.Message);
+                MessageBox.ShowAsync(e.Message);
             }
         }
 
@@ -416,7 +416,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception e)
             {
-                MainWindow.MessageBoxAsync(e.Message);
+                MessageBox.ShowAsync(e.Message);
             }
         }
 
@@ -432,7 +432,7 @@ namespace ScriptGraphicHelper.ViewModels
                     var result = GraphicHelper.CompareColorEx(str.Trim('"'), sims[SimSelectedIndex]);
                     if (!result.Result)
                     {
-                        MainWindow.MessageBoxAsync(result.ErrorMessage);
+                        MessageBox.ShowAsync(result.ErrorMessage);
                     }
                     TestResult = result.Result.ToString();
                 }
@@ -445,7 +445,7 @@ namespace ScriptGraphicHelper.ViewModels
                     var result = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sims[SimSelectedIndex]);
                     if (!result.Result)
                     {
-                        MainWindow.MessageBoxAsync(result.ErrorMessage);
+                        MessageBox.ShowAsync(result.ErrorMessage);
                     }
                     TestResult = result.Result.ToString();
                 }
@@ -474,7 +474,7 @@ namespace ScriptGraphicHelper.ViewModels
                     string[] strArray = str.Split("\",\"");
                     if (strArray[1].Length <= 3)
                     {
-                        MainWindow.MessageBoxAsync("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
+                        MessageBox.ShowAsync("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
                         TestResult = "error";
                         return;
                     }
@@ -526,7 +526,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception ex)
             {
-                MainWindow.MessageBoxAsync("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
+                MessageBox.ShowAsync("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
             }
         }
 
@@ -713,7 +713,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception ex)
             {
-                MainWindow.MessageBoxAsync("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
+                MessageBox.ShowAsync("设置剪贴板失败 , 你的剪贴板可能被其他软件占用\r\n\r\n" + ex.Message, "error");
             }
         }
 
@@ -736,7 +736,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception ex)
             {
-                MainWindow.MessageBoxAsync("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
+                MessageBox.ShowAsync("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
             }
         }
 
@@ -754,7 +754,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception ex)
             {
-                MainWindow.MessageBoxAsync("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
+                MessageBox.ShowAsync("设置剪贴板失败\r\n\r\n" + ex.Message, "错误");
             }
         }
 

@@ -97,7 +97,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             }
             catch (Exception e)
             {
-                MainWindow.MessageBoxAsync(e.Message);
+                MessageBox.ShowAsync(e.Message);
             }
         }
 
@@ -189,7 +189,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             }
             catch (Exception e)
             {
-                MainWindow.MessageBoxAsync(e.Message);
+                MessageBox.ShowAsync(e.Message);
             }
             return false;
         }

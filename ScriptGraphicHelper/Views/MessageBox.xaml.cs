@@ -3,12 +3,27 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
+using Avalonia.Threading;
 using System;
 
 namespace ScriptGraphicHelper.Views
 {
     public partial class MessageBox : Window
     {
+        public static async void ShowAsync(string msg)
+        {
+            await Dispatcher.UIThread.InvokeAsync(async () => {
+                await new MessageBox(msg).ShowDialog(MainWindow.Instance);
+            });
+        }
+
+        public static async void ShowAsync(string title, string msg)
+        {
+            await Dispatcher.UIThread.InvokeAsync(async () => {
+                await new MessageBox(title, msg).ShowDialog(MainWindow.Instance);
+            });
+        }
+
         public MessageBox()
         {
             InitializeComponent();

@@ -55,7 +55,7 @@ public class Dmsoft
         string regCode = Setting.Instance.DmRegcode;
         if (regCode == string.Empty || regCode == "")
         {
-            MainWindow.MessageBoxAsync("错误, 需要在setting.json文件中填写大漠注册码");
+            MessageBox.ShowAsync("错误, 需要在setting.json文件中填写大漠注册码");
             return false;
         }
 
@@ -66,7 +66,7 @@ public class Dmsoft
         }
         else
         {
-            MainWindow.MessageBoxAsync("注册大漠失败, 返回值" + result.ToString());
+            MessageBox.ShowAsync("注册大漠失败, 返回值" + result.ToString());
             return false;
         }
     }
@@ -82,7 +82,7 @@ public class Dmsoft
         }
         catch (Exception e)
         {
-            MainWindow.MessageBoxAsync(e.Message);
+            MessageBox.ShowAsync(e.Message);
         }
 
     }

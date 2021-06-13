@@ -117,7 +117,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     }
                     catch (Exception e)
                     {
-                        MainWindow.MessageBoxAsync(e.Message);
+                        MessageBox.ShowAsync(e.Message);
                     }
                 }
                 result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));

@@ -98,7 +98,7 @@ namespace ScriptGraphicHelper.ViewModels
         {
             if (BindHwnd == -1)
             {
-                MainWindow.MessageBoxAsync("请选择句柄!");
+                MessageBox.ShowAsync("请选择句柄!");
                 return;
             }
             string[] graphicModes = new string[] { "normal", "gdi", "gdi2", "dx2", "dx3", "dx.graphic.2d", "dx.graphic.2d.2", "dx.graphic.3d", "dx.graphic.3d.8", "dx.graphic.opengl", "dx.graphic.opengl.esv2", "dx.graphic.3d.10plus" };

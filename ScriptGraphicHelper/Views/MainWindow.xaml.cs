@@ -18,18 +18,6 @@ namespace ScriptGraphicHelper.Views
         public static MainWindow Instance { get; private set; }
         public IntPtr Handle { get; private set; }
 
-
-        public static async void MessageBoxAsync(string msg)
-        {
-            await new MessageBox(msg).ShowDialog(Instance);
-        }
-
-        public static async void MessageBoxAsync(string title, string msg)
-        {
-            await new MessageBox(title, msg).ShowDialog(Instance);
-        }
-
-
         public MainWindow()
         {
             ExtendClientAreaToDecorationsHint = true;
