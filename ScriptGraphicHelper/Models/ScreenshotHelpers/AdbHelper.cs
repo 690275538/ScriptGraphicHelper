@@ -78,7 +78,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 for (int i = 0; i < 20; i++)
                 {
                     Task.Delay(100).Wait();
-                    PipeCmd("-s " + DeviceInfos[index].Value + " pull /sdcard/screenshot.png ./Assets/Adb/Screenshot/" + BmpName);
+                    PipeCmd("-s " + DeviceInfos[index].Value + " pull /sdcard/screenshot.png ./Screenshot/" + BmpName);
                     Task.Delay(100).Wait();
                     if (File.Exists(BmpPath))
                     {
@@ -120,6 +120,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 RedirectStandardOutput = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
+                WorkingDirectory = Path
             };
             Process pipe = Process.Start(start);
             StreamReader readStream = pipe.StandardOutput;

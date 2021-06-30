@@ -1,17 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
-		<TargetFramework>net6.0</TargetFramework>
+		<TargetFramework>net5.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<Platforms>x64;x86</Platforms>
 		<ApplicationIcon>Assets\ico.ico</ApplicationIcon>
-		<Version>1.3.2</Version>
+		<Version>1.3.2.1</Version>
 		<NeutralLanguage></NeutralLanguage>
-		<ApplicationManifest>app.manifest</ApplicationManifest>
 		<RepositoryType>https://gitee.com/yiszza/ScriptGraphicHelper</RepositoryType>
 		<Authors>yiszza</Authors>
 		<Company>ScriptGraphicHelper</Company>
 		<Configurations>Debug;Release;MacOS-build;osx-publish</Configurations>
+		<ApplicationManifest>app.manifest</ApplicationManifest>
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
