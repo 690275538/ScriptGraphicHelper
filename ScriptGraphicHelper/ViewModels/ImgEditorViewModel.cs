@@ -4,6 +4,7 @@ using Avalonia.Media;
 using Avalonia.Media.Imaging;
 using ReactiveUI;
 using ScriptGraphicHelper.Models;
+using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels.Core;
 using ScriptGraphicHelper.Views;
 using System;
@@ -167,34 +168,74 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Save_Click()
         {
-            var dlg = new SaveFileDialog
+            if (DrawBitmap == null)
             {
-                InitialFileName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss"),
-                Title = "保存文件",
-                Filters = new List<FileDialogFilter>
-                {
-                    new FileDialogFilter
-                    {
-                        Name = "位图文件",
-                        Extensions = { "png", "bmp","jpg"}
-                    }
-                }
-            };
-            string fileName = await dlg.ShowAsync(MainWindow.Instance);
+                return;
+            }
 
-            if (fileName != null && fileName != "" && fileName != string.Empty)
+            try
             {
-                if (fileName.IndexOf("bmp") != -1 && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                string fileName = string.Empty;
+
+                if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
-                    var bitmap = DrawBitmap.GetBitmap();
-                    bitmap.Save(fileName, System.Drawing.Imaging.ImageFormat.Bmp);
+                    OpenFileName ofn = new();
+
+                    ofn.hwnd = MainWindow.Instance.Handle;
+                    ofn.structSize = Marshal.SizeOf(ofn);
+                    ofn.filter = "位图文件 (*.png;*.bmp;*.jpg)\0*.png;*.bmp;*.jpg\0";
+                    ofn.file = new string(new char[256]);
+                    ofn.maxFile = ofn.file.Length;
+                    ofn.fileTitle = new string(new char[64]);
+                    ofn.maxFileTitle = ofn.fileTitle.Length;
+                    ofn.title = "保存文件";
+                    ofn.defExt = ".png";
+                    if (NativeApi.GetSaveFileName(ofn))
+                    {
+                        fileName = ofn.file;
+                    }
                 }
                 else
                 {
-                    DrawBitmap.Save(fileName);
+                    var dlg = new SaveFileDialog
+                    {
+                        InitialFileName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss"),
+                        Title = "保存文件",
+                        Filters = new List<FileDialogFilter>
+                        {
+                            new FileDialogFilter
+                            {
+                                Name = "位图文件",
+                                Extensions = new List<string>()
+                                {
+                                    "png",
+                                    "bmp",
+                                    "jpg"
+                                }
+                            }
+                        }
+                    };
+                    fileName = await dlg.ShowAsync(MainWindow.Instance);
+                }
+
+
+                if (fileName != null && fileName != "" && fileName != string.Empty)
+                {
+                    if (fileName.IndexOf("bmp") != -1 && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+                    {
+                        var bitmap = DrawBitmap.GetBitmap();
+                        bitmap.Save(fileName, System.Drawing.Imaging.ImageFormat.Bmp);
+                    }
+                    else
+                    {
+                        DrawBitmap.Save(fileName);
+                    }
                 }
             }
-
+            catch (Exception e)
+            {
+                MessageBox.ShowAsync(e.Message);
+            }
         }
 
 

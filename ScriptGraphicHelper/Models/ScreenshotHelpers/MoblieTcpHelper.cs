@@ -58,14 +58,22 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public static string GetLocalAddress()
         {
-            var addressList = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList;
-            var addresses = addressList.Where(address => address.AddressFamily == AddressFamily.InterNetwork)
-                    .Select(address => address.ToString()).ToArray();
-            if (addresses.Length == 1)
+            try
             {
-                return addresses.First();
+                var addressList = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList;
+                var addresses = addressList.Where(address => address.AddressFamily == AddressFamily.InterNetwork)
+                        .Select(address => address.ToString()).ToArray();
+                if (addresses.Length == 1)
+                {
+                    return addresses.First();
+                }
+                return addresses.Where(address => !address.EndsWith(".1")).FirstOrDefault() ?? addresses.FirstOrDefault() ?? string.Empty;
             }
-            return addresses.Where(address => !address.EndsWith(".1")).FirstOrDefault() ?? addresses.FirstOrDefault() ?? string.Empty;
+            catch (Exception e)
+            {
+                MessageBox.ShowAsync($"获取地址失败, 请手动填入\r\n{e}");
+                return string.Empty;
+            }
         }
 
         private void ConnectCallback(IAsyncResult ar)
@@ -103,13 +111,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public override async Task<List<KeyValuePair<int, string>>> ListAll()
         {
-            var address = GetLocalAddress();
-
             TcpConfig tcpConfig = new();
-            TcpConfig.Address = address;
-
+            TcpConfig.Address = GetLocalAddress();
             await tcpConfig.ShowDialog(MainWindow.Instance);
 
+            var address = TcpConfig.Address;
             int port = TcpConfig.Port;
 
             Listener = new TcpListener(IPAddress.Parse(address), port);

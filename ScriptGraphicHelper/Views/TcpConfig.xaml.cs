@@ -34,11 +34,7 @@ namespace ScriptGraphicHelper.Views
             address.Text = Address != string.Empty ? Address : "192.168.0.";
             var port = this.FindControl<TextBox>("Port");
             port.Text = Port.ToString();
-            if (Title == "tcp≈‰÷√")
-            {
-                address.IsReadOnly = true;
-            }
-            else if (Title == "AJ≈‰÷√")
+            if (Title == "AJ≈‰÷√")
             {
                 port.IsVisible = false;
                 var tb = this.FindControl<TextBlock>("Description");

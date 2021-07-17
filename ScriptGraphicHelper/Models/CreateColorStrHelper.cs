@@ -82,7 +82,7 @@ namespace ScriptGraphicHelper.Models
 
         public static DiyFormat GetDiyFormat()
         {
-            StreamReader sr = File.OpenText(System.AppDomain.CurrentDomain.BaseDirectory + @"Assets\diyFormat.json");
+            StreamReader sr = File.OpenText(System.AppDomain.CurrentDomain.BaseDirectory + @"Assets/diyFormat.json");
             string result = sr.ReadToEnd();
             sr.Close();
 
