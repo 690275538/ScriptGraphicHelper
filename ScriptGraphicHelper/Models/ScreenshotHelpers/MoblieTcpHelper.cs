@@ -56,23 +56,19 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
 
 
-        public static string GetLocalAddress()
+        public static string[] GetLocalAddress()
         {
             try
             {
-                var addressList = System.Net.Dns.GetHostEntry(System.Net.Dns.GetHostName()).AddressList;
+                var addressList = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
                 var addresses = addressList.Where(address => address.AddressFamily == AddressFamily.InterNetwork)
                         .Select(address => address.ToString()).ToArray();
-                if (addresses.Length == 1)
-                {
-                    return addresses.First();
-                }
-                return addresses.Where(address => !address.EndsWith(".1")).FirstOrDefault() ?? addresses.FirstOrDefault() ?? string.Empty;
+                return addresses;
             }
             catch (Exception e)
             {
                 MessageBox.ShowAsync($"获取地址失败, 请手动填入\r\n{e}");
-                return string.Empty;
+                return Array.Empty<string>();
             }
         }
 
@@ -112,7 +108,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         public override async Task<List<KeyValuePair<int, string>>> ListAll()
         {
             TcpConfig tcpConfig = new();
-            TcpConfig.Address = GetLocalAddress();
+            TcpConfig.Address = string.Join("|", GetLocalAddress());
             await tcpConfig.ShowDialog(MainWindow.Instance);
 
             var address = TcpConfig.Address;

@@ -30,6 +30,18 @@ namespace ScriptGraphicHelper.Views
         private void WindowOpened(object sender, EventArgs e)
         {
             WindowStartupLocation = WindowStartupLocation.CenterScreen;
+
+            if (Title == "tcp≈‰÷√")
+            {
+                this.FindControl<Border>("TBBorder").IsVisible = false;
+                this.FindControl<Border>("CBBorder").IsVisible = true;
+                var addressList = this.FindControl<ComboBox>("AddressList");
+                var array = Address.Split("|");
+                addressList.Items = array;
+                addressList.SelectedIndex = 0;
+                return;
+            }
+
             var address = this.FindControl<TextBox>("Address");
             address.Text = Address != string.Empty ? Address : "192.168.0.";
             var port = this.FindControl<TextBox>("Port");
@@ -48,6 +60,7 @@ namespace ScriptGraphicHelper.Views
                 btn.IsVisible = true;
                 Height += 50;
             }
+
         }
 
         private void Ok_Tapped(object sender, RoutedEventArgs e)
@@ -55,6 +68,13 @@ namespace ScriptGraphicHelper.Views
             IsTapped = true;
             var address = this.FindControl<TextBox>("Address");
             Address = address.Text.Trim();
+
+            if (Title == "tcp≈‰÷√")
+            {
+                var addressList = this.FindControl<ComboBox>("AddressList");
+                Address = addressList.SelectedItem as string ?? "null";
+            }
+
             var port = this.FindControl<TextBox>("Port");
             Port = int.Parse(port.Text.Trim());
             this.Close();

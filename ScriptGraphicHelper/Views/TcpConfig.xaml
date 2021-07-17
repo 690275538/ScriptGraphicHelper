@@ -26,6 +26,7 @@
                     地址
                 </TextBlock>
                 <Border
+                    x:Name="TBBorder"
                     Margin="10,30"
                     BorderBrush="#666666"
                     BorderThickness="0,0,0,2"
@@ -38,6 +39,22 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Text="192.168.0." />
+                </Border>
+                <Border
+                    x:Name="CBBorder"
+                    IsVisible ="false"
+                    Margin="10,30"
+                    BorderBrush="#666666"
+                    BorderThickness="0,0,0,2"
+                    CornerRadius="0">
+                    <ComboBox
+                        Name="AddressList"
+                        Width="150"
+                        HorizontalAlignment="Left"
+                        VerticalAlignment="Top"
+                        Background="Transparent"
+                        BorderThickness="0"/>
+
                 </Border>
             </StackPanel>
             <StackPanel
