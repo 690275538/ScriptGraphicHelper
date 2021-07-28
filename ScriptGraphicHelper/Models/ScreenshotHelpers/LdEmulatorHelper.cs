@@ -89,7 +89,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public string PipeCmd(string theCommand, bool select = false)
         {
-            string ThePath = Path + "dnconsole.exe";
+            string ThePath = Path + "ldconsole.exe";
 
             if (select)
             {
@@ -113,8 +113,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 Arguments = theCommand,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
-                RedirectStandardInput = true,
-                UseShellExecute = false
+                RedirectStandardInput = true
             };
 
             Process pipe = Process.Start(start);

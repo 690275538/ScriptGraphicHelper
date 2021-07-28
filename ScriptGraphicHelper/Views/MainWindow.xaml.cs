@@ -7,9 +7,11 @@ using Avalonia.Threading;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
+using ScriptGraphicHelper.ViewModels;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Runtime.InteropServices;
 
 namespace ScriptGraphicHelper.Views
 {
@@ -23,7 +25,6 @@ namespace ScriptGraphicHelper.Views
             ExtendClientAreaToDecorationsHint = true;
             ExtendClientAreaTitleBarHeightHint = -1;
             ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
-
             Instance = this;
             InitializeComponent();
 #if DEBUG
@@ -41,6 +42,7 @@ namespace ScriptGraphicHelper.Views
 
         private void Window_Opened(object sender, EventArgs e)
         {
+            AddHandler(DragDrop.DropEvent, (this.DataContext as MainWindowViewModel).DropImage_Event);
             this.Handle = this.PlatformImpl.Handle.Handle;
             this.ClientSize = new Size(Setting.Instance.Width, Setting.Instance.Height);
             Timer.Tick += new EventHandler(HintMessage_Closed);

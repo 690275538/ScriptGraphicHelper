@@ -14,6 +14,7 @@
     CanResize="True"
     Closing="Window_Closing"
     Cursor="{Binding WindowCursor, Mode=TwoWay}"
+    DragDrop.AllowDrop="True"
     FontSize="14"
     FontStyle="Normal"
     Icon="/Assets/ico.ico"
@@ -55,7 +56,7 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid Background="#2d2d30">
+    <Grid Background="#2d2d30" >
         <Grid.ContextMenu>
             <ContextMenu>
                 <MenuItem Command="{Binding ResetEmulatorOptions_Click}" Header="重置模式选择" />

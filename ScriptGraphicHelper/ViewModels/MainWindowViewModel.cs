@@ -281,6 +281,34 @@ namespace ScriptGraphicHelper.ViewModels
             Img = await GraphicHelper.TurnRight();
         }
 
+        public void DropImage_Event(object? sender, DragEventArgs e)
+        {
+            if (e.Data.Contains(DataFormats.FileNames))
+            {
+                foreach (var name in e.Data.GetFileNames())
+                {
+                    if (name != "" && name != string.Empty)
+                    {
+                        var stream = new FileStream(name, FileMode.Open, FileAccess.Read);
+                        Img = new Bitmap(stream);
+                        stream.Position = 0;
+                        SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                        GraphicHelper.KeepScreen(sKBitmap);
+                        sKBitmap.Dispose();
+                        stream.Dispose();
+
+                        var item = new TabItem(Img);
+                        item.Command = new Command((param) =>
+                        {
+                            TabItems.Remove(item);
+                        });
+                        TabItems.Add(item);
+                        TabControlSelectedIndex = TabItems.Count - 1;
+                    }
+                }
+            }
+        }
+
         public async void Load_Click()
         {
             try

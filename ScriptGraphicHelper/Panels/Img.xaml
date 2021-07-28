@@ -18,13 +18,13 @@
         VerticalScrollBarVisibility="Auto">
         <Grid>
             <Image
-				ZIndex="1"
                 Width="72"
                 Height="72"
                 Margin="{Binding FindedPoint_Margin}"
                 HorizontalAlignment="Left"
                 VerticalAlignment="Top"
-                IsVisible="{Binding FindedPoint_IsVisible}">
+                IsVisible="{Binding FindedPoint_IsVisible}"
+                ZIndex="1">
                 <Image.Source>
                     <svg:SvgImage Source="/Assets/location.svg" />
                 </Image.Source>

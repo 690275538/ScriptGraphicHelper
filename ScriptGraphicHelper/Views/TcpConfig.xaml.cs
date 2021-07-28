@@ -39,7 +39,15 @@ namespace ScriptGraphicHelper.Views
                 var array = Address.Split("|");
                 addressList.Items = array;
                 addressList.SelectedIndex = 0;
-                return;
+
+                for (int i = 0; i < array.Length; i++)
+                {
+                    if (array[i].StartsWith("192.168"))
+                    {
+                        addressList.SelectedIndex = i;
+                    }
+                }
+
             }
 
             var address = this.FindControl<TextBox>("Address");

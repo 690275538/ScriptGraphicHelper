@@ -12,6 +12,7 @@
 		<Company>ScriptGraphicHelper</Company>
 		<Configurations>Debug;Release;MacOS-build;osx-publish</Configurations>
 		<ApplicationManifest>app.manifest</ApplicationManifest>
+		<StartupObject />
 	</PropertyGroup>
 	
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -84,8 +85,8 @@
 		<PackageReference Include="Avalonia.Desktop" Version="0.10.6" />
 		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.6" />
 		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.6" />
-		<PackageReference Include="Avalonia.Svg.Skia" Version="0.10.6.1" />
-		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.6" />
+		<PackageReference Include="Avalonia.Svg.Skia" Version="0.10.6.2" />
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.6.10" />
 		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-s390x.1.20553.1" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>	 

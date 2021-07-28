@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using ScriptGraphicHelper.ViewModels;
 using ScriptGraphicHelper.Views;
+using System;
 
 namespace ScriptGraphicHelper
 {
