@@ -8,10 +8,7 @@ using Newtonsoft.Json;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels;
-using System;
 using System.ComponentModel;
-using System.IO;
-using System.Runtime.InteropServices;
 
 namespace ScriptGraphicHelper.Views
 {
@@ -91,14 +88,30 @@ namespace ScriptGraphicHelper.Views
             WindowState = WindowState.Minimized;
         }
 
-        private void Fullscreen_Tapped(object sender, RoutedEventArgs e)
+        private double defaultWidth;
+        private double defaultHeight;
+        private void WindowStateChange_Tapped(object sender, RoutedEventArgs e)
         {
+            this.CanResize = true;
+            Button default_btn = this.FindControl<Button>("Default_btn");
+            Button fullScreen_btn = this.FindControl<Button>("FullScreen_btn");
             if (WindowState == WindowState.FullScreen)
             {
+                default_btn.IsVisible = false;
+                fullScreen_btn.IsVisible = true;
                 WindowState = WindowState.Normal;
+
+                this.Width = defaultWidth;
+                this.Height = defaultHeight;
+                var workingAreaSize = Screens.Primary.WorkingArea.Size;
+                this.Position = new PixelPoint((int)((workingAreaSize.Width - this.Width) / 2), (int)((workingAreaSize.Height - this.Height) / 2));
             }
             else
             {
+                defaultWidth = this.Width;
+                defaultHeight = this.Height;
+                default_btn.IsVisible = true;
+                fullScreen_btn.IsVisible = false;
                 WindowState = WindowState.FullScreen;
             }
         }

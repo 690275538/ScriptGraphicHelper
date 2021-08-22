@@ -113,7 +113,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 Arguments = theCommand,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
-                RedirectStandardInput = true
+                RedirectStandardInput = true,
+                UseShellExecute = false
             };
 
             Process pipe = Process.Start(start);

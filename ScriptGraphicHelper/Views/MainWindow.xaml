@@ -8,7 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:svg="clr-namespace:Avalonia.Svg.Skia;assembly=Avalonia.Svg.Skia"
     xmlns:vm="using:ScriptGraphicHelper.ViewModels"
-    Title="综合图色助手 V1.3.2.2"
+    Title="综合图色助手 V1.3.3"
     Width="1720"
     Height="900"
     CanResize="True"
@@ -56,7 +56,7 @@
         <vm:MainWindowViewModel />
     </Design.DataContext>
 
-    <Grid Background="#2d2d30" >
+    <Grid Background="#2d2d30">
         <Grid.ContextMenu>
             <ContextMenu>
                 <MenuItem Command="{Binding ResetEmulatorOptions_Click}" Header="重置模式选择" />
@@ -74,7 +74,7 @@
             <Panels:TitleBar.ContextMenu>
                 <ContextMenu>
                     <MenuItem Header="最小化" Tapped="Minsize_Tapped" />
-                    <MenuItem Header="全屏/还原" Tapped="Fullscreen_Tapped" />
+                    <MenuItem Header="全屏/还原" Tapped="WindowStateChange_Tapped" />
                     <MenuItem Header="关闭" Tapped="Close_Tapped" />
                 </ContextMenu>
             </Panels:TitleBar.ContextMenu>
@@ -194,12 +194,39 @@
                 </Button.Styles>
             </Button>
             <Button
+                x:Name="Default_btn"
                 Width="46"
                 Height="30"
                 Padding="15,0,15,0"
                 VerticalAlignment="Center"
                 Background="Transparent"
-                Tapped="Fullscreen_Tapped">
+                IsVisible="False"
+                Tapped="WindowStateChange_Tapped">
+                <Image
+                    Width="16"
+                    Height="16"
+                    VerticalAlignment="Center">
+                    <Image.Source>
+                        <svg:SvgImage Source="/Assets/default.svg" />
+                    </Image.Source>
+                </Image>
+                <Button.Styles>
+                    <Style Selector="Button /template/ ContentPresenter">
+                        <Setter Property="CornerRadius" Value="0" />
+                    </Style>
+                    <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
+                        <Setter Property="Background" Value="#ffffff" />
+                    </Style>
+                </Button.Styles>
+            </Button>
+            <Button
+                x:Name="FullScreen_btn"
+                Width="46"
+                Height="30"
+                Padding="15,0,15,0"
+                VerticalAlignment="Center"
+                Background="Transparent"
+                Tapped="WindowStateChange_Tapped">
                 <Image
                     Width="16"
                     Height="16"

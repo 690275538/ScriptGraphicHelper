@@ -102,6 +102,13 @@ namespace ScriptGraphicHelper.Views
                     IsTapped = true;
                     var address = this.FindControl<TextBox>("Address");
                     Address = address.Text.Trim();
+
+                    if (Title == "tcp≈‰÷√")
+                    {
+                        var addressList = this.FindControl<ComboBox>("AddressList");
+                        Address = addressList.SelectedItem as string ?? "null";
+                    }
+
                     var port = this.FindControl<TextBox>("Port");
                     Port = int.Parse(port.Text.Trim());
                     this.Close();

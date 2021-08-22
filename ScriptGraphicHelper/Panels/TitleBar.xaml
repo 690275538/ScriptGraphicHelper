@@ -10,13 +10,16 @@
     mc:Ignorable="d">
 
     <Grid Height="30" Background="#e8e8e8">
-        <StackPanel Orientation="Horizontal">
+        <Grid>
             <Image
                 Width="20"
                 Margin="10,0,8,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
                 Source="/Assets/ico.ico" />
             <TextBlock
-                Margin="1,1,0,0"
+                Margin="38,1,0,0"
+                HorizontalAlignment="Left"
                 VerticalAlignment="Center"
                 FontSize="13"
                 FontWeight="Bold"
@@ -24,10 +27,12 @@
                 综合图色助手
             </TextBlock>
             <TabControl
-                Margin="27,0,0,0"
+                Margin="170,0,0,0"
+                HorizontalAlignment="Left"
+                VerticalAlignment="Center"
                 Items="{Binding TabItems, Mode=TwoWay}"
                 SelectedIndex="{Binding TabControlSelectedIndex, Mode=TwoWay}" />
-        </StackPanel>
+        </Grid>
     </Grid>
 
     <UserControl.Styles>
@@ -98,7 +103,7 @@
         <!--  We don't use selector to PART_LayoutRoot, so developer can override selected item background with TabStripItem.Background  -->
 
         <Style Selector="TabItem">
-            <Setter Property="Background" Value="#cccccc" />
+            <Setter Property="Background" Value="#e8e8e8" />
             <Setter Property="TextBlock.Foreground" Value="#000000" />
         </Style>
 

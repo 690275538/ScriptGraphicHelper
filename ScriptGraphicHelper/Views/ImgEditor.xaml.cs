@@ -5,6 +5,7 @@ using Avalonia.Markup.Xaml;
 using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.ViewModels;
 using System.Collections.Generic;
+using Range = ScriptGraphicHelper.Models.Range;
 
 namespace ScriptGraphicHelper.Views
 {
