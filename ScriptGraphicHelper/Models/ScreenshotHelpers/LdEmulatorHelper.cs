@@ -21,90 +21,90 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             {
                 if (version == 0)
                 {
-                    Name = "雷电模拟器3.0";
-                    RegistryKey Hkml = Registry.CurrentUser;
-                    RegistryKey Aimdir = Hkml.OpenSubKey("Software\\ChangZhi2\\dnplayer", true);
+                    this.Name = "雷电模拟器3.0";
+                    var Hkml = Registry.CurrentUser;
+                    var Aimdir = Hkml.OpenSubKey("Software\\ChangZhi2\\dnplayer", true);
                     if (Aimdir == null)
                     {
                         if (Setting.Instance.Ldpath3 != null && Setting.Instance.Ldpath3 != string.Empty)
                         {
-                            Path = Setting.Instance.Ldpath64;
+                            this.Path = Setting.Instance.Ldpath64;
                         }
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
+                    this.Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
                 }
                 else if (version == 1)
                 {
-                    Name = "雷电模拟器4.0";
-                    RegistryKey Hkml = Registry.CurrentUser;
-                    RegistryKey Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer", true);
+                    this.Name = "雷电模拟器4.0";
+                    var Hkml = Registry.CurrentUser;
+                    var Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer", true);
                     if (Aimdir == null)
                     {
                         if (Setting.Instance.Ldpath4 != null && Setting.Instance.Ldpath4 != string.Empty)
                         {
-                            Path = Setting.Instance.Ldpath64;
+                            this.Path = Setting.Instance.Ldpath64;
                         }
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
+                    this.Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
                 }
                 else if (version == 2)
                 {
-                    Name = "雷电模拟器64";
-                    RegistryKey Hkml = Registry.CurrentUser;
-                    RegistryKey Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer64", true);
+                    this.Name = "雷电模拟器64";
+                    var Hkml = Registry.CurrentUser;
+                    var Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer64", true);
                     if (Aimdir == null)
                     {
                         if (Setting.Instance.Ldpath64 != null && Setting.Instance.Ldpath64 != string.Empty)
                         {
-                            Path = Setting.Instance.Ldpath64;
+                            this.Path = Setting.Instance.Ldpath64;
                         }
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
+                    this.Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
                 }
                 else if (version == 3)
                 {
-                    Name = "雷神模拟器";
-                    RegistryKey Hkml = Registry.CurrentUser;
-                    RegistryKey Aimdir = Hkml.OpenSubKey("Software\\baizhi\\lsplayer", true);
+                    this.Name = "雷神模拟器";
+                    var Hkml = Registry.CurrentUser;
+                    var Aimdir = Hkml.OpenSubKey("Software\\baizhi\\lsplayer", true);
                     if (Aimdir == null)
                     {
                         if (Setting.Instance.Ldpath64 != null && Setting.Instance.Ldpath64 != string.Empty)
                         {
-                            Path = Setting.Instance.Ldpath64;
+                            this.Path = Setting.Instance.Ldpath64;
                         }
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
+                    this.Path = Aimdir.GetValue("InstallDir").ToString() ?? string.Empty;
                 }
             }
             catch
             {
-                Path = string.Empty;
+                this.Path = string.Empty;
             }
         }
         public override void Dispose() { }
 
         public string PipeCmd(string theCommand, bool select = false)
         {
-            string ThePath = Path + "ldconsole.exe";
+            var ThePath = this.Path + "ldconsole.exe";
 
             if (select)
             {
-                ThePath = Path + "ld.exe";
+                ThePath = this.Path + "ld.exe";
             }
 
-            if (Name == "雷神模拟器")
+            if (this.Name == "雷神模拟器")
             {
                 if (!select)
                 {
-                    ThePath = Path + "lsconsole.exe";
+                    ThePath = this.Path + "lsconsole.exe";
                 }
                 else
                 {
-                    ThePath = Path + "ls.exe";
+                    ThePath = this.Path + "ls.exe";
                 }
             }
 
@@ -117,9 +117,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 UseShellExecute = false
             };
 
-            Process pipe = Process.Start(start);
-            StreamReader readStream = pipe.StandardOutput;
-            string OutputStr = readStream.ReadToEnd();
+            var pipe = Process.Start(start);
+            var readStream = pipe.StandardOutput;
+            var OutputStr = readStream.ReadToEnd();
             pipe.WaitForExit(10000);
             pipe.Close();
             readStream.Close();
@@ -128,10 +128,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         public string[] List(string ldName)//获取模拟器信息
                                            //返回数组 , 顺序为:序号，标题，顶层窗口句柄，绑定窗口句柄，是否进入android，进程PID，VBox进程PID
         {
-            string[] resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
-            for (int i = 0; i < resultArray.Length; i++)
+            var resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
+            for (var i = 0; i < resultArray.Length; i++)
             {
-                string[] LineArray = resultArray[i].Split(',');
+                var LineArray = resultArray[i].Split(',');
                 if (LineArray.Length > 1)
                 {
                     if (LineArray[1] == ldName)
@@ -144,10 +144,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
         public string[] List(int ldIndex)
         {
-            string[] resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
-            for (int i = 0; i < resultArray.Length; i++)
+            var resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
+            for (var i = 0; i < resultArray.Length; i++)
             {
-                string[] LineArray = resultArray[i].Split(',');
+                var LineArray = resultArray[i].Split(',');
                 if (LineArray.Length > 1)
                 {
                     if (LineArray[0] == ldIndex.ToString())
@@ -160,10 +160,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
         public override bool IsStart(int ldIndex)
         {
-            string[] resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
-            for (int i = 0; i < resultArray.Length; i++)
+            var resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
+            for (var i = 0; i < resultArray.Length; i++)
             {
-                string[] LineArray = resultArray[i].Split(',');
+                var LineArray = resultArray[i].Split(',');
                 if (LineArray.Length > 1)
                 {
                     if (LineArray[0] == ldIndex.ToString())
@@ -179,11 +179,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             var task = Task.Run(() =>
             {
-                string[] resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
+                var resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
                 List<KeyValuePair<int, string>> result = new();
-                for (int i = 0; i < resultArray.Length; i++)
+                for (var i = 0; i < resultArray.Length; i++)
                 {
-                    string[] LineArray = resultArray[i].Split(',');
+                    var LineArray = resultArray[i].Split(',');
                     result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[1]));
                 }
                 return result;
@@ -199,26 +199,26 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 {
                     throw new Exception("模拟器未启动 ! ");
                 }
-                if (BmpPath == string.Empty)
+                if (this.BmpPath == string.Empty)
                 {
-                    BmpPath = BmpPathGet(index);
+                    this.BmpPath = BmpPathGet(index);
                 }
-                string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                var BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
                 Screencap(index, "/mnt/sdcard/Pictures", BmpName);
-                for (int i = 0; i < 10; i++)
+                for (var i = 0; i < 10; i++)
                 {
                     Task.Delay(200).Wait();
-                    if (File.Exists(BmpPath + "\\" + BmpName))
+                    if (File.Exists(this.BmpPath + "\\" + BmpName))
                     {
                         break;
                     }
                 }
                 try
                 {
-                    FileStream stream = new(BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
+                    FileStream stream = new(this.BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
                     var bitmap = new Bitmap(stream);
                     stream.Position = 0;
-                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    var sKBitmap = SKBitmap.Decode(stream);
                     GraphicHelper.KeepScreen(sKBitmap);
                     sKBitmap.Dispose();
                     stream.Dispose();
@@ -239,10 +239,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             try
             {
-                StreamReader streamReader = new(string.Format(@"{0}\vms\config\leidian{1}.config", Path, index), false);
-                string ret = streamReader.ReadToEnd();
+                StreamReader streamReader = new(string.Format(@"{0}\vms\config\leidian{1}.config", this.Path, index), false);
+                var ret = streamReader.ReadToEnd();
                 streamReader.Close();
-                JObject jsonObj = JObject.Parse(ret);
+                var jsonObj = JObject.Parse(ret);
                 return jsonObj["statusSettings.sharedPictures"].ToString();
             }
             catch

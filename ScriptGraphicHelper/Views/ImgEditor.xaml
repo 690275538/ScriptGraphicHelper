@@ -16,7 +16,6 @@
     MaxWidth="1800"
     MaxHeight="870"
     Icon="/Assets/ico.ico"
-    WindowStartupLocation="CenterOwner"
     mc:Ignorable="d">
 
     <Window.Resources>
@@ -24,7 +23,7 @@
         <cv:Color2BrushConverter x:Key="color2Brush" />
     </Window.Resources>
 
-    <Grid Background="#333333">
+    <Grid Background="#2d2d30">
         <StackPanel
             Margin="20,15"
             HorizontalAlignment="Left"

@@ -12,14 +12,16 @@ namespace ScriptGraphicHelper.Views
     {
         public static async void ShowAsync(string msg)
         {
-            await Dispatcher.UIThread.InvokeAsync(async () => {
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
                 await new MessageBox(msg).ShowDialog(MainWindow.Instance);
             });
         }
 
         public static async void ShowAsync(string title, string msg)
         {
-            await Dispatcher.UIThread.InvokeAsync(async () => {
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
                 await new MessageBox(title, msg).ShowDialog(MainWindow.Instance);
             });
         }
@@ -35,6 +37,7 @@ namespace ScriptGraphicHelper.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         private new string Title { get; set; } = string.Empty;
@@ -42,12 +45,12 @@ namespace ScriptGraphicHelper.Views
 
         public MessageBox(string title, string msg) : this()
         {
-            Title = title;
-            Message = msg;
+            this.Title = title;
+            this.Message = msg;
 
-            ExtendClientAreaToDecorationsHint = true;
-            ExtendClientAreaTitleBarHeightHint = -1;
-            ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
+            this.ExtendClientAreaToDecorationsHint = true;
+            this.ExtendClientAreaTitleBarHeightHint = -1;
+            this.ExtendClientAreaChromeHints = Avalonia.Platform.ExtendClientAreaChromeHints.NoChrome;
         }
 
         public MessageBox(string msg) : this("ÌבÊ¾", msg) { }
@@ -56,23 +59,23 @@ namespace ScriptGraphicHelper.Views
         private void Window_Opened(object sender, EventArgs e)
         {
             var title = this.FindControl<TextBlock>("Title");
-            title.Text = Title;
+            title.Text = this.Title;
             var tb = this.FindControl<TextBlock>("Message");
-            tb.Text = Message;
+            tb.Text = this.Message;
         }
 
         private async void Close_Tapped(object sender, RoutedEventArgs e)
         {
-            await Application.Current.Clipboard.SetTextAsync(Message);
-            this.Close();
+            await Application.Current.Clipboard.SetTextAsync(this.Message);
+            Close();
         }
 
         private async void Window_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
-                await Application.Current.Clipboard.SetTextAsync(Message);
-                this.Close();
+                await Application.Current.Clipboard.SetTextAsync(this.Message);
+                Close();
             }
         }
 
@@ -80,7 +83,7 @@ namespace ScriptGraphicHelper.Views
         {
             if (e.Property.Name == "Width" || e.Property.Name == "Height")
             {
-                Position = new PixelPoint((int)(Screens.Primary.WorkingArea.Width / 2 - Width / 2), (int)(Screens.Primary.WorkingArea.Height / 2 - Height / 2));
+                this.Position = new PixelPoint((int)(this.Screens.Primary.WorkingArea.Width / 2 - this.Width / 2), (int)(this.Screens.Primary.WorkingArea.Height / 2 - this.Height / 2));
             }
         }
     }

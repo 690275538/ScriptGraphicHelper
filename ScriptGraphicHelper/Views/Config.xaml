@@ -10,7 +10,7 @@
     Icon="/Assets/ico.ico"
     Opened="Window_Opened"
     mc:Ignorable="d">
-    <Grid Background="#333333">
+    <Grid Background="#2d2d30">
         <StackPanel Margin="20,15,20,15">
             <StackPanel Margin="10" Orientation="Horizontal">
                 <TextBlock

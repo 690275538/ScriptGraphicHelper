@@ -18,8 +18,8 @@ namespace ScriptGraphicHelper.Models
 
 
             str = str.Replace("\"", "").Replace("\r", "").Replace("\n", "").Replace(" ", "");
-            string[] strArray = str.Split(",");
-            string[] info = strArray[0].Split('/');
+            var strArray = str.Split(",");
+            var info = strArray[0].Split('/');
             if (info.Length == 3)
             {
                 return info[0] switch
@@ -134,9 +134,9 @@ namespace ScriptGraphicHelper.Models
                 Point = startPoint,
                 Color = startColor
             });
-            int startIndex = str.IndexOf("[[");
-            int endIndex = str.IndexOf("]]", startIndex);
-            string[] array = str.Substring(startIndex, endIndex - startIndex).Replace("[", "").Split("],");
+            var startIndex = str.IndexOf("[[");
+            var endIndex = str.IndexOf("]]", startIndex);
+            var array = str.Substring(startIndex, endIndex - startIndex).Replace("[", "").Split("],");
             foreach (var item in array)
             {
                 var arr = item.Split(",");
@@ -155,10 +155,10 @@ namespace ScriptGraphicHelper.Models
         {
             var colorInfos = new ObservableCollection<ColorInfo>();
             var startPoint = new Point(int.Parse(info[1]), int.Parse(info[2]));
-            for (int i = 1; i < strArray.Length; i++)
+            for (var i = 1; i < strArray.Length; i++)
             {
-                string item = strArray[i];
-                string[] array = item.Split("|");
+                var item = strArray[i];
+                var array = item.Split("|");
                 if (item.Length == 8)
                 {
                     var colorInfo = new ColorInfo
@@ -195,9 +195,9 @@ namespace ScriptGraphicHelper.Models
                 Point = startPoint,
                 Color = startColor
             });
-            int startIndex = str.IndexOf("[[");
-            int endIndex = str.IndexOf("]]", startIndex);
-            string[] array = str.Substring(startIndex, endIndex - startIndex).Replace("[", "").Split("],");
+            var startIndex = str.IndexOf("[[");
+            var endIndex = str.IndexOf("]]", startIndex);
+            var array = str.Substring(startIndex, endIndex - startIndex).Replace("[", "").Split("],");
             foreach (var item in array)
             {
                 var arr = item.Split(",");
@@ -216,10 +216,10 @@ namespace ScriptGraphicHelper.Models
         {
             var colorInfos = new ObservableCollection<ColorInfo>();
             var startPoint = new Point(int.Parse(info[1]), int.Parse(info[2]));
-            for (int i = 1; i < strArray.Length; i++)
+            for (var i = 1; i < strArray.Length; i++)
             {
-                string item = strArray[i];
-                string[] array = item.Split("|");
+                var item = strArray[i];
+                var array = item.Split("|");
                 if (item.Length == 8)
                 {
                     var colorInfo = new ColorInfo
@@ -248,10 +248,10 @@ namespace ScriptGraphicHelper.Models
         {
             var colorInfos = new ObservableCollection<ColorInfo>();
             var startPoint = new Point(int.Parse(info[1]), int.Parse(info[2]));
-            for (int i = 1; i < strArray.Length; i++)
+            for (var i = 1; i < strArray.Length; i++)
             {
-                string item = strArray[i];
-                string[] array = item.Split("|");
+                var item = strArray[i];
+                var array = item.Split("|");
                 if (item.Length == 6)
                 {
                     var colorInfo = new ColorInfo
@@ -280,10 +280,10 @@ namespace ScriptGraphicHelper.Models
         {
             var colorInfos = new ObservableCollection<ColorInfo>();
             var startPoint = new Point(int.Parse(info[1]), int.Parse(info[2]));
-            for (int i = 1; i < strArray.Length; i++)
+            for (var i = 1; i < strArray.Length; i++)
             {
-                string item = strArray[i];
-                string[] array = item.Split("|");
+                var item = strArray[i];
+                var array = item.Split("|");
                 if (item.Length == 6)
                 {
                     var colorInfo = new ColorInfo
@@ -318,12 +318,12 @@ namespace ScriptGraphicHelper.Models
             ColorInfo.Width = width;
             ColorInfo.Height = height;
 
-            int startIndex = str.IndexOf("[[");
-            int endIndex = str.IndexOf("]]", startIndex);
-            string[] array = str.Substring(startIndex, endIndex - startIndex).Replace("\r\n", "").Replace("[", "").Split("],");
+            var startIndex = str.IndexOf("[[");
+            var endIndex = str.IndexOf("]]", startIndex);
+            var array = str.Substring(startIndex, endIndex - startIndex).Replace("\r\n", "").Replace("[", "").Split("],");
             foreach (var item in array)
             {
-                var arr = item.Split(",");
+                var arr = item.Trim().Split(",");
                 var colorInfo = new ColorInfo();
                 switch (arr[0])
                 {

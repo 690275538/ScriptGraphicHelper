@@ -6,25 +6,25 @@ namespace ScriptGraphicHelper.Models.UnmanagedMethods
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
     public class OpenFileName
     {
-        public int structSize = 0;
+        public int structSize;
         public IntPtr hwnd = IntPtr.Zero;
         public IntPtr hinst = IntPtr.Zero;
-        public string filter = null;
-        public string custFilter = null;
-        public int custFilterMax = 0;
-        public int filterIndex = 0;
-        public string file = null;
-        public int maxFile = 0;
-        public string fileTitle = null;
+        public string? filter;
+        public string? custFilter;
+        public int custFilterMax;
+        public int filterIndex;
+        public string? file;
+        public int maxFile;
+        public string? fileTitle;
         public int maxFileTitle = 0;
-        public string initialDir = null;
-        public string title = null;
-        public int flags = 0;
-        public short fileOffset = 0;
+        public string? initialDir;
+        public string? title;
+        public int flags;
+        public short fileOffset;
         public short fileExtMax = 0;
-        public string defExt = null;
-        public int custData = 0;
+        public string? defExt;
+        public int custData;
         public IntPtr pHook = IntPtr.Zero;
-        public string template = null;
+        public string? template;
     }
 }

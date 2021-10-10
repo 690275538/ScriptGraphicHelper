@@ -20,6 +20,7 @@ namespace ScriptGraphicHelper.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
         }
 
@@ -29,9 +30,9 @@ namespace ScriptGraphicHelper.Views
 
         private void WindowOpened(object sender, EventArgs e)
         {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
 
-            if (Title == "tcp≈‰÷√")
+            if (this.Title == "tcp≈‰÷√")
             {
                 this.FindControl<Border>("TBBorder").IsVisible = false;
                 this.FindControl<Border>("CBBorder").IsVisible = true;
@@ -40,7 +41,7 @@ namespace ScriptGraphicHelper.Views
                 addressList.Items = array;
                 addressList.SelectedIndex = 0;
 
-                for (int i = 0; i < array.Length; i++)
+                for (var i = 0; i < array.Length; i++)
                 {
                     if (array[i].StartsWith("192.168"))
                     {
@@ -54,30 +55,30 @@ namespace ScriptGraphicHelper.Views
             address.Text = Address != string.Empty ? Address : "192.168.0.";
             var port = this.FindControl<TextBox>("Port");
             port.Text = Port.ToString();
-            if (Title == "AJ≈‰÷√")
+            if (this.Title == "AJ≈‰÷√")
             {
                 port.IsVisible = false;
                 var tb = this.FindControl<TextBlock>("Description");
                 tb.Text = "–Ë“™ø™∆Ùautojsµƒ–¸∏°¥∞!";
                 tb.HorizontalAlignment = Avalonia.Layout.HorizontalAlignment.Center;
-                Height -= 20;
+                this.Height -= 20;
             }
-            else if (Title == "AdbŒﬁœﬂµ˜ ‘")
+            else if (this.Title == "AdbŒﬁœﬂµ˜ ‘")
             {
                 var btn = this.FindControl<Button>("Skip");
                 btn.IsVisible = true;
-                Height += 50;
+                this.Height += 50;
             }
 
         }
 
         private void Ok_Tapped(object sender, RoutedEventArgs e)
         {
-            IsTapped = true;
+            this.IsTapped = true;
             var address = this.FindControl<TextBox>("Address");
             Address = address.Text.Trim();
 
-            if (Title == "tcp≈‰÷√")
+            if (this.Title == "tcp≈‰÷√")
             {
                 var addressList = this.FindControl<ComboBox>("AddressList");
                 Address = addressList.SelectedItem as string ?? "null";
@@ -85,25 +86,25 @@ namespace ScriptGraphicHelper.Views
 
             var port = this.FindControl<TextBox>("Port");
             Port = int.Parse(port.Text.Trim());
-            this.Close();
+            Close();
         }
 
         private void Skip_Tapped(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            Close();
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
         {
-            Key key = e.Key;
+            var key = e.Key;
             switch (key)
             {
                 case Key.Enter:
-                    IsTapped = true;
+                    this.IsTapped = true;
                     var address = this.FindControl<TextBox>("Address");
                     Address = address.Text.Trim();
 
-                    if (Title == "tcp≈‰÷√")
+                    if (this.Title == "tcp≈‰÷√")
                     {
                         var addressList = this.FindControl<ComboBox>("AddressList");
                         Address = addressList.SelectedItem as string ?? "null";
@@ -111,10 +112,10 @@ namespace ScriptGraphicHelper.Views
 
                     var port = this.FindControl<TextBox>("Port");
                     Port = int.Parse(port.Text.Trim());
-                    this.Close();
+                    Close();
                     break;
 
-                case Key.Escape: this.Close(); break;
+                case Key.Escape: Close(); break;
 
                 default: return;
             }

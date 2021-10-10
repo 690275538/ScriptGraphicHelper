@@ -17,8 +17,8 @@ namespace ScriptGraphicHelper.Models
             }
             base.Add(item);
 
-            int width = (int)((MainWindow.Instance.Width - 450) / (this.Count < 8 ? this.Count : 8));
-            for (int i = 0; i < this.Count; i++)
+            var width = (int)((MainWindow.Instance.Width - 450) / (this.Count < 8 ? this.Count : 8));
+            for (var i = 0; i < this.Count; i++)
             {
                 this[i].Width = width < 160 ? width : 160;
             }
@@ -31,10 +31,10 @@ namespace ScriptGraphicHelper.Models
         private int width;
         public int Width
         {
-            get { return width; }
+            get { return this.width; }
             set
             {
-                width = value;
+                this.width = value;
                 NotifyPropertyChanged("Width");
             }
         }
@@ -47,18 +47,15 @@ namespace ScriptGraphicHelper.Models
 
         public TabItem(Bitmap img)
         {
-            Header = DateTime.Now.ToString("HH-mm-ss");
-            Img = img;
+            this.Header = DateTime.Now.ToString("HH-mm-ss");
+            this.Img = img;
         }
 
         public event PropertyChangedEventHandler? PropertyChanged;
 
         protected virtual void NotifyPropertyChanged(string propertyName)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

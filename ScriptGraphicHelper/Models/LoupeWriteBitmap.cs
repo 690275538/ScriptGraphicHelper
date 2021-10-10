@@ -18,22 +18,22 @@ namespace ScriptGraphicHelper.Models
                 unsafe
                 {
                     var ptr = (byte*)bmpData.Address;
-                    for (int j = 0; j < 16; j++)
+                    for (var j = 0; j < 16; j++)
                     {
-                        for (int i = 0; i < 241; i++)
+                        for (var i = 0; i < 241; i++)
                         {
-                            int k = j * 16 * bmpData.RowBytes + i * 4;
+                            var k = j * 16 * bmpData.RowBytes + i * 4;
                             ptr[k] = 75;
                             ptr[k + 1] = 75;
                             ptr[k + 2] = 75;
                             ptr[k + 3] = 255;
                         }
                     }
-                    for (int j = 0; j < 16; j++)
+                    for (var j = 0; j < 16; j++)
                     {
-                        for (int i = 0; i < 241; i++)
+                        for (var i = 0; i < 241; i++)
                         {
-                            int k = i * bmpData.RowBytes + j * 16 * 4;
+                            var k = i * bmpData.RowBytes + j * 16 * 4;
                             ptr[k] = 75;
                             ptr[k + 1] = 75;
                             ptr[k + 2] = 75;
@@ -54,11 +54,11 @@ namespace ScriptGraphicHelper.Models
                 unsafe
                 {
                     var ptr = (byte*)bmpData.Address;
-                    for (int j = 0; j < 16; j++)
+                    for (var j = 0; j < 16; j++)
                     {
-                        for (int i = 0; i < 241; i++)
+                        for (var i = 0; i < 241; i++)
                         {
-                            int k = j * 16 * bmpData.RowBytes + i * 4;
+                            var k = j * 16 * bmpData.RowBytes + i * 4;
                             if (i >= 110 && i <= 130 && j <= 8 && j >= 7)
                             {
                                 ptr[k] = highLightColor[0];
@@ -69,11 +69,11 @@ namespace ScriptGraphicHelper.Models
                             }
                         }
                     }
-                    for (int j = 0; j < 16; j++)
+                    for (var j = 0; j < 16; j++)
                     {
-                        for (int i = 0; i < 241; i++)
+                        for (var i = 0; i < 241; i++)
                         {
-                            int k = i * bmpData.RowBytes + j * 16 * 4;
+                            var k = i * bmpData.RowBytes + j * 16 * 4;
                             if (i >= 110 && i <= 130 && j <= 8 && j >= 7)
                             {
                                 ptr[k] = highLightColor[0];
@@ -89,10 +89,10 @@ namespace ScriptGraphicHelper.Models
 
         private static int IsOffsetSame(List<byte[]> colors)
         {
-            int result = 24;
+            var result = 24;
             double similarity = 12;
-            byte[] color = colors[7 * 15 + 7];
-            List<byte[]> offsetIndex = new List<byte[]>
+            var color = colors[7 * 15 + 7];
+            var offsetIndex = new List<byte[]>
             {
                 new byte[]{ 6, 7},
                 new byte[]{ 6, 8},
@@ -119,9 +119,9 @@ namespace ScriptGraphicHelper.Models
                 new byte[]{ 6, 5},
                 new byte[]{ 5, 5},
             };
-            for (int i = 0; i < 24; i++)
+            for (var i = 0; i < 24; i++)
             {
-                byte[] offsetColor = colors[offsetIndex[i][0] * 15 + offsetIndex[i][1]];
+                var offsetColor = colors[offsetIndex[i][0] * 15 + offsetIndex[i][1]];
                 if (Math.Abs(color[0] - offsetColor[0]) > similarity || Math.Abs(color[1] - offsetColor[1]) > similarity || Math.Abs(color[2] - offsetColor[2]) > similarity)
                 {
                     result = i;
@@ -137,29 +137,29 @@ namespace ScriptGraphicHelper.Models
         }
         public static bool WriteColor(this WriteableBitmap bmp, List<byte[]> colors)
         {
-            List<byte[]> highLightColor = new List<byte[]>
+            var highLightColor = new List<byte[]>
             {
             new byte[]{ 60, 20, 220 },
             new byte[]{ 0x1A, 0xB1, 0xF9 },
             new byte[]{ 0x14, 0xB8, 0x6E }
             };
-            int offsetRange = IsOffsetSame(colors);
+            var offsetRange = IsOffsetSame(colors);
             ChangeHighLight(bmp, highLightColor[offsetRange]);
             using (var bmpData = Bitmap.Lock())
             {
                 unsafe
                 {
                     var ptr = (byte*)bmpData.Address;
-                    for (int y = 0; y < 15; y++)
+                    for (var y = 0; y < 15; y++)
                     {
-                        for (int x = 0; x < 15; x++)
+                        for (var x = 0; x < 15; x++)
                         {
-                            byte[] color = colors[y * 15 + x];
-                            for (int i = y * 16 + 1; i < y * 16 + 16; i++)
+                            var color = colors[y * 15 + x];
+                            for (var i = y * 16 + 1; i < y * 16 + 16; i++)
                             {
-                                for (int j = x * 16 + 1; j < x * 16 + 16; j++)
+                                for (var j = x * 16 + 1; j < x * 16 + 16; j++)
                                 {
-                                    int k = i * bmpData.RowBytes + j * 4;
+                                    var k = i * bmpData.RowBytes + j * 4;
                                     if (i >= 110 && i <= 130 && ((j >= 110 && j <= 112) || (j >= 128 && j <= 130)))
                                     {
                                         ptr[k] = highLightColor[offsetRange][0];

@@ -16,14 +16,14 @@ namespace ScriptGraphicHelper.Models
 
         public CompareResult(bool result)
         {
-            Result = result;
-            ErrorMessage = string.Empty;
+            this.Result = result;
+            this.ErrorMessage = string.Empty;
         }
 
         public CompareResult(bool result, string message)
         {
-            Result = result;
-            ErrorMessage = message;
+            this.Result = result;
+            this.ErrorMessage = message;
         }
     }
 
@@ -49,18 +49,18 @@ namespace ScriptGraphicHelper.Models
 
         public static byte[] GetRectData(Range range)
         {
-            int sx = (int)range.Left;
-            int sy = (int)range.Top;
-            int ex = (int)range.Right;
-            int ey = (int)range.Bottom;
-            int width = ex - sx + 1;
-            int height = ey - sy + 1;
-            byte[] data = new byte[width * height * 4];
-            int site = 0;
-            for (int i = sy; i <= ey; i++)
+            var sx = (int)range.Left;
+            var sy = (int)range.Top;
+            var ex = (int)range.Right;
+            var ey = (int)range.Bottom;
+            var width = ex - sx + 1;
+            var height = ey - sy + 1;
+            var data = new byte[width * height * 4];
+            var site = 0;
+            for (var i = sy; i <= ey; i++)
             {
-                int location = sx * 4 + Width * 4 * i;
-                for (int j = sx; j <= ex; j++)
+                var location = sx * 4 + Width * 4 * i;
+                for (var j = sx; j <= ex; j++)
                 {
                     data[site] = ScreenData[location];
                     data[site + 1] = ScreenData[location + 1];
@@ -77,13 +77,13 @@ namespace ScriptGraphicHelper.Models
         {
             var task = Task.Run(() =>
             {
-                byte[] data = new byte[RowStride * Height];
-                int step = 0;
-                for (int j = 0; j < Width; j++)
+                var data = new byte[RowStride * Height];
+                var step = 0;
+                for (var j = 0; j < Width; j++)
                 {
-                    for (int i = Height - 1; i >= 0; i--)
+                    for (var i = Height - 1; i >= 0; i--)
                     {
-                        int location = j * PixelStride + i * RowStride;
+                        var location = j * PixelStride + i * RowStride;
                         data[step] = ScreenData[location];
                         data[step + 1] = ScreenData[location + 1];
                         data[step + 2] = ScreenData[location + 2];
@@ -103,12 +103,12 @@ namespace ScriptGraphicHelper.Models
 
         public static byte[] GetPixel(int x, int y)
         {
-            byte[] retRGB = new byte[] { 0, 0, 0 };
+            var retRGB = new byte[] { 0, 0, 0 };
             try
             {
                 if (x < Width && y < Height)
                 {
-                    int location = x * PixelStride + y * RowStride;
+                    var location = x * PixelStride + y * RowStride;
                     if (PxFormat == PixelFormat.Bgra8888)
                     {
                         retRGB[0] = ScreenData[location + 2];
@@ -132,13 +132,13 @@ namespace ScriptGraphicHelper.Models
 
         public static CompareResult AnchorsCompareColor(double width, double height, string colorString, int sim = 95)
         {
-            string[] compareColorArr = colorString.Trim('"').Split(',');
+            var compareColorArr = colorString.Trim('"').Split(',');
 
-            double multiple = Height / height;
-            string result = string.Empty;
-            for (int i = 0; i < compareColorArr.Length; i++)
+            var multiple = Height / height;
+            var result = string.Empty;
+            for (var i = 0; i < compareColorArr.Length; i++)
             {
-                string[] compareColor = compareColorArr[i].Split('|');
+                var compareColor = compareColorArr[i].Split('|');
                 double findX = int.Parse(compareColor[1]);
                 double findY = int.Parse(compareColor[2]);
                 if (compareColor[0] == "Left" || compareColor[0] == "None")
@@ -164,14 +164,14 @@ namespace ScriptGraphicHelper.Models
 
         public static Point AnchorsFindColor(Range rect, double width, double height, string colorString, int sim = 95)
         {
-            string compareColorStr = colorString.Trim('"');
-            string[] compareColorArr = compareColorStr.Split(',');
+            var compareColorStr = colorString.Trim('"');
+            var compareColorArr = compareColorStr.Split(',');
             if (compareColorArr.Length < 2)
             {
                 return new Point(-1, -1);
             }
-            double multiple = Height / height;
-            string[] startColorArr = compareColorArr[0].Split('|');
+            var multiple = Height / height;
+            var startColorArr = compareColorArr[0].Split('|');
             double x = int.Parse(startColorArr[1]);
             double y = int.Parse(startColorArr[2]);
             double startX = -1;
@@ -192,10 +192,10 @@ namespace ScriptGraphicHelper.Models
                 startY = Math.Floor(y * multiple);
             }
 
-            string result = string.Empty;
-            for (int i = 1; i < compareColorArr.Length; i++)
+            var result = string.Empty;
+            for (var i = 1; i < compareColorArr.Length; i++)
             {
-                string[] compareColor = compareColorArr[i].Split('|');
+                var compareColor = compareColorArr[i].Split('|');
                 double findX = int.Parse(compareColor[1]);
                 double findY = int.Parse(compareColor[2]);
                 if (compareColor[0] == "Left" || compareColor[0] == "None")
@@ -248,8 +248,8 @@ namespace ScriptGraphicHelper.Models
 
         public static bool CompareColor(byte[] rgb, double similarity, int x, int y, int offset)
         {
-            int offsetSize = offset == 0 ? 1 : 9;
-            Point[] offsetPoint = new Point[]{
+            var offsetSize = offset == 0 ? 1 : 9;
+            var offsetPoint = new Point[]{
                 new Point(x, y),
                 new Point(x - 1, y - 1),
                 new Point(x - 1, y),
@@ -261,13 +261,13 @@ namespace ScriptGraphicHelper.Models
                 new Point(x + 1, y + 1),
             };
 
-            for (int j = 0; j < offsetSize; j++)
+            for (var j = 0; j < offsetSize; j++)
             {
-                int _x = (int)offsetPoint[j].X;
-                int _y = (int)offsetPoint[j].Y;
+                var _x = (int)offsetPoint[j].X;
+                var _y = (int)offsetPoint[j].Y;
                 if (_x >= 0 && _x < Width && _y >= 0 && _y < Height)
                 {
-                    byte[] GetRGB = GetPixel(_x, _y);
+                    var GetRGB = GetPixel(_x, _y);
                     if (Math.Abs(GetRGB[0] - rgb[0]) <= similarity && Math.Abs(GetRGB[1] - rgb[1]) <= similarity && Math.Abs(GetRGB[2] - rgb[2]) <= similarity)
                     {
                         return true;
@@ -282,20 +282,20 @@ namespace ScriptGraphicHelper.Models
             int findX;
             int findY;
 
-            int offset = Setting.Instance.IsOffset ? 1 : 0;
+            var offset = Setting.Instance.IsOffset ? 1 : 0;
             if (sim == 0)
             {
                 sim = Setting.Instance.DiySim;
             }
 
-            double similarity = 255 - 255 * (sim / 100.0);
+            var similarity = 255 - 255 * (sim / 100.0);
             colorString = colorString.Trim("\"".ToCharArray());
-            string[] findColors = colorString.Split(',');
+            var findColors = colorString.Split(',');
             if (findColors.Length != 0)
             {
-                for (int i = 0; i < findColors.Length; i++)
+                for (var i = 0; i < findColors.Length; i++)
                 {
-                    string[] findColor = findColors[i].Split('|');
+                    var findColor = findColors[i].Split('|');
                     byte[] findRGB = { 0, 0, 0 };
                     findRGB[0] = Convert.ToByte(findColor[2].Substring(0, 2), 16);
                     findRGB[1] = Convert.ToByte(findColor[2].Substring(2, 2), 16);
@@ -329,17 +329,17 @@ namespace ScriptGraphicHelper.Models
                 sim = Setting.Instance.DiySim;
             }
 
-            double similarity = 255 - 255 * (sim / 100.0);
-            string[] findColor = findcolorString.Split('-');
-            byte findR = Convert.ToByte(findColor[0].Substring(0, 2), 16);
-            byte findG = Convert.ToByte(findColor[0].Substring(2, 2), 16);
-            byte findB = Convert.ToByte(findColor[0].Substring(4, 2), 16);
+            var similarity = 255 - 255 * (sim / 100.0);
+            var findColor = findcolorString.Split('-');
+            var findR = Convert.ToByte(findColor[0].Substring(0, 2), 16);
+            var findG = Convert.ToByte(findColor[0].Substring(2, 2), 16);
+            var findB = Convert.ToByte(findColor[0].Substring(4, 2), 16);
 
-            for (int i = startY; i <= endY; i++)
+            for (var i = startY; i <= endY; i++)
             {
-                for (int j = startX; j <= endX; j++)
+                for (var j = startX; j <= endX; j++)
                 {
-                    byte[] GetRGB = GetPixel(j, i);
+                    var GetRGB = GetPixel(j, i);
                     if (Math.Abs(GetRGB[0] - findR) <= similarity)
                     {
                         if (Math.Abs(GetRGB[1] - findG) <= similarity)

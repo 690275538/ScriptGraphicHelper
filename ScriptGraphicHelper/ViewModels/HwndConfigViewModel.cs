@@ -34,26 +34,26 @@ namespace ScriptGraphicHelper.ViewModels
         private HwndConfig? configWindow;
         public HwndConfig? ConfigWindow
         {
-            get => configWindow;
-            set => this.RaiseAndSetIfChanged(ref configWindow, value);
+            get => this.configWindow;
+            set => this.RaiseAndSetIfChanged(ref this.configWindow, value);
         }
 
 
         private ObservableCollection<MoveCategory> hwndInfos = new();
         public ObservableCollection<MoveCategory> HwndInfos
         {
-            get => hwndInfos;
-            set => this.RaiseAndSetIfChanged(ref hwndInfos, value);
+            get => this.hwndInfos;
+            set => this.RaiseAndSetIfChanged(ref this.hwndInfos, value);
         }
 
         private MoveCategory? selectedItem;
         public MoveCategory? SelectedItem
         {
-            get => selectedItem;
+            get => this.selectedItem;
             set
             {
-                this.RaiseAndSetIfChanged(ref selectedItem, value);
-                BindHwnd = value.Hwnd;
+                this.RaiseAndSetIfChanged(ref this.selectedItem, value);
+                this.BindHwnd = value.Hwnd;
             }
         }
 
@@ -61,65 +61,65 @@ namespace ScriptGraphicHelper.ViewModels
         private int bindHwnd = -1;
         public int BindHwnd
         {
-            get => bindHwnd;
-            set => this.RaiseAndSetIfChanged(ref bindHwnd, value);
+            get => this.bindHwnd;
+            set => this.RaiseAndSetIfChanged(ref this.bindHwnd, value);
         }
 
         private int bindGraphicMode = 0;
         public int BindGraphicMode
         {
-            get => bindGraphicMode;
-            set => this.RaiseAndSetIfChanged(ref bindGraphicMode, value);
+            get => this.bindGraphicMode;
+            set => this.RaiseAndSetIfChanged(ref this.bindGraphicMode, value);
         }
 
         private int bindAttribute = 0;
         public int BindAttribute
         {
-            get => bindAttribute;
-            set => this.RaiseAndSetIfChanged(ref bindAttribute, value);
+            get => this.bindAttribute;
+            set => this.RaiseAndSetIfChanged(ref this.bindAttribute, value);
         }
 
         private int bindMode = 0;
         public int BindMode
         {
-            get => bindMode;
-            set => this.RaiseAndSetIfChanged(ref bindMode, value);
+            get => this.bindMode;
+            set => this.RaiseAndSetIfChanged(ref this.bindMode, value);
         }
 
         private Dmsoft Dm = Dmsoft.Instance;
 
         public HwndConfigViewModel(HwndConfig hwndConfig)
         {
-            hwndInfos = new ObservableCollection<MoveCategory>();
-            ConfigWindow = hwndConfig;
+            this.hwndInfos = new ObservableCollection<MoveCategory>();
+            this.ConfigWindow = hwndConfig;
         }
 
         public void Ok_Tapped()
         {
-            if (BindHwnd == -1)
+            if (this.BindHwnd == -1)
             {
                 MessageBox.ShowAsync("请选择句柄!");
                 return;
             }
-            string[] graphicModes = new string[] { "normal", "gdi", "gdi2", "dx2", "dx3", "dx.graphic.2d", "dx.graphic.2d.2", "dx.graphic.3d", "dx.graphic.3d.8", "dx.graphic.opengl", "dx.graphic.opengl.esv2", "dx.graphic.3d.10plus" };
-            string[] attributes = new string[] { "", "dx.public.active.api", "dx.public.active.message", "dx.public.hide.dll", "dx.public.graphic.protect", "dx.public.anti.api", "dx.public.prevent.block", "dx.public.inject.super" };
-            int[] modes = new int[] { 0, 2, 101, 103, 11, 13 };
-            Dm.Hwnd = BindHwnd;
-            Dm.Display = graphicModes[BindGraphicMode];
-            Dm.Public_desc = attributes[BindAttribute];
-            Dm.Mode = modes[BindMode];
-            ConfigWindow.Close();
+            var graphicModes = new string[] { "normal", "gdi", "gdi2", "dx2", "dx3", "dx.graphic.2d", "dx.graphic.2d.2", "dx.graphic.3d", "dx.graphic.3d.8", "dx.graphic.opengl", "dx.graphic.opengl.esv2", "dx.graphic.3d.10plus" };
+            var attributes = new string[] { "", "dx.public.active.api", "dx.public.active.message", "dx.public.hide.dll", "dx.public.graphic.protect", "dx.public.anti.api", "dx.public.prevent.block", "dx.public.inject.super" };
+            var modes = new int[] { 0, 2, 101, 103, 11, 13 };
+            this.Dm.Hwnd = this.BindHwnd;
+            this.Dm.Display = graphicModes[this.BindGraphicMode];
+            this.Dm.Public_desc = attributes[this.BindAttribute];
+            this.Dm.Mode = modes[this.BindMode];
+            this.ConfigWindow.Close();
         }
 
         public ICommand GetHwnd_PointerPressed => new Command((param) =>
         {
             if (param != null)
             {
-                CommandParameters parameters = (CommandParameters)param;
+                var parameters = (CommandParameters)param;
                 var eventArgs = (PointerPressedEventArgs)parameters.EventArgs;
                 if (eventArgs.GetCurrentPoint(null).Properties.IsLeftButtonPressed)
                 {
-                    IntPtr cur = Win32Api.LoadCursorFromFile(AppDomain.CurrentDomain.BaseDirectory + @"Assets/aiming.cur");
+                    var cur = Win32Api.LoadCursorFromFile(AppDomain.CurrentDomain.BaseDirectory + @"Assets/aiming.cur");
                     Win32Api.SetSystemCursor(cur, Win32Api.OCR_NORMAL);
                 }
 
@@ -128,24 +128,24 @@ namespace ScriptGraphicHelper.ViewModels
 
         public ICommand GetHwnd_PointerReleased => new Command((param) =>
         {
-            HwndInfos.Clear();
+            this.HwndInfos.Clear();
             Win32Api.SystemParametersInfo(Win32Api.SPI_SETCURSORS, 0, IntPtr.Zero, Win32Api.SPIF_SENDWININICHANGE);
-            int hwnd = Dm.GetMousePointWindow() ?? -1;
-            int parentHwnd = Dm.GetWindow(hwnd, 7) ?? -1;
+            var hwnd = this.Dm.GetMousePointWindow() ?? -1;
+            var parentHwnd = this.Dm.GetWindow(hwnd, 7) ?? -1;
             var assets = AvaloniaLocator.Current.GetService<IAssetLoader>();
-            HwndInfos.Add(new MoveCategory(parentHwnd, Dm.GetWindowTitle(parentHwnd) ?? string.Empty, Dm.GetWindowClass(parentHwnd) ?? string.Empty));
-            EnumWindows(parentHwnd, HwndInfos[0]);
+            this.HwndInfos.Add(new MoveCategory(parentHwnd, this.Dm.GetWindowTitle(parentHwnd) ?? string.Empty, this.Dm.GetWindowClass(parentHwnd) ?? string.Empty));
+            EnumWindows(parentHwnd, this.HwndInfos[0]);
         });
 
         private void EnumWindows(int parentHwd, MoveCategory movieCategory)
         {
-            string[] hwnds = Dm.EnumWindow(parentHwd, "", "", 4).Split(',');
-            for (int i = 0; i < hwnds.Length; i++)
+            var hwnds = this.Dm.EnumWindow(parentHwd, "", "", 4).Split(',');
+            for (var i = 0; i < hwnds.Length; i++)
             {
                 if (hwnds[i].Trim() != "")
                 {
-                    int hwnd = int.Parse(hwnds[i].Trim());
-                    movieCategory.Moves.Add(new MoveCategory(hwnd, Dm.GetWindowTitle(hwnd) ?? string.Empty, Dm.GetWindowClass(hwnd) ?? string.Empty));
+                    var hwnd = int.Parse(hwnds[i].Trim());
+                    movieCategory.Moves.Add(new MoveCategory(hwnd, this.Dm.GetWindowTitle(hwnd) ?? string.Empty, this.Dm.GetWindowClass(hwnd) ?? string.Empty));
                     EnumWindows(hwnd, movieCategory.Moves[i]);
                 }
             }

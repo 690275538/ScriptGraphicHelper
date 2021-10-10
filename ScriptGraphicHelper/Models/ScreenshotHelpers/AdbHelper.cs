@@ -5,22 +5,23 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class AdbHelper : BaseScreenshotHelper
     {
-        public override string Path { get; set; } = AppDomain.CurrentDomain.BaseDirectory + "Assets/Adb/";
+        public override string Path { get; set; } = AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/") + "Assets/Adb/";
         public override string Name { get; set; } = "Adb连接";
-        public string BmpPath { get; set; } = string.Empty;
+
         private List<KeyValuePair<int, string>> DeviceInfos = new();
 
         public AdbHelper()
         {
-            if (!Directory.Exists(Path + "/Screenshot"))
+            if (!Directory.Exists(this.Path + "/Screenshot"))
             {
-                Directory.CreateDirectory(Path + "/Screenshot");
+                Directory.CreateDirectory(this.Path + "/Screenshot");
             }
         }
 
@@ -33,11 +34,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             await Task.Run(() =>
             {
-                PipeCmd("kill-server");
-                PipeCmd("start-server");
+                //PipeCmd("kill-server");
+                //PipeCmd("start-server");
             });
 
-            DeviceInfos.Clear();
+            this.DeviceInfos.Clear();
             TcpConfig config = new();
             config.Title = "Adb无线调试";
             await config.ShowDialog(MainWindow.Instance);
@@ -48,22 +49,22 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
             var task = Task.Run(() =>
             {
-                string output = PipeCmd("devices");
-                string[] array = output.Substring(output.IndexOf("List of devices attached") + 16).Split("\r\n");
-                for (int i = 0; i < array.Length; i++)
+                var output = PipeCmd("devices");
+                var array = output.Substring(output.IndexOf("List of devices attached") + 16).Split("\r\n");
+                for (var i = 0; i < array.Length; i++)
                 {
-                    string[] deviceInfo = array[i].Split("dev");
+                    var deviceInfo = array[i].Split("dev");
                     if (deviceInfo.Length == 2)
                     {
-                        DeviceInfos.Add(new KeyValuePair<int, string>(DeviceInfos.Count, deviceInfo[0].Trim()));
+                        this.DeviceInfos.Add(new KeyValuePair<int, string>(this.DeviceInfos.Count, deviceInfo[0].Trim()));
                     }
                 }
-                if (DeviceInfos.Count == 0)
+                if (this.DeviceInfos.Count == 0)
                 {
-                    DeviceInfos.Add(new KeyValuePair<int, string>(0, "null"));
+                    this.DeviceInfos.Add(new KeyValuePair<int, string>(0, "null"));
                 }
 
-                return DeviceInfos;
+                return this.DeviceInfos;
             });
             return await task;
         }
@@ -72,25 +73,23 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             var task = Task.Run(() =>
             {
-                string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
-                string BmpPath = Path + "/Screenshot/" + BmpName;
-                PipeCmd("-s " + DeviceInfos[index].Value + " shell /system/bin/screencap -p /sdcard/screenshot.png");
-                for (int i = 0; i < 20; i++)
+                var name = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                var fullName = this.Path + "Screenshot/" + name;
+                PipeCmd($"-s { this.DeviceInfos[index].Value }  exec-out screencap -p > { fullName }");
+                for (var i = 0; i < 50; i++)
                 {
-                    Task.Delay(100).Wait();
-                    PipeCmd("-s " + DeviceInfos[index].Value + " pull /sdcard/screenshot.png ./Screenshot/" + BmpName);
-                    Task.Delay(100).Wait();
-                    if (File.Exists(BmpPath))
+                    if (File.Exists(fullName))
                     {
                         break;
                     }
+                    Thread.Sleep(100);
                 }
                 try
                 {
-                    FileStream stream = new(BmpPath, FileMode.Open, FileAccess.Read);
+                    FileStream stream = new(fullName, FileMode.Open, FileAccess.Read);
                     var bitmap = new Bitmap(stream);
                     stream.Position = 0;
-                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    var sKBitmap = SKBitmap.Decode(stream);
                     GraphicHelper.KeepScreen(sKBitmap);
                     sKBitmap.Dispose();
                     stream.Dispose();
@@ -112,19 +111,19 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public string PipeCmd(string theCommand)
         {
-            string path = Path + "adb";
-            ProcessStartInfo start = new(path)
+            var command = $"/C { this.Path }adb.exe { theCommand }";
+            ProcessStartInfo start = new("cmd.exe")
             {
-                Arguments = theCommand,
+                Arguments = command,
                 CreateNoWindow = true,
                 RedirectStandardOutput = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                WorkingDirectory = Path
             };
-            Process pipe = Process.Start(start);
-            StreamReader readStream = pipe.StandardOutput;
-            string OutputStr = readStream.ReadToEnd();
+
+            var pipe = Process.Start(start);
+            var readStream = pipe.StandardOutput;
+            var OutputStr = readStream.ReadToEnd();
             pipe.WaitForExit(10000);
             pipe.Close();
             readStream.Close();

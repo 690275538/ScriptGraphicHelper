@@ -46,6 +46,7 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Background="Transparent"
+            CornerRadius="0"
             Tapped="Close_Tapped">
             <Image
                 Width="14"
@@ -56,9 +57,6 @@
                 </Image.Source>
             </Image>
             <Button.Styles>
-                <Style Selector="Button /template/ ContentPresenter">
-                    <Setter Property="CornerRadius" Value="0" />
-                </Style>
                 <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
                     <Setter Property="Background" Value="#bfe81123" />
                 </Style>
@@ -73,12 +71,10 @@
             HorizontalContentAlignment="Center"
             VerticalContentAlignment="Center"
             Content="确认"
+            CornerRadius="0"
             Foreground="#2d2d30"
             Tapped="Close_Tapped">
             <Button.Styles>
-                <Style Selector="Button /template/ ContentPresenter">
-                    <Setter Property="CornerRadius" Value="0" />
-                </Style>
                 <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
                     <Setter Property="Background" Value="#bfe81123" />
                 </Style>

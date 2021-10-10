@@ -10,7 +10,7 @@ namespace ScriptGraphicHelper.Views
         public HwndConfig()
         {
             InitializeComponent();
-            DataContext = new HwndConfigViewModel(this);
+            this.DataContext = new HwndConfigViewModel(this);
 #if DEBUG
             this.AttachDevTools();
 #endif
@@ -19,7 +19,8 @@ namespace ScriptGraphicHelper.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
+            var tv = this.FindControl<TreeView>("HwndInfos");
         }
     }
 }

@@ -27,8 +27,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public TcpClientInfo(TcpClient client, NetworkStream stream, string info)
         {
-            Client = client;
-            Info = info;
+            this.Client = client;
+            this.Info = info;
         }
     }
 
@@ -45,7 +45,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             try
             {
-                Listener.Stop();
+                this.Listener.Stop();
             }
             catch { };
 
@@ -56,45 +56,49 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
 
 
-        public static string[] GetLocalAddress()
+        public static string GetLocalAddress()
         {
-            try
+            var addressList = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
+            foreach (var address in addressList)
             {
-                var addressList = Dns.GetHostEntry(Dns.GetHostName()).AddressList;
-                var addresses = addressList.Where(address => address.AddressFamily == AddressFamily.InterNetwork)
-                        .Select(address => address.ToString()).ToArray();
-                return addresses;
+                if (address.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    var ip = address.ToString();
+                    if (ip.StartsWith("192.168"))
+                    {
+                        Console.WriteLine(ip);
+                    }
+                }
             }
-            catch (Exception e)
-            {
-                MessageBox.ShowAsync($"获取地址失败, 请手动填入\r\n{e}");
-                return Array.Empty<string>();
-            }
+
+            return addressList.Where(addresss => addresss.AddressFamily == AddressFamily.InterNetwork)
+                .Select(addresss => addresss.ToString()).FirstOrDefault()
+                ?? addressList[0].ToString();
         }
 
         private void ConnectCallback(IAsyncResult ar)
         {
-            TcpListener listener = (TcpListener)ar.AsyncState;
+            var listener = (TcpListener)ar.AsyncState;
 
             if (listener.Server == null || !listener.Server.IsBound)
             {
                 return;
             }
 
-            TcpClient client = listener.EndAcceptTcpClient(ar);
+            var client = listener.EndAcceptTcpClient(ar);
             try
             {
-                NetworkStream stream = client.GetStream();
-                byte[] buf = new byte[256];
-                for (int i = 0; i < 40; i++)
+                var stream = client.GetStream();
+                var buf = new byte[256];
+                for (var i = 0; i < 40; i++)
                 {
                     Task.Delay(100).Wait();
                     if (stream.DataAvailable)
                     {
-                        int length = stream.Read(buf, 0, 256);
-                        string info = Encoding.UTF8.GetString(buf, 0, length);
-                        TcpClientInfos.Add(new TcpClientInfo(client, stream, info));
-                        Listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), Listener);
+                        var length = stream.Read(buf, 0, 256);
+                        var info = Encoding.UTF8.GetString(buf, 0, length);
+                        this.TcpClientInfos.Add(new TcpClientInfo(client, stream, info));
+                        this.Listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Listener);
                         return;
                     }
                 }
@@ -112,12 +116,12 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             await tcpConfig.ShowDialog(MainWindow.Instance);
 
             var address = TcpConfig.Address;
-            int port = TcpConfig.Port;
+            var port = TcpConfig.Port;
 
-            Listener = new TcpListener(IPAddress.Parse(address), port);
-            Listener.Start();
+            this.Listener = new TcpListener(IPAddress.Parse(address), port);
+            this.Listener.Start();
 
-            Listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), Listener);
+            this.Listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Listener);
 
             var task = Task.Run(() =>
             {
@@ -136,16 +140,16 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             var task = Task.Run(() =>
             {
                 var result = new List<KeyValuePair<int, string>>();
-                for (int i = 0; i < TcpClientInfos.Count; i++)
+                for (var i = 0; i < this.TcpClientInfos.Count; i++)
                 {
-                    var clientInfo = TcpClientInfos[i];
+                    var clientInfo = this.TcpClientInfos[i];
                     if (GetTcpState(i))
                     {
-                        result.Add(new KeyValuePair<int, string>(result.Count, TcpClientInfos[i].Info));
+                        result.Add(new KeyValuePair<int, string>(result.Count, this.TcpClientInfos[i].Info));
                     }
                     else
                     {
-                        TcpClientInfos.Remove(clientInfo);
+                        this.TcpClientInfos.Remove(clientInfo);
                         break;
                     }
                 }
@@ -163,17 +167,17 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             try
             {
-                var stream = TcpClientInfos[index].Client.GetStream();
-                for (int j = 0; j < 20; j++)
+                var stream = this.TcpClientInfos[index].Client.GetStream();
+                for (var j = 0; j < 20; j++)
                 {
                     stream.WriteByte(MessageType.Ping);
-                    for (int i = 0; i < 10; i++)
+                    for (var i = 0; i < 10; i++)
                     {
                         Task.Delay(50).Wait();
-                        byte[] _ = new byte[9];
+                        var _ = new byte[9];
                         if (stream.DataAvailable)
                         {
-                            int length = stream.Read(_, 0, 1);
+                            var length = stream.Read(_, 0, 1);
                             if (length == 1)
                             {
                                 if (_[0] == MessageType.Ping)
@@ -208,7 +212,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         private byte[] Int2Bytes(int value)
         {
-            byte[] src = new byte[4];
+            var src = new byte[4];
             src[0] = (byte)((value >> 24) & 0xFF);
             src[1] = (byte)((value >> 16) & 0xFF);
             src[2] = (byte)((value >> 8) & 0xFF);
@@ -222,42 +226,42 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             {
                 try
                 {
-                    var stream = TcpClientInfos[index].Client.GetStream();
+                    var stream = this.TcpClientInfos[index].Client.GetStream();
                     if (!GetTcpState(index))
                     {
                         throw new Exception("Tcp已断开连接! 请重新连接");
                     }
                     stream.WriteByte(MessageType.ScreenShot);
 
-                    int offset = 0;
-                    byte[] info = new byte[4];
-                    for (int i = 0; i < 100; i++)
+                    var offset = 0;
+                    var info = new byte[4];
+                    for (var i = 0; i < 100; i++)
                     {
                         Task.Delay(100).Wait();
                         if (stream.DataAvailable)
                         {
                             while (offset < 4)
                             {
-                                int len = stream.Read(info, offset, 4 - offset);
+                                var len = stream.Read(info, offset, 4 - offset);
                                 offset += 4;
                             }
                             break;
                         }
                     }
 
-                    int length = Bytes2Int(info);
+                    var length = Bytes2Int(info);
 
-                    byte[] data = new byte[length];
+                    var data = new byte[length];
 
                     offset = 0;
 
                     while (offset < length)
                     {
-                        int len = stream.Read(data, offset, length - offset);
+                        var len = stream.Read(data, offset, length - offset);
                         offset += len;
                     }
 
-                    SKBitmap sKBitmap = SKBitmap.Decode(data);
+                    var sKBitmap = SKBitmap.Decode(data);
                     GraphicHelper.KeepScreen(sKBitmap);
                     var bitmap = new Bitmap(GraphicHelper.PxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
                     sKBitmap.Dispose();

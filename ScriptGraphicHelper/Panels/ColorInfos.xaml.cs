@@ -21,7 +21,7 @@ namespace ScriptGraphicHelper.Panels
             var dataGrid = (DataGrid)sender;
             e.Row.PointerEnter += (object? sender, PointerEventArgs _) =>
             {
-                int index = e.Row.GetIndex();
+                var index = e.Row.GetIndex();
                 dataGrid.SelectedIndex = index;
             };
         }

@@ -22,11 +22,11 @@ namespace ScriptGraphicHelper.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
         }
 
         private void Window_Opened(object sender, EventArgs e)
         {
-            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             var addRange = this.FindControl<ToggleSwitch>("AddRange");
             var addInfo = this.FindControl<ToggleSwitch>("AddInfo");
             var isOffset = this.FindControl<ToggleSwitch>("IsOffset");
@@ -58,7 +58,7 @@ namespace ScriptGraphicHelper.Views
                 Setting.Instance.AddInfo = addInfo.IsChecked ?? false;
                 Setting.Instance.IsOffset = isOffset.IsChecked ?? false;
 
-                if (int.TryParse(diySim.Text.Trim(), out int sim))
+                if (int.TryParse(diySim.Text.Trim(), out var sim))
                 {
                     Setting.Instance.DiySim = sim;
                 }
@@ -66,9 +66,9 @@ namespace ScriptGraphicHelper.Views
                 Setting.Instance.YsPath = ysPath.Text ?? string.Empty;
                 Setting.Instance.XyPath = xyPath.Text ?? string.Empty;
                 Setting.Instance.DmRegcode = dmRegcode.Text ?? string.Empty;
-                string settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
+                var settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
                 File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json", settingStr);
-                this.Close();
+                Close();
             }
             catch { }
 

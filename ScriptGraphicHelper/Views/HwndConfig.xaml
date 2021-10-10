@@ -19,7 +19,7 @@
         <vm:HwndConfigViewModel />
     </Design.DataContext>
 
-    <Grid Background="#333333">
+    <Grid Background="#2d2d30">
 
         <TreeView
             x:Name="HwndInfos"
@@ -28,6 +28,7 @@
             Margin="20,30,160,30"
             HorizontalAlignment="Left"
             VerticalAlignment="Top"
+            
             Items="{Binding HwndInfos, Mode=TwoWay}"
             SelectedItem="{Binding SelectedItem}">
             <TreeView.DataTemplates>

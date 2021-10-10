@@ -9,13 +9,13 @@ namespace ScriptGraphicHelper.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Color color = (Color)value;
+            var color = (Color)value;
             return string.Format("#{0}{1}{2}", color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2"));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string str = (string)value;
+            var str = (string)value;
             if (str.IndexOf('#') == -1)
             {
                 str = "#" + str;
@@ -27,13 +27,13 @@ namespace ScriptGraphicHelper.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Color color = (Color)value;
+            var color = (Color)value;
             return Brush.Parse(string.Format("#{0}{1}{2}", color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2")));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            Brush brush = (Brush)value;
+            var brush = (Brush)value;
             return Color.Parse(brush.ToString());
         }
     }

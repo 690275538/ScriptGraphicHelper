@@ -31,23 +31,25 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                StreamReader sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json");
-                string configStr = sr.ReadToEnd();
+                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json");
+                var configStr = sr.ReadToEnd();
                 sr.Close();
                 configStr = configStr.Replace("\\\\", "\\").Replace("\\", "\\\\");
                 Setting.Instance = JsonConvert.DeserializeObject<Setting>(configStr) ?? new Setting();
-                SimSelectedIndex = Setting.Instance.SimSelectedIndex;
-                FormatSelectedIndex = (FormatMode)Setting.Instance.FormatSelectedIndex;
+                this.WindowWidth = Setting.Instance.Width;
+                this.WindowHeight = Setting.Instance.Height;
+                this.SimSelectedIndex = Setting.Instance.SimSelectedIndex;
+                this.FormatSelectedIndex = (FormatMode)Setting.Instance.FormatSelectedIndex;
             }
             catch { }
 
-            ColorInfos = new ObservableCollection<ColorInfo>();
-            LoupeWriteBmp = LoupeWriteBitmap.Init(241, 241);
-            DataGridHeight = 40;
-            Loupe_IsVisible = false;
-            Rect_IsVisible = false;
-            EmulatorSelectedIndex = -1;
-            EmulatorInfo = ScreenshotHelperBridge.Init();
+            this.ColorInfos = new ObservableCollection<ColorInfo>();
+            this.LoupeWriteBmp = LoupeWriteBitmap.Init(241, 241);
+            this.DataGridHeight = 40;
+            this.Loupe_IsVisible = false;
+            this.Rect_IsVisible = false;
+            this.EmulatorSelectedIndex = -1;
+            this.EmulatorInfo = ScreenshotHelperBridge.Init();
         }
 
         private Point StartPoint;
@@ -56,14 +58,14 @@ namespace ScriptGraphicHelper.ViewModels
         {
             if (param != null)
             {
-                CommandParameters parameters = (CommandParameters)param;
+                var parameters = (CommandParameters)param;
                 var eventArgs = (PointerPressedEventArgs)parameters.EventArgs;
                 if (eventArgs.GetCurrentPoint(null).Properties.IsLeftButtonPressed)
                 {
-                    Loupe_IsVisible = false;
-                    StartPoint = eventArgs.GetPosition(null);
-                    RectMargin = new Thickness(StartPoint.X, StartPoint.Y, 0, 0);
-                    Rect_IsVisible = true;
+                    this.Loupe_IsVisible = false;
+                    this.StartPoint = eventArgs.GetPosition(null);
+                    this.RectMargin = new Thickness(this.StartPoint.X, this.StartPoint.Y, 0, 0);
+                    this.Rect_IsVisible = true;
                 }
             }
         });
@@ -72,41 +74,38 @@ namespace ScriptGraphicHelper.ViewModels
         {
             if (param != null)
             {
-                CommandParameters parameters = (CommandParameters)param;
+                var parameters = (CommandParameters)param;
                 var eventArgs = (PointerEventArgs)parameters.EventArgs;
                 var point = eventArgs.GetPosition(null);
-                if (Rect_IsVisible)
+                if (this.Rect_IsVisible)
                 {
-                    double width = point.X - StartPoint.X - 1;
-                    double height = point.Y - StartPoint.Y - 1;
+                    var width = point.X - this.StartPoint.X - 1;
+                    var height = point.Y - this.StartPoint.Y - 1;
                     if (width > 0 && height > 0)
                     {
-                        RectWidth = width;
-                        RectHeight = height;
+                        this.RectWidth = width;
+                        this.RectHeight = height;
                     }
                 }
                 else
                 {
-                    if (point.Y > 500)
-                        LoupeMargin = new Thickness(point.X + 20, point.Y - 261, 0, 0);
-                    else
-                        LoupeMargin = new Thickness(point.X + 20, point.Y + 20, 0, 0);
+                    this.LoupeMargin = point.Y > 500 ? new Thickness(point.X + 20, point.Y - 261, 0, 0) : new Thickness(point.X + 20, point.Y + 20, 0, 0);
 
                     var position = eventArgs.GetPosition((Image)parameters.Sender);
-                    var imgPoint = new Point(Math.Floor(position.X / ScaleFactor), Math.Floor(position.Y / ScaleFactor));
-                    PointX = (int)imgPoint.X;
-                    PointY = (int)imgPoint.Y;
-                    int sx = PointX - 7;
-                    int sy = PointY - 7;
-                    List<byte[]> colors = new List<byte[]>();
-                    for (int j = 0; j < 15; j++)
+                    var imgPoint = new Point(Math.Floor(position.X / this.ScaleFactor), Math.Floor(position.Y / this.ScaleFactor));
+                    this.PointX = (int)imgPoint.X;
+                    this.PointY = (int)imgPoint.Y;
+                    var sx = this.PointX - 7;
+                    var sy = this.PointY - 7;
+                    var colors = new List<byte[]>();
+                    for (var j = 0; j < 15; j++)
                     {
-                        for (int i = 0; i < 15; i++)
+                        for (var i = 0; i < 15; i++)
                         {
-                            int x = sx + i;
-                            int y = sy + j;
+                            var x = sx + i;
+                            var y = sy + j;
 
-                            if (x >= 0 && y >= 0 && x < ImgWidth && y < ImgHeight)
+                            if (x >= 0 && y >= 0 && x < this.ImgWidth && y < this.ImgHeight)
                             {
                                 colors.Add(GraphicHelper.GetPixel(x, y));
                             }
@@ -116,7 +115,7 @@ namespace ScriptGraphicHelper.ViewModels
                             }
                         }
                     }
-                    LoupeWriteBmp.WriteColor(colors);
+                    this.LoupeWriteBmp.WriteColor(colors);
                 }
             }
         });
@@ -125,26 +124,26 @@ namespace ScriptGraphicHelper.ViewModels
         {
             if (param != null)
             {
-                CommandParameters parameters = (CommandParameters)param;
-                if (Rect_IsVisible)
+                var parameters = (CommandParameters)param;
+                if (this.Rect_IsVisible)
                 {
                     var eventArgs = (PointerEventArgs)parameters.EventArgs;
                     var position = eventArgs.GetPosition((Image)parameters.Sender);
-                    var point = new Point(Math.Floor(position.X / ScaleFactor), Math.Floor(position.Y / ScaleFactor));
-                    int sx = (int)(point.X - Math.Floor(RectWidth / ScaleFactor));
-                    int sy = (int)(point.Y - Math.Floor(rectHeight / ScaleFactor));
-                    if (RectWidth > 10 && rectHeight > 10)
+                    var point = new Point(Math.Floor(position.X / this.ScaleFactor), Math.Floor(position.Y / this.ScaleFactor));
+                    var sx = (int)(point.X - Math.Floor(this.RectWidth / this.ScaleFactor));
+                    var sy = (int)(point.Y - Math.Floor(this.rectHeight / this.ScaleFactor));
+                    if (this.RectWidth > 10 && this.rectHeight > 10)
                     {
-                        Rect = string.Format("[{0},{1},{2},{3}]", sx, sy, Math.Min(point.X, ImgWidth - 1), Math.Min(point.Y, ImgHeight - 1));
+                        this.Rect = string.Format("[{0},{1},{2},{3}]", sx, sy, Math.Min(point.X, this.ImgWidth - 1), Math.Min(point.Y, this.ImgHeight - 1));
                     }
                     else
                     {
-                        byte[] color = GraphicHelper.GetPixel(sx, sy);
+                        var color = GraphicHelper.GetPixel(sx, sy);
 
-                        if (FormatSelectedIndex == FormatMode.anchorsFindStr || FormatSelectedIndex == FormatMode.anchorsCompareStr)
+                        if (this.FormatSelectedIndex == FormatMode.anchorsFindStr || this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
                         {
-                            AnchorType anchor = AnchorType.None;
-                            double quarterWidth = imgDrawWidth / 4;
+                            var anchor = AnchorType.None;
+                            var quarterWidth = this.imgDrawWidth / 4;
                             if (sx > quarterWidth * 3)
                             {
                                 anchor = AnchorType.Right;
@@ -157,32 +156,32 @@ namespace ScriptGraphicHelper.ViewModels
                             {
                                 anchor = AnchorType.Left;
                             }
-                            if (ColorInfos.Count == 0)
+                            if (this.ColorInfos.Count == 0)
                             {
-                                ColorInfo.Width = ImgWidth;
-                                ColorInfo.Height = ImgHeight;
+                                ColorInfo.Width = this.ImgWidth;
+                                ColorInfo.Height = this.ImgHeight;
                             }
-                            ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchor, sx, sy, color));
+                            this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, anchor, sx, sy, color));
                         }
                         else
                         {
-                            ColorInfos.Add(new ColorInfo(ColorInfos.Count, sx, sy, color));
+                            this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, sx, sy, color));
                         }
 
-                        DataGridHeight = (ColorInfos.Count + 1) * 40;
+                        this.DataGridHeight = (this.ColorInfos.Count + 1) * 40;
                     }
                 }
-                Rect_IsVisible = false;
-                Loupe_IsVisible = true;
-                RectWidth = 0;
-                RectHeight = 0;
-                RectMargin = new Thickness(0, 0, 0, 0);
+                this.Rect_IsVisible = false;
+                this.Loupe_IsVisible = true;
+                this.RectWidth = 0;
+                this.RectHeight = 0;
+                this.RectMargin = new Thickness(0, 0, 0, 0);
             }
         });
 
-        public ICommand Img_PointerEnter => new Command((param) => Loupe_IsVisible = true);
+        public ICommand Img_PointerEnter => new Command((param) => this.Loupe_IsVisible = true);
 
-        public ICommand Img_PointerLeave => new Command((param) => Loupe_IsVisible = false);
+        public ICommand Img_PointerLeave => new Command((param) => this.Loupe_IsVisible = false);
 
         public ICommand GetTcpList => new Command(async (param) =>
         {
@@ -195,7 +194,7 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     result.Add(item.Value);
                 }
-                EmulatorInfo = result;
+                this.EmulatorInfo = result;
             }
         });
 
@@ -205,14 +204,14 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 if (ScreenshotHelperBridge.State == LinkState.success)
                 {
-                    ScreenshotHelperBridge.Index = EmulatorSelectedIndex;
+                    ScreenshotHelperBridge.Index = this.EmulatorSelectedIndex;
                 }
                 else if (ScreenshotHelperBridge.State == LinkState.Waiting)
                 {
-                    WindowCursor = new Cursor(StandardCursorType.Wait);
-                    ScreenshotHelperBridge.Changed(EmulatorSelectedIndex);
-                    EmulatorInfo = await ScreenshotHelperBridge.GetAll();
-                    EmulatorSelectedIndex = -1;
+                    this.WindowCursor = new Cursor(StandardCursorType.Wait);
+                    ScreenshotHelperBridge.Changed(this.EmulatorSelectedIndex);
+                    this.EmulatorInfo = await ScreenshotHelperBridge.GetAll();
+                    this.EmulatorSelectedIndex = -1;
                 }
                 else if (ScreenshotHelperBridge.State == LinkState.Starting)
                 {
@@ -221,36 +220,36 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception e)
             {
-                EmulatorSelectedIndex = -1;
+                this.EmulatorSelectedIndex = -1;
                 ScreenshotHelperBridge.Dispose();
-                EmulatorInfo.Clear();
-                EmulatorInfo = ScreenshotHelperBridge.Init();
+                this.EmulatorInfo.Clear();
+                this.EmulatorInfo = ScreenshotHelperBridge.Init();
                 MessageBox.ShowAsync(e.Message);
             }
-            WindowCursor = new Cursor(StandardCursorType.Arrow);
+            this.WindowCursor = new Cursor(StandardCursorType.Arrow);
 
         }
 
         public async void ScreenShot_Click()
         {
-            WindowCursor = new Cursor(StandardCursorType.Wait);
+            this.WindowCursor = new Cursor(StandardCursorType.Wait);
             if (ScreenshotHelperBridge.Select == -1 || ScreenshotHelperBridge.Index == -1)
             {
                 MessageBox.ShowAsync("请先配置 -> (模拟器/tcp/句柄)");
-                WindowCursor = new Cursor(StandardCursorType.Arrow);
+                this.WindowCursor = new Cursor(StandardCursorType.Arrow);
                 return;
             }
             try
             {
-                Img = await ScreenshotHelperBridge.ScreenShot();
+                this.Img = await ScreenshotHelperBridge.ScreenShot();
 
-                var item = new TabItem(Img);
+                var item = new TabItem(this.Img);
                 item.Command = new Command((param) =>
                 {
-                    TabItems.Remove(item);
+                    this.TabItems.Remove(item);
                 });
-                TabItems.Add(item);
-                TabControlSelectedIndex = TabItems.Count - 1;
+                this.TabItems.Add(item);
+                this.TabControlSelectedIndex = this.TabItems.Count - 1;
             }
             catch (Exception e)
             {
@@ -258,27 +257,27 @@ namespace ScriptGraphicHelper.ViewModels
             }
 
 
-            WindowCursor = new Cursor(StandardCursorType.Arrow);
+            this.WindowCursor = new Cursor(StandardCursorType.Arrow);
         }
 
         public void ResetEmulatorOptions_Click()
         {
             if (ScreenshotHelperBridge.State == LinkState.Starting || ScreenshotHelperBridge.State == LinkState.success)
             {
-                EmulatorSelectedIndex = -1;
+                this.EmulatorSelectedIndex = -1;
             }
             ScreenshotHelperBridge.Dispose();
-            EmulatorInfo.Clear();
-            EmulatorInfo = ScreenshotHelperBridge.Init();
+            this.EmulatorInfo.Clear();
+            this.EmulatorInfo = ScreenshotHelperBridge.Init();
         }
 
         public async void TurnRight_Click()
         {
-            if (Img == null)
+            if (this.Img == null)
             {
                 return;
             }
-            Img = await GraphicHelper.TurnRight();
+            this.Img = await GraphicHelper.TurnRight();
         }
 
         public void DropImage_Event(object? sender, DragEventArgs e)
@@ -290,20 +289,20 @@ namespace ScriptGraphicHelper.ViewModels
                     if (name != "" && name != string.Empty)
                     {
                         var stream = new FileStream(name, FileMode.Open, FileAccess.Read);
-                        Img = new Bitmap(stream);
+                        this.Img = new Bitmap(stream);
                         stream.Position = 0;
-                        SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                        var sKBitmap = SKBitmap.Decode(stream);
                         GraphicHelper.KeepScreen(sKBitmap);
                         sKBitmap.Dispose();
                         stream.Dispose();
 
-                        var item = new TabItem(Img);
+                        var item = new TabItem(this.Img);
                         item.Command = new Command((param) =>
                         {
-                            TabItems.Remove(item);
+                            this.TabItems.Remove(item);
                         });
-                        TabItems.Add(item);
-                        TabControlSelectedIndex = TabItems.Count - 1;
+                        this.TabItems.Add(item);
+                        this.TabControlSelectedIndex = this.TabItems.Count - 1;
                     }
                 }
             }
@@ -313,7 +312,7 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                string fileName = string.Empty;
+                var fileName = string.Empty;
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -362,20 +361,20 @@ namespace ScriptGraphicHelper.ViewModels
                 if (fileName != "" && fileName != string.Empty)
                 {
                     var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                    Img = new Bitmap(stream);
+                    this.Img = new Bitmap(stream);
                     stream.Position = 0;
-                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    var sKBitmap = SKBitmap.Decode(stream);
                     GraphicHelper.KeepScreen(sKBitmap);
                     sKBitmap.Dispose();
                     stream.Dispose();
 
-                    var item = new TabItem(Img);
+                    var item = new TabItem(this.Img);
                     item.Command = new Command((param) =>
                     {
-                        TabItems.Remove(item);
+                        this.TabItems.Remove(item);
                     });
-                    TabItems.Add(item);
-                    TabControlSelectedIndex = TabItems.Count - 1;
+                    this.TabItems.Add(item);
+                    this.TabControlSelectedIndex = this.TabItems.Count - 1;
                 }
             }
             catch (Exception e)
@@ -386,14 +385,14 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Save_Click()
         {
-            if (Img == null)
+            if (this.Img == null)
             {
                 return;
             }
 
             try
             {
-                string fileName = string.Empty;
+                var fileName = string.Empty;
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -439,7 +438,7 @@ namespace ScriptGraphicHelper.ViewModels
 
                 if (fileName != null && fileName != "" && fileName != string.Empty)
                 {
-                    Img.Save(fileName);
+                    this.Img.Save(fileName);
                 }
             }
             catch (Exception e)
@@ -450,73 +449,73 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Test_Click()
         {
-            if (Img != null && ColorInfos.Count > 0)
+            if (this.Img != null && this.ColorInfos.Count > 0)
             {
-                int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
-                if (FormatSelectedIndex == FormatMode.compareStr || FormatSelectedIndex == FormatMode.anjianCompareStr || FormatSelectedIndex == FormatMode.cdCompareStr || FormatSelectedIndex == FormatMode.diyCompareStr)
+                var sims = new int[] { 100, 95, 90, 85, 80, 0 };
+                if (this.FormatSelectedIndex == FormatMode.compareStr || this.FormatSelectedIndex == FormatMode.anjianCompareStr || this.FormatSelectedIndex == FormatMode.cdCompareStr || this.FormatSelectedIndex == FormatMode.diyCompareStr)
                 {
-                    string str = CreateColorStrHelper.Create(FormatMode.compareStr, ColorInfos);
+                    var str = CreateColorStrHelper.Create(FormatMode.compareStr, this.ColorInfos);
 
-                    var result = GraphicHelper.CompareColorEx(str.Trim('"'), sims[SimSelectedIndex]);
+                    var result = GraphicHelper.CompareColorEx(str.Trim('"'), sims[this.SimSelectedIndex]);
                     if (!result.Result)
                     {
                         MessageBox.ShowAsync(result.ErrorMessage);
                     }
-                    TestResult = result.Result.ToString();
+                    this.TestResult = result.Result.ToString();
                 }
-                else if (FormatSelectedIndex == FormatMode.anchorsCompareStr)
+                else if (this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
                 {
-                    double width = ColorInfo.Width;
-                    double height = ColorInfo.Height;
-                    string str = CreateColorStrHelper.Create(FormatMode.anchorsCompareStr4Test, ColorInfos);
+                    var width = ColorInfo.Width;
+                    var height = ColorInfo.Height;
+                    var str = CreateColorStrHelper.Create(FormatMode.anchorsCompareStr4Test, this.ColorInfos);
 
-                    var result = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sims[SimSelectedIndex]);
+                    var result = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sims[this.SimSelectedIndex]);
                     if (!result.Result)
                     {
                         MessageBox.ShowAsync(result.ErrorMessage);
                     }
-                    TestResult = result.Result.ToString();
+                    this.TestResult = result.Result.ToString();
                 }
-                else if (FormatSelectedIndex == FormatMode.anchorsFindStr)
+                else if (this.FormatSelectedIndex == FormatMode.anchorsFindStr)
                 {
-                    Range rect = GetRange();
-                    double width = ColorInfo.Width;
-                    double height = ColorInfo.Height;
-                    string str = CreateColorStrHelper.Create(FormatMode.anchorsFindStr4Test, ColorInfos);
-                    Point result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sims[SimSelectedIndex]);
+                    var rect = GetRange();
+                    var width = ColorInfo.Width;
+                    var height = ColorInfo.Height;
+                    var str = CreateColorStrHelper.Create(FormatMode.anchorsFindStr4Test, this.ColorInfos);
+                    var result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sims[this.SimSelectedIndex]);
 
-                    TestResult = result.ToString();
+                    this.TestResult = result.ToString();
 
                     if (result.X >= 0 && result.Y >= 0)
                     {
-                        FindedPoint_Margin = new Thickness(result.X - 36, result.Y - 69, 0, 0);
-                        FindedPoint_IsVisible = true;
+                        this.FindedPoint_Margin = new Thickness(result.X - 36, result.Y - 69, 0, 0);
+                        this.FindedPoint_IsVisible = true;
                         await Task.Delay(2500);
-                        FindedPoint_IsVisible = false;
+                        this.FindedPoint_IsVisible = false;
                     }
                 }
                 else
                 {
-                    Range rect = GetRange();
-                    string str = CreateColorStrHelper.Create(FormatMode.findStr4Test, ColorInfos, rect);
-                    string[] strArray = str.Split("\",\"");
+                    var rect = GetRange();
+                    var str = CreateColorStrHelper.Create(FormatMode.findStr4Test, this.ColorInfos, rect);
+                    var strArray = str.Split("\",\"");
                     if (strArray[1].Length <= 3)
                     {
                         MessageBox.ShowAsync("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
-                        TestResult = "error";
+                        this.TestResult = "error";
                         return;
                     }
-                    string[] _str = strArray[0].Split(",\"");
-                    Point result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _str[^1].Trim('"'), strArray[1].Trim('"'), sims[SimSelectedIndex]);
+                    var _str = strArray[0].Split(",\"");
+                    var result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _str[^1].Trim('"'), strArray[1].Trim('"'), sims[this.SimSelectedIndex]);
 
-                    TestResult = result.ToString();
+                    this.TestResult = result.ToString();
 
                     if (result.X >= 0 && result.Y >= 0)
                     {
-                        FindedPoint_Margin = new(result.X * ScaleFactor - 36, result.Y * ScaleFactor - 69, 0, 0);
-                        FindedPoint_IsVisible = true;
+                        this.FindedPoint_Margin = new(result.X * this.ScaleFactor - 36, result.Y * this.ScaleFactor - 69, 0, 0);
+                        this.FindedPoint_IsVisible = true;
                         await Task.Delay(2500);
-                        FindedPoint_IsVisible = false;
+                        this.FindedPoint_IsVisible = false;
                     }
                 }
             }
@@ -524,24 +523,24 @@ namespace ScriptGraphicHelper.ViewModels
 
         public void Create_Click()
         {
-            if (ColorInfos.Count > 0)
+            if (this.ColorInfos.Count > 0)
             {
-                Range rect = GetRange();
+                var rect = GetRange();
 
-                if (Rect.IndexOf("[") != -1)
+                if (this.Rect.IndexOf("[") != -1)
                 {
-                    Rect = string.Format("[{0}]", rect.ToString());
+                    this.Rect = string.Format("[{0}]", rect.ToString());
                 }
-                else if (FormatSelectedIndex == FormatMode.anchorsCompareStr || FormatSelectedIndex == FormatMode.anchorsFindStr)
+                else if (this.FormatSelectedIndex == FormatMode.anchorsCompareStr || this.FormatSelectedIndex == FormatMode.anchorsFindStr)
                 {
-                    Rect = rect.ToString(2);
+                    this.Rect = rect.ToString(2);
                 }
                 else
                 {
-                    Rect = rect.ToString();
+                    this.Rect = rect.ToString();
                 }
 
-                CreateStr = CreateColorStrHelper.Create(FormatSelectedIndex, ColorInfos, rect);
+                this.CreateStr = CreateColorStrHelper.Create(this.FormatSelectedIndex, this.ColorInfos, rect);
                 CreateStr_Copy_Click();
             }
         }
@@ -550,7 +549,7 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                await Application.Current.Clipboard.SetTextAsync(CreateStr);
+                await Application.Current.Clipboard.SetTextAsync(this.CreateStr);
             }
             catch (Exception ex)
             {
@@ -560,32 +559,32 @@ namespace ScriptGraphicHelper.ViewModels
 
         public void Clear_Click()
         {
-            if (CreateStr == string.Empty && Rect == string.Empty)
+            if (this.CreateStr == string.Empty && this.Rect == string.Empty)
             {
-                ColorInfos.Clear();
-                DataGridHeight = 40;
+                this.ColorInfos.Clear();
+                this.DataGridHeight = 40;
             }
             else
             {
-                CreateStr = string.Empty;
-                Rect = string.Empty;
-                TestResult = string.Empty;
+                this.CreateStr = string.Empty;
+                this.Rect = string.Empty;
+                this.TestResult = string.Empty;
             }
         }
 
         public ICommand Key_AddColorInfo => new Command((param) =>
         {
-            if (!Loupe_IsVisible)
+            if (!this.Loupe_IsVisible)
             {
                 return;
             }
-            int x = (int)PointX;
-            int y = (int)PointY;
-            string key = (string)param;
-            byte[] color = GraphicHelper.GetPixel(x, y);
+            var x = (int)this.PointX;
+            var y = (int)this.PointY;
+            var key = (string)param;
+            var color = GraphicHelper.GetPixel(x, y);
 
-            AnchorType anchor = AnchorType.None;
-            if (FormatSelectedIndex == FormatMode.anchorsFindStr || FormatSelectedIndex == FormatMode.anchorsCompareStr)
+            var anchor = AnchorType.None;
+            if (this.FormatSelectedIndex == FormatMode.anchorsFindStr || this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
             {
                 if (key == "A")
                     anchor = AnchorType.Left;
@@ -594,13 +593,13 @@ namespace ScriptGraphicHelper.ViewModels
                 else if (key == "D")
                     anchor = AnchorType.Right;
             }
-            ColorInfos.Add(new ColorInfo(ColorInfos.Count, anchor, x, y, color));
-            DataGridHeight = (ColorInfos.Count + 1) * 40;
+            this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, anchor, x, y, color));
+            this.DataGridHeight = (this.ColorInfos.Count + 1) * 40;
         });
 
         public ICommand Key_ScaleFactorChanged => new Command((param) =>
         {
-            var num = ScaleFactor switch
+            var num = this.ScaleFactor switch
             {
                 0.4 => 0,
                 0.6 => 1,
@@ -634,7 +633,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             num = Math.Min(num, 7);
             num = Math.Max(num, 0);
-            ScaleFactor = num switch
+            this.ScaleFactor = num switch
             {
                 0 => 0.4,
                 1 => 0.6,
@@ -651,8 +650,8 @@ namespace ScriptGraphicHelper.ViewModels
 
         public async void Key_GetClipboardData()
         {
-            string[] formats = await Application.Current.Clipboard.GetFormatsAsync();
-            string fileName = string.Empty;
+            var formats = await Application.Current.Clipboard.GetFormatsAsync();
+            var fileName = string.Empty;
 
             if (Array.IndexOf(formats, "FileNames") != -1)
             {
@@ -666,64 +665,64 @@ namespace ScriptGraphicHelper.ViewModels
             if (fileName.IndexOf(".bmp") != -1 || fileName.IndexOf(".png") != -1 || fileName.IndexOf(".jpg") != -1)
             {
                 var stream = new FileStream(fileName, FileMode.Open, FileAccess.Read);
-                Img = new Bitmap(stream);
+                this.Img = new Bitmap(stream);
                 stream.Position = 0;
-                SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                var sKBitmap = SKBitmap.Decode(stream);
                 GraphicHelper.KeepScreen(sKBitmap);
                 sKBitmap.Dispose();
                 stream.Dispose();
 
-                var item = new TabItem(Img);
+                var item = new TabItem(this.Img);
                 item.Command = new Command((param) =>
                 {
-                    TabItems.Remove(item);
+                    this.TabItems.Remove(item);
                 });
-                TabItems.Add(item);
-                TabControlSelectedIndex = TabItems.Count - 1;
+                this.TabItems.Add(item);
+                this.TabControlSelectedIndex = this.TabItems.Count - 1;
             }
             else
             {
-                string text = await Application.Current.Clipboard.GetTextAsync();
+                var text = await Application.Current.Clipboard.GetTextAsync();
                 if (text != string.Empty)
                 {
-                    ColorInfos.Clear();
-                    int[] sims = new int[] { 100, 95, 90, 85, 80, 0 };
-                    int sim = sims[SimSelectedIndex];
+                    this.ColorInfos.Clear();
+                    var sims = new int[] { 100, 95, 90, 85, 80, 0 };
+                    var sim = sims[this.SimSelectedIndex];
                     if (sim == 0)
                     {
                         sim = Setting.Instance.DiySim;
                     }
                     var result = DataImportHelper.Import(text);
 
-                    double similarity = (255 - 255 * (sim / 100.0)) / 2;
-                    for (int i = 0; i < result.Count; i++)
+                    var similarity = (255 - 255 * (sim / 100.0)) / 2;
+                    for (var i = 0; i < result.Count; i++)
                     {
                         if (GraphicHelper.CompareColor(new byte[] { result[i].Color.R, result[i].Color.G, result[i].Color.B }, similarity, (int)result[i].Point.X, (int)result[i].Point.Y, 0))
                         {
                             result[i].IsChecked = true;
                         }
-                        ColorInfos.Add(result[i]);
+                        this.ColorInfos.Add(result[i]);
                     }
-                    DataGridHeight = (ColorInfos.Count + 1) * 40;
+                    this.DataGridHeight = (this.ColorInfos.Count + 1) * 40;
                 }
             }
         }
 
         public void Key_ColorInfo_Clear()
         {
-            ColorInfos.Clear();
-            DataGridHeight = 40;
+            this.ColorInfos.Clear();
+            this.DataGridHeight = 40;
         }
 
         public async void Key_SetConfig()
         {
             var config = new Config();
             var setting = Setting.Instance;
-            string ysPath = setting.YsPath;
-            string xyPath = setting.XyPath;
-            string ldpath3 = setting.Ldpath3;
-            string ldpath4 = setting.Ldpath4;
-            string ldpath64 = setting.Ldpath64;
+            var ysPath = setting.YsPath;
+            var xyPath = setting.XyPath;
+            var ldpath3 = setting.Ldpath3;
+            var ldpath4 = setting.Ldpath4;
+            var ldpath64 = setting.Ldpath64;
 
             await config.ShowDialog(MainWindow.Instance);
 
@@ -737,7 +736,7 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                await Application.Current.Clipboard.SetTextAsync(Rect);
+                await Application.Current.Clipboard.SetTextAsync(this.Rect);
             }
             catch (Exception ex)
             {
@@ -747,19 +746,19 @@ namespace ScriptGraphicHelper.ViewModels
 
         public void Rect_Clear_Click()
         {
-            Rect = string.Empty;
+            this.Rect = string.Empty;
         }
 
         public async void Point_Copy_Click()
         {
             try
             {
-                if (DataGridSelectedIndex == -1 || DataGridSelectedIndex > ColorInfos.Count)
+                if (this.DataGridSelectedIndex == -1 || this.DataGridSelectedIndex > this.ColorInfos.Count)
                 {
                     return;
                 }
-                Point point = ColorInfos[DataGridSelectedIndex].Point;
-                string pointStr = string.Format("{0},{1}", point.X, point.Y);
+                var point = this.ColorInfos[this.DataGridSelectedIndex].Point;
+                var pointStr = string.Format("{0},{1}", point.X, point.Y);
                 await Application.Current.Clipboard.SetTextAsync(pointStr);
             }
             catch (Exception ex)
@@ -772,12 +771,12 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                if (DataGridSelectedIndex == -1 || DataGridSelectedIndex > ColorInfos.Count)
+                if (this.DataGridSelectedIndex == -1 || this.DataGridSelectedIndex > this.ColorInfos.Count)
                 {
                     return;
                 }
-                Color color = ColorInfos[DataGridSelectedIndex].Color;
-                string hexColor = string.Format("#{0}{1}{2}", color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2"));
+                var color = this.ColorInfos[this.DataGridSelectedIndex].Color;
+                var hexColor = string.Format("#{0}{1}{2}", color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2"));
                 await Application.Current.Clipboard.SetTextAsync(hexColor);
             }
             catch (Exception ex)
@@ -790,45 +789,45 @@ namespace ScriptGraphicHelper.ViewModels
         {
             var temp = new ObservableCollection<ColorInfo>();
 
-            foreach (var colorInfo in ColorInfos)
+            foreach (var colorInfo in this.ColorInfos)
             {
-                int x = (int)colorInfo.Point.X;
-                int y = (int)colorInfo.Point.Y;
-                byte[] color = GraphicHelper.GetPixel(x, y);
+                var x = (int)colorInfo.Point.X;
+                var y = (int)colorInfo.Point.Y;
+                var color = GraphicHelper.GetPixel(x, y);
                 colorInfo.Color = Color.FromRgb(color[0], color[1], color[2]);
-                if (x >= ImgWidth || y >= ImgHeight)
+                if (x >= this.ImgWidth || y >= this.ImgHeight)
                 {
                     colorInfo.IsChecked = false;
                 }
                 temp.Add(colorInfo);
             }
 
-            ColorInfos = temp;
+            this.ColorInfos = temp;
 
         }
 
         public void ColorInfo_SelectItemClear_Click()
         {
-            if (DataGridSelectedIndex == -1 || DataGridSelectedIndex > ColorInfos.Count)
+            if (this.DataGridSelectedIndex == -1 || this.DataGridSelectedIndex > this.ColorInfos.Count)
             {
                 return;
             }
-            ColorInfos.RemoveAt(DataGridSelectedIndex);
-            DataGridHeight = (ColorInfos.Count + 1) * 40;
+            this.ColorInfos.RemoveAt(this.DataGridSelectedIndex);
+            this.DataGridHeight = (this.ColorInfos.Count + 1) * 40;
         }
 
         public async void CutImg_Click()
         {
-            Range range = GetRange();
+            var range = GetRange();
             var colorInfos = new List<ColorInfo>();
             var imgEditor = new ImgEditor(range, GraphicHelper.GetRectData(range));
             await imgEditor.ShowDialog(MainWindow.Instance);
             if (ImgEditor.Result_ACK && ImgEditor.ResultColorInfos != null && ImgEditor.ResultColorInfos.Count != 0)
             {
-                ColorInfos = new ObservableCollection<ColorInfo>(ImgEditor.ResultColorInfos);
+                this.ColorInfos = new ObservableCollection<ColorInfo>(ImgEditor.ResultColorInfos);
                 ImgEditor.ResultColorInfos.Clear();
                 ImgEditor.Result_ACK = false;
-                DataGridHeight = (ColorInfos.Count + 1) * 40;
+                this.DataGridHeight = (this.ColorInfos.Count + 1) * 40;
             }
         }
 
@@ -838,32 +837,32 @@ namespace ScriptGraphicHelper.ViewModels
             //{
             //    return new Range(0, 0, ImgWidth - 1, ImgHeight - 1);
             //}
-            if (Rect != string.Empty)
+            if (this.Rect != string.Empty)
             {
-                if (Rect.IndexOf("[") != -1)
+                if (this.Rect.IndexOf("[") != -1)
                 {
-                    string[] range = Rect.TrimStart('[').TrimEnd(']').Split(',');
+                    var range = this.Rect.TrimStart('[').TrimEnd(']').Split(',');
 
                     return new Range(int.Parse(range[0].Trim()), int.Parse(range[1].Trim()), int.Parse(range[2].Trim()), int.Parse(range[3].Trim()));
                 }
             }
-            double imgWidth = ImgWidth - 1;
-            double imgHeight = ImgHeight - 1;
+            var imgWidth = this.ImgWidth - 1;
+            var imgHeight = this.ImgHeight - 1;
 
-            if (FormatSelectedIndex == FormatMode.anchorsFindStr || FormatSelectedIndex == FormatMode.anchorsCompareStr)
+            if (this.FormatSelectedIndex == FormatMode.anchorsFindStr || this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
             {
                 imgWidth = ColorInfo.Width - 1;
                 imgHeight = ColorInfo.Height - 1;
             }
 
-            double left = imgWidth;
-            double top = imgHeight;
+            var left = imgWidth;
+            var top = imgHeight;
             double right = 0;
             double bottom = 0;
-            int mode_1 = -1;
-            int mode_2 = -1;
+            var mode_1 = -1;
+            var mode_2 = -1;
 
-            foreach (ColorInfo colorInfo in ColorInfos)
+            foreach (var colorInfo in this.ColorInfos)
             {
                 if (colorInfo.IsChecked)
                 {

@@ -39,6 +39,9 @@
 	  <AvaloniaResource Remove="Assets\aiming.cur" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Remove="Assets\info.svg" />
+		<None Remove="Assets\settings.svg" />
+		<None Remove="Views\Info.xaml" />
 		<None Remove="Views\MessageBox.xaml" />
 	</ItemGroup>
 	<ItemGroup>
@@ -59,6 +62,9 @@
 		</AvaloniaXaml>
 		<AvaloniaXaml Include="Views\Config.xaml">
 			<Generator>MSBuild:Compile</Generator>
+		</AvaloniaXaml>
+		<AvaloniaXaml Include="Views\Info.xaml">
+		  <Generator>MSBuild:Compile</Generator>
 		</AvaloniaXaml>
 		<AvaloniaXaml Include="Views\MainWindow.xaml">
 			<Generator>MSBuild:Compile</Generator>

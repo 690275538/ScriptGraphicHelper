@@ -17,17 +17,31 @@ namespace ScriptGraphicHelper.ViewModels
         private Cursor windowCursor = new Cursor(StandardCursorType.Arrow);
         public Cursor WindowCursor
         {
-            get => windowCursor;
-            set => this.RaiseAndSetIfChanged(ref windowCursor, value);
+            get => this.windowCursor;
+            set => this.RaiseAndSetIfChanged(ref this.windowCursor, value);
+        }
+
+        private double windowWidth = 1720d;
+        public double WindowWidth
+        {
+            get => this.windowWidth;
+            set => this.RaiseAndSetIfChanged(ref this.windowWidth, value);
+        }
+
+        private double windowHeight = 900d;
+        public double WindowHeight
+        {
+            get => this.windowHeight;
+            set => this.RaiseAndSetIfChanged(ref this.windowHeight, value);
         }
 
         private int emulatorSelectedIndex = 0;
         public int EmulatorSelectedIndex
         {
-            get => emulatorSelectedIndex;
+            get => this.emulatorSelectedIndex;
             set
             {
-                this.RaiseAndSetIfChanged(ref emulatorSelectedIndex, value);
+                this.RaiseAndSetIfChanged(ref this.emulatorSelectedIndex, value);
                 Emulator_Selected(value);
             }
         }
@@ -35,10 +49,10 @@ namespace ScriptGraphicHelper.ViewModels
         private int simSelectedIndex = 0;
         public int SimSelectedIndex
         {
-            get => simSelectedIndex;
+            get => this.simSelectedIndex;
             set
             {
-                this.RaiseAndSetIfChanged(ref simSelectedIndex, value);
+                this.RaiseAndSetIfChanged(ref this.simSelectedIndex, value);
                 Setting.Instance.SimSelectedIndex = value;
             }
         }
@@ -46,22 +60,22 @@ namespace ScriptGraphicHelper.ViewModels
         private FormatMode formatSelectedIndex = FormatMode.compareStr;
         public FormatMode FormatSelectedIndex
         {
-            get => formatSelectedIndex;
+            get => this.formatSelectedIndex;
             set
             {
-                this.RaiseAndSetIfChanged(ref formatSelectedIndex, value);
+                this.RaiseAndSetIfChanged(ref this.formatSelectedIndex, value);
                 Setting.Instance.FormatSelectedIndex = (int)value;
                 if (value == FormatMode.anchorsFindStr || value == FormatMode.anchorsCompareStr)
                 {
-                    DataGrid_IsVisible = false;
-                    ImgMargin = new Thickness(170, 50, 340, 20);
-                    ColorInfo.Width = ImgWidth;
-                    ColorInfo.Height = imgHeight;
+                    this.DataGrid_IsVisible = false;
+                    this.ImgMargin = new Thickness(170, 50, 340, 20);
+                    ColorInfo.Width = this.ImgWidth;
+                    ColorInfo.Height = this.imgHeight;
                 }
                 else
                 {
-                    DataGrid_IsVisible = true;
-                    ImgMargin = new Thickness(170, 50, 280, 20);
+                    this.DataGrid_IsVisible = true;
+                    this.ImgMargin = new Thickness(170, 50, 280, 20);
                 }
             }
         }
@@ -69,68 +83,68 @@ namespace ScriptGraphicHelper.ViewModels
         private string testResult = string.Empty;
         public string TestResult
         {
-            get => testResult;
-            set => this.RaiseAndSetIfChanged(ref testResult, value);
+            get => this.testResult;
+            set => this.RaiseAndSetIfChanged(ref this.testResult, value);
         }
 
         private string rect = string.Empty;
         public string Rect
         {
-            get => rect;
-            set => this.RaiseAndSetIfChanged(ref rect, value);
+            get => this.rect;
+            set => this.RaiseAndSetIfChanged(ref this.rect, value);
         }
 
         private string createStr = string.Empty;
         public string CreateStr
         {
-            get => createStr;
-            set => this.RaiseAndSetIfChanged(ref createStr, value);
+            get => this.createStr;
+            set => this.RaiseAndSetIfChanged(ref this.createStr, value);
         }
 
         private ObservableCollection<string> emulatorInfo;
         public ObservableCollection<string> EmulatorInfo
         {
-            get => emulatorInfo;
-            set => this.RaiseAndSetIfChanged(ref emulatorInfo, value);
+            get => this.emulatorInfo;
+            set => this.RaiseAndSetIfChanged(ref this.emulatorInfo, value);
         }
 
         private int titleBarWidth;
         public int TitleBarWidth
         {
-            get => titleBarWidth;
-            set => this.RaiseAndSetIfChanged(ref titleBarWidth, value);
+            get => this.titleBarWidth;
+            set => this.RaiseAndSetIfChanged(ref this.titleBarWidth, value);
         }
 
         private TabItems<TabItem> tabItems = new TabItems<TabItem>();
         public TabItems<TabItem> TabItems
         {
-            get => tabItems;
-            set => this.RaiseAndSetIfChanged(ref tabItems, value);
+            get => this.tabItems;
+            set => this.RaiseAndSetIfChanged(ref this.tabItems, value);
         }
 
         private int tabControlSelectedIndex;
         public int TabControlSelectedIndex
         {
-            get => tabControlSelectedIndex;
+            get => this.tabControlSelectedIndex;
             set
             {
-                this.RaiseAndSetIfChanged(ref tabControlSelectedIndex, value);
+                this.RaiseAndSetIfChanged(ref this.tabControlSelectedIndex, value);
                 if (value != -1)
                 {
-                    Img = TabItems[value].Img;
-                    MemoryStream stream = new MemoryStream();
-                    Img.Save(stream);
+                    this.Img = this.TabItems[value].Img;
+                    var stream = new MemoryStream();
+                    this.Img.Save(stream);
                     stream.Position = 0;
-                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    var sKBitmap = SKBitmap.Decode(stream);
                     GraphicHelper.KeepScreen(sKBitmap);
                     sKBitmap.Dispose();
                     stream.Dispose();
                 }
                 else
                 {
-                    SKBitmap sKBitmap = new SKBitmap(1, 1);
+                    var sKBitmap = new SKBitmap(1, 1);
                     GraphicHelper.KeepScreen(sKBitmap);
-                    Img = new Bitmap(GraphicHelper.PxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(1, 1), new Vector(96, 96), sKBitmap.RowBytes);
+                    this.Img = new Bitmap(GraphicHelper.PxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(1, 1), new Vector(96, 96), sKBitmap.RowBytes);
                     sKBitmap.Dispose();
                 }
             }
@@ -139,183 +153,183 @@ namespace ScriptGraphicHelper.ViewModels
         private Bitmap img;
         public Bitmap Img
         {
-            get => img;
+            get => this.img;
             set
             {
-                this.RaiseAndSetIfChanged(ref img, value);
-                ImgWidth = value.Size.Width;
-                ImgHeight = value.Size.Height;
+                this.RaiseAndSetIfChanged(ref this.img, value);
+                this.ImgWidth = value.Size.Width;
+                this.ImgHeight = value.Size.Height;
             }
         }
 
         private Thickness imgMargin = new Thickness(170, 50, 280, 20);
         public Thickness ImgMargin
         {
-            get => imgMargin;
-            set => this.RaiseAndSetIfChanged(ref imgMargin, value);
+            get => this.imgMargin;
+            set => this.RaiseAndSetIfChanged(ref this.imgMargin, value);
         }
 
         private double imgWidth = 0;
         private double ImgWidth
         {
-            get => imgWidth;
+            get => this.imgWidth;
             set
             {
-                imgWidth = value;
-                ImgDrawWidth = Math.Floor(value * ScaleFactor);
+                this.imgWidth = value;
+                this.ImgDrawWidth = Math.Floor(value * this.ScaleFactor);
             }
         }
 
         private double imgHeight = 0;
         private double ImgHeight
         {
-            get => imgHeight;
+            get => this.imgHeight;
             set
             {
-                imgHeight = value;
-                ImgDrawHeight = Math.Floor(value * ScaleFactor);
+                this.imgHeight = value;
+                this.ImgDrawHeight = Math.Floor(value * this.ScaleFactor);
             }
         }
 
         private double imgDrawWidth = 0;
         public double ImgDrawWidth
         {
-            get => imgDrawWidth;
-            set => this.RaiseAndSetIfChanged(ref imgDrawWidth, value);
+            get => this.imgDrawWidth;
+            set => this.RaiseAndSetIfChanged(ref this.imgDrawWidth, value);
         }
 
         private double imgDrawHeight = 0;
         public double ImgDrawHeight
         {
-            get => imgDrawHeight;
-            set => this.RaiseAndSetIfChanged(ref imgDrawHeight, value);
+            get => this.imgDrawHeight;
+            set => this.RaiseAndSetIfChanged(ref this.imgDrawHeight, value);
         }
 
         private double scaleFactor = 1.0;
         public double ScaleFactor
         {
-            get => scaleFactor;
+            get => this.scaleFactor;
             set
             {
-                ImgDrawWidth = Math.Floor(ImgWidth * value);
-                ImgDrawHeight = Math.Floor(ImgHeight * value);
-                this.RaiseAndSetIfChanged(ref scaleFactor, value);
+                this.ImgDrawWidth = Math.Floor(this.ImgWidth * value);
+                this.ImgDrawHeight = Math.Floor(this.ImgHeight * value);
+                this.RaiseAndSetIfChanged(ref this.scaleFactor, value);
             }
         }
 
         private WriteableBitmap loupeWriteBmp;
         public WriteableBitmap LoupeWriteBmp
         {
-            get => loupeWriteBmp;
-            set => this.RaiseAndSetIfChanged(ref loupeWriteBmp, value);
+            get => this.loupeWriteBmp;
+            set => this.RaiseAndSetIfChanged(ref this.loupeWriteBmp, value);
         }
 
         private bool loupe_IsVisible = false;
         public bool Loupe_IsVisible
         {
-            get => loupe_IsVisible;
-            set => this.RaiseAndSetIfChanged(ref loupe_IsVisible, value);
+            get => this.loupe_IsVisible;
+            set => this.RaiseAndSetIfChanged(ref this.loupe_IsVisible, value);
         }
 
         private Thickness loupeMargin;
         public Thickness LoupeMargin
         {
-            get => loupeMargin;
-            set => this.RaiseAndSetIfChanged(ref loupeMargin, value);
+            get => this.loupeMargin;
+            set => this.RaiseAndSetIfChanged(ref this.loupeMargin, value);
         }
 
         private int pointX = 0;
         public int PointX
         {
-            get => pointX;
-            set => this.RaiseAndSetIfChanged(ref pointX, value);
+            get => this.pointX;
+            set => this.RaiseAndSetIfChanged(ref this.pointX, value);
         }
 
         private int pointY = 0;
         public int PointY
         {
-            get => pointY;
-            set => this.RaiseAndSetIfChanged(ref pointY, value);
+            get => this.pointY;
+            set => this.RaiseAndSetIfChanged(ref this.pointY, value);
         }
 
         private double rectWidth = 0;
         public double RectWidth
         {
-            get => rectWidth;
-            set => this.RaiseAndSetIfChanged(ref rectWidth, value);
+            get => this.rectWidth;
+            set => this.RaiseAndSetIfChanged(ref this.rectWidth, value);
         }
 
         private double rectHeight = 0;
         public double RectHeight
         {
-            get => rectHeight;
-            set => this.RaiseAndSetIfChanged(ref rectHeight, value);
+            get => this.rectHeight;
+            set => this.RaiseAndSetIfChanged(ref this.rectHeight, value);
         }
 
         private Thickness rectMargin;
         public Thickness RectMargin
         {
-            get => rectMargin;
-            set => this.RaiseAndSetIfChanged(ref rectMargin, value);
+            get => this.rectMargin;
+            set => this.RaiseAndSetIfChanged(ref this.rectMargin, value);
         }
 
         private bool rect_IsVisible = false;
         public bool Rect_IsVisible
         {
-            get => rect_IsVisible;
-            set => this.RaiseAndSetIfChanged(ref rect_IsVisible, value);
+            get => this.rect_IsVisible;
+            set => this.RaiseAndSetIfChanged(ref this.rect_IsVisible, value);
         }
 
         private Thickness findedPoint_Margin;
         public Thickness FindedPoint_Margin
         {
-            get => findedPoint_Margin;
-            set => this.RaiseAndSetIfChanged(ref findedPoint_Margin, value);
+            get => this.findedPoint_Margin;
+            set => this.RaiseAndSetIfChanged(ref this.findedPoint_Margin, value);
         }
 
         private bool findedPoint_IsVisible = false;
         public bool FindedPoint_IsVisible
         {
-            get => findedPoint_IsVisible;
-            set => this.RaiseAndSetIfChanged(ref findedPoint_IsVisible, value);
+            get => this.findedPoint_IsVisible;
+            set => this.RaiseAndSetIfChanged(ref this.findedPoint_IsVisible, value);
         }
 
         private ObservableCollection<ColorInfo> colorInfos;
         public ObservableCollection<ColorInfo> ColorInfos
         {
-            get => colorInfos;
+            get => this.colorInfos;
             set
             {
-                this.RaiseAndSetIfChanged(ref colorInfos, value);
+                this.RaiseAndSetIfChanged(ref this.colorInfos, value);
             }
         }
 
         private int dataGridSelectedIndex;
         public int DataGridSelectedIndex
         {
-            get => dataGridSelectedIndex;
-            set => this.RaiseAndSetIfChanged(ref dataGridSelectedIndex, value);
+            get => this.dataGridSelectedIndex;
+            set => this.RaiseAndSetIfChanged(ref this.dataGridSelectedIndex, value);
         }
 
         private int dataGridHeight;
         public int DataGridHeight
         {
-            get => dataGridHeight;
+            get => this.dataGridHeight;
             set
             {
                 if (value > 1000)
                 {
                     value = 1000;
                 }
-                this.RaiseAndSetIfChanged(ref dataGridHeight, value);
+                this.RaiseAndSetIfChanged(ref this.dataGridHeight, value);
             }
         }
 
         private bool dataGrid_IsVisible = true;
         public bool DataGrid_IsVisible
         {
-            get => dataGrid_IsVisible;
-            set => this.RaiseAndSetIfChanged(ref dataGrid_IsVisible, value);
+            get => this.dataGrid_IsVisible;
+            set => this.RaiseAndSetIfChanged(ref this.dataGrid_IsVisible, value);
         }
 
     }

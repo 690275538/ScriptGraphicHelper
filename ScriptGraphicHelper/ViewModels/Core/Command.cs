@@ -12,8 +12,8 @@ namespace ScriptGraphicHelper.ViewModels.Core
 
         public Command(Action<object?>? execute = null, Predicate<object?>? canExecute = null)
         {
-            _execute = execute;
-            _canExecute = canExecute;
+            this._execute = execute;
+            this._canExecute = canExecute;
         }
 
         public virtual void NotifyCanExecuteChanged()
@@ -23,12 +23,12 @@ namespace ScriptGraphicHelper.ViewModels.Core
 
         public bool CanExecute(object? parameter)
         {
-            return _canExecute?.Invoke(parameter) ?? true;
+            return this._canExecute?.Invoke(parameter) ?? true;
         }
 
         public void Execute(object? parameter)
         {
-            _execute?.Invoke(parameter);
+            this._execute?.Invoke(parameter);
         }
     }
 }

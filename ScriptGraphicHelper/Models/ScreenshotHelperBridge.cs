@@ -95,7 +95,7 @@ namespace ScriptGraphicHelper.Models
         {
             if (index >= 0)
             {
-                for (int i = 0; i < Helpers.Count; i++)
+                for (var i = 0; i < Helpers.Count; i++)
                 {
                     if (Helpers[i].Name == Result[index])
                     {

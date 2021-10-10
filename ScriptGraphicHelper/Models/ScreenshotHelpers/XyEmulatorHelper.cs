@@ -15,7 +15,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         public string BmpPath { get; set; } = string.Empty;
         public override bool IsStart(int index)
         {
-            string result = PipeCmd("isvmrunning -i " + index.ToString());
+            var result = PipeCmd("isvmrunning -i " + index.ToString());
             result = result.Trim();
             return result == "Running";
         }
@@ -24,11 +24,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             var task = Task.Run(() =>
             {
-                string[] resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n");
-                List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
-                for (int i = 0; i < resultArray.Length; i++)
+                var resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n");
+                var result = new List<KeyValuePair<int, string>>();
+                for (var i = 0; i < resultArray.Length; i++)
                 {
-                    string[] LineArray = resultArray[i].Split(',');
+                    var LineArray = resultArray[i].Split(',');
                     if (LineArray.Length >= 4)
                     {
                         result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[1]));
@@ -47,26 +47,26 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 {
                     throw new Exception("模拟器未启动 ! ");
                 }
-                if (BmpPath == string.Empty)
+                if (this.BmpPath == string.Empty)
                 {
-                    BmpPath = BmpPathGet(index);
+                    this.BmpPath = BmpPathGet(index);
                 }
-                string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                var BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
                 Screencap(index, "/mnt/sdcard/Pictures", BmpName);
-                for (int i = 0; i < 10; i++)
+                for (var i = 0; i < 10; i++)
                 {
                     Task.Delay(200).Wait();
-                    if (File.Exists(BmpPath + "\\" + BmpName))
+                    if (File.Exists(this.BmpPath + "\\" + BmpName))
                     {
                         break;
                     }
                 }
                 try
                 {
-                    FileStream stream = new(BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
+                    FileStream stream = new(this.BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
                     var bitmap = new Bitmap(stream);
                     stream.Position = 0;
-                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    var sKBitmap = SKBitmap.Decode(stream);
                     GraphicHelper.KeepScreen(sKBitmap);
                     sKBitmap.Dispose();
                     stream.Dispose();
@@ -82,25 +82,25 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public XyEmulatorHelper()//初始化, 获取模拟器路径
         {
-            string path = Setting.Instance.XyPath.Trim("\\".ToCharArray()) + "\\";
+            var path = Setting.Instance.XyPath.Trim("\\".ToCharArray()) + "\\";
             if (path != string.Empty && path != "")
             {
-                int index = path.LastIndexOf("\\");
+                var index = path.LastIndexOf("\\");
                 path = path.Substring(0, index + 1).Trim('"');
                 if (File.Exists(path + "memuc.exe"))
                 {
-                    Name = "逍遥模拟器";
-                    Path = path;
+                    this.Name = "逍遥模拟器";
+                    this.Path = path;
                 }
             }
         }
 
         public string[] List(int index)
         {
-            string[] resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n");
-            for (int i = 0; i < resultArray.Length; i++)
+            var resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n");
+            for (var i = 0; i < resultArray.Length; i++)
             {
-                string[] LineArray = resultArray[i].Split(',');
+                var LineArray = resultArray[i].Split(',');
                 if (LineArray.Length > 1)
                 {
                     if (LineArray[0] == index.ToString())
@@ -120,9 +120,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             try
             {
-                string result = PipeCmd(string.Format("getconfigex -i {0} picturepath", index));
-                int firstIndex = result.IndexOf(":") + 2;
-                int lastIndex = result.LastIndexOf("\\");
+                var result = PipeCmd(string.Format("getconfigex -i {0} picturepath", index));
+                var firstIndex = result.IndexOf(":") + 2;
+                var lastIndex = result.LastIndexOf("\\");
                 return result.Substring(firstIndex, lastIndex - firstIndex + 1).Trim() + "逍遥安卓照片\\";
             }
             catch
@@ -132,8 +132,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
         public string PipeCmd(string theCommand)
         {
-            string path = Path + "memuc.exe";
-            ProcessStartInfo start = new ProcessStartInfo(path)
+            var path = this.Path + "memuc.exe";
+            var start = new ProcessStartInfo(path)
             {
                 Arguments = theCommand,
                 CreateNoWindow = true,
@@ -141,9 +141,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 RedirectStandardInput = true,
                 UseShellExecute = false,
             };
-            Process pipe = Process.Start(start);
-            StreamReader readStream = pipe.StandardOutput;
-            string OutputStr = readStream.ReadToEnd();
+            var pipe = Process.Start(start);
+            var readStream = pipe.StandardOutput;
+            var OutputStr = readStream.ReadToEnd();
             pipe.WaitForExit(10000);
             pipe.Close();
             readStream.Close();

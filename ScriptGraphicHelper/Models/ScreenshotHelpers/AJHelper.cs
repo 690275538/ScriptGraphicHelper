@@ -33,22 +33,22 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Assets/screenshotHelper.js"))
             {
-                StreamReader sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"Assets/screenshotHelper.js");
-                RunCode = sr.ReadToEnd();
-                Step = 0;
-                Path = "AJ连接";
-                Name = "AJ连接";
+                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"Assets/screenshotHelper.js");
+                this.RunCode = sr.ReadToEnd();
+                this.Step = 0;
+                this.Path = "AJ连接";
+                this.Name = "AJ连接";
             }
         }
 
         public override void Dispose()
         {
-            if (IsInit)
+            if (this.IsInit)
             {
                 try
                 {
-                    networkStream.Close();
-                    MyTcpClient.Close();
+                    this.networkStream.Close();
+                    this.MyTcpClient.Close();
                 }
                 catch { };
             }
@@ -66,8 +66,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             tcpConfig.Title = "AJ配置";
             await tcpConfig.ShowDialog(MainWindow.Instance);
 
-            string address = TcpConfig.Address;
-            int port = TcpConfig.Port;
+            var address = TcpConfig.Address;
+            var port = TcpConfig.Port;
 
             var task = Task.Run(async () =>
             {
@@ -77,21 +77,21 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 {
                     try
                     {
-                        MyTcpClient = new TcpClient(address, port);
-                        networkStream = MyTcpClient.GetStream();
-                        byte[] buf = new byte[256];
-                        for (int i = 0; i < 40; i++)
+                        this.MyTcpClient = new TcpClient(address, port);
+                        this.networkStream = this.MyTcpClient.GetStream();
+                        var buf = new byte[256];
+                        for (var i = 0; i < 40; i++)
                         {
                             Task.Delay(100).Wait();
-                            if (networkStream.DataAvailable)
+                            if (this.networkStream.DataAvailable)
                             {
-                                int length = networkStream.Read(buf, 0, 256);
-                                string info = Encoding.UTF8.GetString(buf, 8, length - 8);
-                                JObject obj = (JObject)JsonConvert.DeserializeObject(info);
-                                JObject data = (JObject)obj.GetValue("data");
-                                string deviceName = (string)data.GetValue("device_name") ?? string.Empty;
+                                var length = this.networkStream.Read(buf, 0, 256);
+                                var info = Encoding.UTF8.GetString(buf, 8, length - 8);
+                                var obj = (JObject)JsonConvert.DeserializeObject(info);
+                                var data = (JObject)obj.GetValue("data");
+                                var deviceName = (string)data.GetValue("device_name") ?? string.Empty;
 
-                                byte[] send = new byte[59]
+                                var send = new byte[59]
                                 {
                                     0x00,0x00,0x00,0x33,0x00,0x00,0x00,0x01,
                                     0x7B,0x22,0x69,0x64,0x22,0x3A,0x31,0x2C,
@@ -103,14 +103,14 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                                     0x32,0x7D,0x7D
                                 };
 
-                                await networkStream.WriteAsync(send);
+                                await this.networkStream.WriteAsync(send);
 
-                                string mainCode = "let _engines = engines.all(); for (let i = 0; i < _engines.length; i++) { if (_engines[i].getSource().toString().indexOf(\"cap_script\") != -1 && _engines[i] != engines.myEngine()) { _engines[i].forceStop(); } } threads.start(function () { if (!requestScreenCapture()) { alert(\"请求截图权限失败\"); exit(); } else { toastLog(\"请求截图权限成功\"); } }); setInterval(() => { }, 1000);";
+                                var mainCode = "let _engines = engines.all(); for (let i = 0; i < _engines.length; i++) { if (_engines[i].getSource().toString().indexOf(\"cap_script\") != -1 && _engines[i] != engines.myEngine()) { _engines[i].forceStop(); } } threads.start(function () { if (!requestScreenCapture()) { alert(\"请求截图权限失败\"); exit(); } else { toastLog(\"请求截图权限成功\"); } }); setInterval(() => { }, 1000);";
 
-                                networkStream.Write(GetRunCommandBytes(mainCode, "cap_script"));
+                                await this.networkStream.WriteAsync(GetRunCommandBytes(mainCode, "cap_script"));
 
                                 result.Add(new KeyValuePair<int, string>(key: 0, value: deviceName));
-                                IsInit = true;
+                                this.IsInit = true;
                                 return result;
                             }
                         }
@@ -138,7 +138,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         private byte[] Int2Bytes(int value)
         {
-            byte[] src = new byte[4];
+            var src = new byte[4];
             src[0] = (byte)((value >> 24) & 0xFF);
             src[1] = (byte)((value >> 16) & 0xFF);
             src[2] = (byte)((value >> 8) & 0xFF);
@@ -174,10 +174,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     script = runCode
                 }
             };
-            Step++;
-            byte[] data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(command));
-            byte[] recv = new byte[data.Length + 8];
-            byte[] len = Int2Bytes(data.Length);
+            this.Step++;
+            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(command));
+            var recv = new byte[data.Length + 8];
+            var len = Int2Bytes(data.Length);
             len.CopyTo(recv, 0);
             recv[7] = 1;
             data.CopyTo(recv, 8);
@@ -190,10 +190,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             {
                 try
                 {
-                    networkStream.Write(GetRunCommandBytes(RunCode, "screenshotHelper"));
+                    this.networkStream.Write(GetRunCommandBytes(this.RunCode, "screenshotHelper"));
 
                     var client = new TcpClient();
-                    for (int i = 0; i < 300; i++)
+                    for (var i = 0; i < 300; i++)
                     {
                         Task.Delay(100).Wait();
                         try
@@ -209,35 +209,35 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
                     var stream = client.GetStream();
 
-                    int offset = 0;
-                    byte[] info = new byte[4];
-                    for (int i = 0; i < 100; i++)
+                    var offset = 0;
+                    var info = new byte[4];
+                    for (var i = 0; i < 100; i++)
                     {
                         Task.Delay(100).Wait();
                         if (stream.DataAvailable)
                         {
                             while (offset < 4)
                             {
-                                int len = stream.Read(info, offset, 4 - offset);
+                                var len = stream.Read(info, offset, 4 - offset);
                                 offset += 4;
                             }
                             break;
                         }
                     }
 
-                    int length = Bytes2Int(info);
+                    var length = Bytes2Int(info);
 
-                    byte[] data = new byte[length];
+                    var data = new byte[length];
 
                     offset = 0;
 
                     while (offset < length)
                     {
-                        int len = stream.Read(data, offset, length - offset);
+                        var len = stream.Read(data, offset, length - offset);
                         offset += len;
                     }
 
-                    SKBitmap sKBitmap = SKBitmap.Decode(data);
+                    var sKBitmap = SKBitmap.Decode(data);
                     GraphicHelper.KeepScreen(sKBitmap);
                     var bitmap = new Bitmap(GraphicHelper.PxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
                     sKBitmap.Dispose();

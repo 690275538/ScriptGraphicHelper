@@ -23,34 +23,34 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             try
             {
-                Dm.UnBindWindow();
+                this.Dm.UnBindWindow();
             }
             catch { }
         }
 
         public override bool IsStart(int Index)
         {
-            return Inited;
+            return this.Inited;
         }
 
         public override async Task<List<KeyValuePair<int, string>>> ListAll()
         {
-            Dm = Dmsoft.Instance;
-            Dm.Hwnd = -1;
+            this.Dm = Dmsoft.Instance;
+            this.Dm.Hwnd = -1;
             HwndConfig config = new();
             await config.ShowDialog(MainWindow.Instance);
             var task = Task.Run(() =>
             {
                 List<KeyValuePair<int, string>> result = new();
-                if (Dm.Hwnd == -1)
+                if (this.Dm.Hwnd == -1)
                 {
                     result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
                     return result;
                 }
-                if (Dm.BindWindowEx() == 1)
+                if (this.Dm.BindWindowEx() == 1)
                 {
-                    Inited = true;
-                    result.Add(new KeyValuePair<int, string>(key: 0, value: Dm.Hwnd.ToString() + "-" + Dm.Display));
+                    this.Inited = true;
+                    result.Add(new KeyValuePair<int, string>(key: 0, value: this.Dm.Hwnd.ToString() + "-" + this.Dm.Display));
                     return result;
                 }
                 result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
@@ -61,7 +61,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public override async Task<Bitmap> ScreenShot(int Index)
         {
-            if (Index == -1 || !Inited)
+            if (Index == -1 || !this.Inited)
             {
                 throw new Exception("请先选择窗口句柄!");
             }
@@ -69,10 +69,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             {
                 try
                 {
-                    Point point = Dm.GetClientSize();
-                    int width = (int)point.X;
-                    int height = (int)point.Y;
-                    byte[] data = Dm.GetScreenData(width, height);
+                    var point = this.Dm.GetClientSize();
+                    var width = (int)point.X;
+                    var height = (int)point.Y;
+                    var data = this.Dm.GetScreenData(width, height);
 
                     SKBitmap sKBitmap = new(new SKImageInfo(width, height));
                     Marshal.Copy(data, 0, sKBitmap.GetPixels(), data.Length);

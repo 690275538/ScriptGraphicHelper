@@ -16,26 +16,26 @@ namespace ScriptGraphicHelper.Models
 
         public MoveCategory(int hwnd, string title, string className, params MoveCategory[] movies)
         {
-            Hwnd = hwnd;
-            Title = title;
-            ClassName = className;
-            Info = string.Format("[{0}][{1}][{2}]", hwnd, title, className);
-            Moves = new ObservableCollection<MoveCategory>(movies);
+            this.Hwnd = hwnd;
+            this.Title = title;
+            this.ClassName = className;
+            this.Info = string.Format("[{0}][{1}][{2}]", hwnd, title, className);
+            this.Moves = new ObservableCollection<MoveCategory>(movies);
         }
         public MoveCategory(int hwnd, string title, string className)
         {
-            Hwnd = hwnd;
-            Title = title;
-            ClassName = className;
-            Info = string.Format("[{0}][{1}][{2}]", hwnd, title, className);
+            this.Hwnd = hwnd;
+            this.Title = title;
+            this.ClassName = className;
+            this.Info = string.Format("[{0}][{1}][{2}]", hwnd, title, className);
         }
         public MoveCategory()
         {
-            Hwnd = -1;
-            Title = "";
-            ClassName = "";
-            Info = string.Format("[{0}][{1}][{2}]", Hwnd, Title, ClassName);
-            Moves = new ObservableCollection<MoveCategory>();
+            this.Hwnd = -1;
+            this.Title = "";
+            this.ClassName = "";
+            this.Info = string.Format("[{0}][{1}][{2}]", this.Hwnd, this.Title, this.ClassName);
+            this.Moves = new ObservableCollection<MoveCategory>();
         }
     }
 }

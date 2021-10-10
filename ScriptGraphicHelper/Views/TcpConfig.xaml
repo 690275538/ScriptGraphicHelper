@@ -12,7 +12,7 @@
     Opened="WindowOpened"
     mc:Ignorable="d">
 
-    <Grid Background="#333333">
+    <Grid Background="#2d2d30">
 
         <StackPanel>
             <StackPanel

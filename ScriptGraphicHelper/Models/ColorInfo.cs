@@ -23,13 +23,13 @@ namespace ScriptGraphicHelper.Models
         private Color _color;
         public Color Color
         {
-            get => _color;
+            get => this._color;
             set
             {
-                _color = value;
+                this._color = value;
                 if (value.R < 0x40 && value.G < 0x40 && value.B < 0x40)
                 {
-                    MarkBrush = Color.FromRgb(0xe8, 0xe8, 0xe8);
+                    this.MarkBrush = Color.FromRgb(0xe8, 0xe8, 0xe8);
                 }
             }
         }
@@ -42,29 +42,29 @@ namespace ScriptGraphicHelper.Models
 
         public ColorInfo(int index, int x, int y, byte[] color)
         {
-            Index = index;
-            Point = new Point(x, y);
-            Color = Color.FromRgb(color[0], color[1], color[2]);
-            IsChecked = true;
-            Anchor = AnchorType.None;
+            this.Index = index;
+            this.Point = new Point(x, y);
+            this.Color = Color.FromRgb(color[0], color[1], color[2]);
+            this.IsChecked = true;
+            this.Anchor = AnchorType.None;
         }
 
         public ColorInfo(int index, int x, int y, Color color)
         {
-            Index = index;
-            Point = new Point(x, y);
-            Color = color;
-            IsChecked = true;
-            Anchor = AnchorType.None;
+            this.Index = index;
+            this.Point = new Point(x, y);
+            this.Color = color;
+            this.IsChecked = true;
+            this.Anchor = AnchorType.None;
         }
 
         public ColorInfo(int index, AnchorType anchor, int x, int y, byte[] color)
         {
-            Index = index;
-            Anchor = anchor;
-            Point = new Point(x, y);
-            Color = Color.FromRgb(color[0], color[1], color[2]);
-            IsChecked = true;
+            this.Index = index;
+            this.Anchor = anchor;
+            this.Point = new Point(x, y);
+            this.Color = Color.FromRgb(color[0], color[1], color[2]);
+            this.IsChecked = true;
         }
 
     }

@@ -16,16 +16,16 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         public string BmpPath { get; set; }
         public YsEmulatorHelper()//初始化 , 获取模拟器路径
         {
-            string path = Setting.Instance.YsPath.Trim("\\".ToCharArray()) + "\\";
+            var path = Setting.Instance.YsPath.Trim("\\".ToCharArray()) + "\\";
             if (path != string.Empty && path != "")
             {
-                int index = path.LastIndexOf("\\");
+                var index = path.LastIndexOf("\\");
                 path = path.Substring(0, index + 1).Trim('"');
                 if (File.Exists(path + "NoxConsole.exe"))
                 {
-                    Name = "夜神模拟器";
-                    Path = path;
-                    BmpPath = BmpPathGet();
+                    this.Name = "夜神模拟器";
+                    this.Path = path;
+                    this.BmpPath = BmpPathGet();
                 }
             }
         }
@@ -33,10 +33,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public string[] List(int index)
         {
-            string[] resultArray = PipeCmd("list").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
-            for (int i = 0; i < resultArray.Length; i++)
+            var resultArray = PipeCmd("list").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
+            for (var i = 0; i < resultArray.Length; i++)
             {
-                string[] LineArray = resultArray[i].Split(',');
+                var LineArray = resultArray[i].Split(',');
                 if (LineArray.Length > 1)
                 {
                     if (LineArray[0] == index.ToString())
@@ -49,8 +49,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
         public override bool IsStart(int index)
         {
-            string[] resultArray = PipeCmd("list").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
-            string[] LineArray = resultArray[index].Split(',');
+            var resultArray = PipeCmd("list").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
+            var LineArray = resultArray[index].Split(',');
             if (LineArray.Length > 1)
             {
                 if (LineArray.Length == 8) return LineArray[6] != "-1";
@@ -65,11 +65,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             var task = Task.Run(() =>
             {
-                string[] resultArray = PipeCmd("list").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
-                List<KeyValuePair<int, string>> result = new List<KeyValuePair<int, string>>();
-                for (int i = 0; i < resultArray.Length; i++)
+                var resultArray = PipeCmd("list").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
+                var result = new List<KeyValuePair<int, string>>();
+                for (var i = 0; i < resultArray.Length; i++)
                 {
-                    string[] LineArray = resultArray[i].Split(',');
+                    var LineArray = resultArray[i].Split(',');
                     if (LineArray.Length == 8)
                     {
                         result.Add(new KeyValuePair<int, string>(key: int.Parse(LineArray[0].Trim()), value: LineArray[2]));
@@ -91,22 +91,22 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 {
                     throw new Exception("模拟器未启动 ! ");
                 }
-                string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                var BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
                 Screencap(Index, "/mnt/sdcard/Pictures", BmpName);
-                for (int i = 0; i < 10; i++)
+                for (var i = 0; i < 10; i++)
                 {
                     Task.Delay(200).Wait();
-                    if (File.Exists(BmpPath + "\\" + BmpName))
+                    if (File.Exists(this.BmpPath + "\\" + BmpName))
                     {
                         break;
                     }
                 }
                 try
                 {
-                    FileStream stream = new(BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
+                    FileStream stream = new(this.BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
                     var bitmap = new Bitmap(stream);
                     stream.Position = 0;
-                    SKBitmap sKBitmap = SKBitmap.Decode(stream);
+                    var sKBitmap = SKBitmap.Decode(stream);
                     GraphicHelper.KeepScreen(sKBitmap);
                     sKBitmap.Dispose();
                     stream.Dispose();
@@ -137,8 +137,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
         public string PipeCmd(string theCommand)
         {
-            string path = Path + "NoxConsole.exe";
-            ProcessStartInfo start = new ProcessStartInfo(path)
+            var path = this.Path + "NoxConsole.exe";
+            var start = new ProcessStartInfo(path)
             {
                 Arguments = theCommand,
                 CreateNoWindow = true,
@@ -146,9 +146,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 RedirectStandardInput = true,
                 UseShellExecute = false
             };
-            Process pipe = Process.Start(start);
-            StreamReader readStream = pipe.StandardOutput;
-            string OutputStr = readStream.ReadToEnd();
+            var pipe = Process.Start(start);
+            var readStream = pipe.StandardOutput;
+            var OutputStr = readStream.ReadToEnd();
             pipe.WaitForExit(10000);
             pipe.Close();
             readStream.Close();

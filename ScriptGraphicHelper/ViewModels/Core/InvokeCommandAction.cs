@@ -99,23 +99,23 @@ namespace ScriptGraphicHelper.ViewModels.Core
         /// <returns>True if the command is successfully executed; else false.</returns>
         public object Execute(object? sender, object? eventArgs)
         {
-            if (Command is null)
+            if (this.Command is null)
             {
                 return false;
             }
 
-            CommandParameters list = new CommandParameters();
+            var list = new CommandParameters();
 
             list.Sender = sender;
 
-            if (InputConverter is { })
+            if (this.InputConverter is { })
             {
-                list.EventArgs = InputConverter.Convert(
+                list.EventArgs = this.InputConverter.Convert(
                     eventArgs,
                     typeof(object),
-                    InputConverterParameter,
-                    InputConverterLanguage is { } ?
-                        new System.Globalization.CultureInfo(InputConverterLanguage)
+                    this.InputConverterParameter,
+                    this.InputConverterLanguage is { } ?
+                        new System.Globalization.CultureInfo(this.InputConverterLanguage)
                         : System.Globalization.CultureInfo.CurrentCulture);
             }
             else
@@ -126,16 +126,16 @@ namespace ScriptGraphicHelper.ViewModels.Core
 
             if (IsSet(CommandParameterProperty))
             {
-                list.CommandParameter = CommandParameter;
+                list.CommandParameter = this.CommandParameter;
             }
 
 
-            if (!Command.CanExecute(list))
+            if (!this.Command.CanExecute(list))
             {
                 return false;
             }
 
-            Command.Execute(list);
+            this.Command.Execute(list);
             return true;
         }
     }

@@ -20,94 +20,94 @@ namespace ScriptGraphicHelper.ViewModels
         private int windowWidth;
         public int WindowWidth
         {
-            get => windowWidth;
-            set => this.RaiseAndSetIfChanged(ref windowWidth, value);
+            get => this.windowWidth;
+            set => this.RaiseAndSetIfChanged(ref this.windowWidth, value);
         }
 
         private int windowHeight;
         public int WindowHeight
         {
-            get => windowHeight;
-            set => this.RaiseAndSetIfChanged(ref windowHeight, value);
+            get => this.windowHeight;
+            set => this.RaiseAndSetIfChanged(ref this.windowHeight, value);
         }
 
         private WriteableBitmap drawBitmap;
         public WriteableBitmap DrawBitmap
         {
-            get => drawBitmap;
-            set => this.RaiseAndSetIfChanged(ref drawBitmap, value);
+            get => this.drawBitmap;
+            set => this.RaiseAndSetIfChanged(ref this.drawBitmap, value);
         }
 
         private int imgWidth;
         public int ImgWidth
         {
-            get => imgWidth;
-            set => this.RaiseAndSetIfChanged(ref imgWidth, value);
+            get => this.imgWidth;
+            set => this.RaiseAndSetIfChanged(ref this.imgWidth, value);
         }
 
         private int imgHeight;
         public int ImgHeight
         {
-            get => imgHeight;
-            set => this.RaiseAndSetIfChanged(ref imgHeight, value);
+            get => this.imgHeight;
+            set => this.RaiseAndSetIfChanged(ref this.imgHeight, value);
         }
 
         private Color srcColor = Colors.White;
         public Color SrcColor
         {
-            get => srcColor;
-            set => this.RaiseAndSetIfChanged(ref srcColor, value);
+            get => this.srcColor;
+            set => this.RaiseAndSetIfChanged(ref this.srcColor, value);
         }
 
         private Color destColor = Colors.Red;
         public Color DestColor
         {
-            get => destColor;
-            set => this.RaiseAndSetIfChanged(ref destColor, value);
+            get => this.destColor;
+            set => this.RaiseAndSetIfChanged(ref this.destColor, value);
         }
 
         private bool pen_IsChecked;
         public bool Pen_IsChecked
         {
-            get => pen_IsChecked;
-            set => this.RaiseAndSetIfChanged(ref pen_IsChecked, value);
+            get => this.pen_IsChecked;
+            set => this.RaiseAndSetIfChanged(ref this.pen_IsChecked, value);
         }
 
         private int tolerance = 5;
         public int Tolerance
         {
-            get => tolerance;
+            get => this.tolerance;
             set
             {
-                this.RaiseAndSetIfChanged(ref tolerance, value);
-                DrawBitmap = ImgEditorHelper.ResetImg();
-                DrawBitmap.SetPixels(SrcColor, destColor, Tolerance, reverse_IsChecked);
-                ImgWidth -= 1;
-                ImgWidth += 1;
+                this.RaiseAndSetIfChanged(ref this.tolerance, value);
+                this.DrawBitmap = ImgEditorHelper.ResetImg();
+                this.DrawBitmap.SetPixels(this.SrcColor, this.destColor, this.Tolerance, this.reverse_IsChecked);
+                this.ImgWidth -= 1;
+                this.ImgWidth += 1;
             }
         }
 
         private bool reverse_IsChecked;
         public bool Reverse_IsChecked
         {
-            get => reverse_IsChecked;
-            set => this.RaiseAndSetIfChanged(ref reverse_IsChecked, value);
+            get => this.reverse_IsChecked;
+            set => this.RaiseAndSetIfChanged(ref this.reverse_IsChecked, value);
         }
 
         private bool getColorInfosBtnState;
         public bool GetColorInfosBtnState
         {
-            get => getColorInfosBtnState;
-            set => this.RaiseAndSetIfChanged(ref getColorInfosBtnState, value);
+            get => this.getColorInfosBtnState;
+            set => this.RaiseAndSetIfChanged(ref this.getColorInfosBtnState, value);
         }
 
         private int getColorInfosModeSelectedIndex;
         public int GetColorInfosModeSelectedIndex
         {
-            get => getColorInfosModeSelectedIndex;
+            get => this.getColorInfosModeSelectedIndex;
             set
             {
-                this.RaiseAndSetIfChanged(ref getColorInfosModeSelectedIndex, value);
+                this.RaiseAndSetIfChanged(ref this.getColorInfosModeSelectedIndex, value);
                 Setting.Instance.GetColorInfosConfig.ModeSelectedIndex = value;
             }
         }
@@ -115,10 +115,10 @@ namespace ScriptGraphicHelper.ViewModels
         private int getColorInfosThreshold;
         public int GetColorInfosThreshold
         {
-            get => getColorInfosThreshold;
+            get => this.getColorInfosThreshold;
             set
             {
-                this.RaiseAndSetIfChanged(ref getColorInfosThreshold, value);
+                this.RaiseAndSetIfChanged(ref this.getColorInfosThreshold, value);
                 Setting.Instance.GetColorInfosConfig.Threshold = value;
             }
         }
@@ -126,26 +126,26 @@ namespace ScriptGraphicHelper.ViewModels
         private int getColorInfosSize;
         public int GetColorInfosSize
         {
-            get => getColorInfosSize;
+            get => this.getColorInfosSize;
             set
             {
-                this.RaiseAndSetIfChanged(ref getColorInfosSize, value);
+                this.RaiseAndSetIfChanged(ref this.getColorInfosSize, value);
                 Setting.Instance.GetColorInfosConfig.Size = value;
             }
         }
 
         public ImgEditorViewModel(Models.Range range, byte[] data)
         {
-            DrawBitmap = ImgEditorHelper.Init(range, data);
-            ImgWidth = (int)DrawBitmap.Size.Width * 5;
-            ImgHeight = (int)DrawBitmap.Size.Height * 5;
-            WindowWidth = ImgWidth + 320;
-            WindowHeight = ImgHeight + 40;
+            this.DrawBitmap = ImgEditorHelper.Init(range, data);
+            this.ImgWidth = (int)this.DrawBitmap.Size.Width * 5;
+            this.ImgHeight = (int)this.DrawBitmap.Size.Height * 5;
+            this.WindowWidth = this.ImgWidth + 320;
+            this.WindowHeight = this.ImgHeight + 40;
 
-            GetColorInfosBtnState = true;
-            GetColorInfosModeSelectedIndex = Setting.Instance.GetColorInfosConfig.ModeSelectedIndex;
-            GetColorInfosSize = Setting.Instance.GetColorInfosConfig.Size;
-            GetColorInfosThreshold = Setting.Instance.GetColorInfosConfig.Threshold;
+            this.GetColorInfosBtnState = true;
+            this.GetColorInfosModeSelectedIndex = Setting.Instance.GetColorInfosConfig.ModeSelectedIndex;
+            this.GetColorInfosSize = Setting.Instance.GetColorInfosConfig.Size;
+            this.GetColorInfosThreshold = Setting.Instance.GetColorInfosConfig.Threshold;
 
             ImgEditorHelper.StartX = (int)range.Left;
             ImgEditorHelper.StartY = (int)range.Top;
@@ -153,29 +153,29 @@ namespace ScriptGraphicHelper.ViewModels
 
         public void CutImg_Click()
         {
-            DrawBitmap = DrawBitmap.CutImg();
-            ImgWidth = (int)DrawBitmap.Size.Width * 5;
-            ImgHeight = (int)DrawBitmap.Size.Height * 5;
+            this.DrawBitmap = this.DrawBitmap.CutImg();
+            this.ImgWidth = (int)this.DrawBitmap.Size.Width * 5;
+            this.ImgHeight = (int)this.DrawBitmap.Size.Height * 5;
 
-            WindowWidth = ImgWidth + 320;
-            WindowHeight = ImgHeight + 40;
+            this.WindowWidth = this.ImgWidth + 320;
+            this.WindowHeight = this.ImgHeight + 40;
         }
 
         public void Reset_Click()
         {
-            DrawBitmap = ImgEditorHelper.ResetImg();
+            this.DrawBitmap = ImgEditorHelper.ResetImg();
         }
 
         public async void Save_Click()
         {
-            if (DrawBitmap == null)
+            if (this.DrawBitmap == null)
             {
                 return;
             }
 
             try
             {
-                string fileName = string.Empty;
+                var fileName = string.Empty;
 
                 if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                 {
@@ -223,12 +223,12 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     if (fileName.IndexOf("bmp") != -1 && RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
                     {
-                        var bitmap = DrawBitmap.GetBitmap();
+                        var bitmap = this.DrawBitmap.GetBitmap();
                         bitmap.Save(fileName, System.Drawing.Imaging.ImageFormat.Bmp);
                     }
                     else
                     {
-                        DrawBitmap.Save(fileName);
+                        this.DrawBitmap.Save(fileName);
                     }
                 }
             }
@@ -242,31 +242,31 @@ namespace ScriptGraphicHelper.ViewModels
         private bool IsDown = false;
         public ICommand Img_PointerPressed => new Command(async (param) =>
         {
-            IsDown = true;
-            if (pen_IsChecked)
+            this.IsDown = true;
+            if (this.pen_IsChecked)
             {
                 if (param != null)
                 {
-                    CommandParameters parameters = (CommandParameters)param;
+                    var parameters = (CommandParameters)param;
                     var eventArgs = (PointerPressedEventArgs)parameters.EventArgs;
                     if (eventArgs.GetCurrentPoint(null).Properties.IsLeftButtonPressed)
                     {
                         var point = eventArgs.GetPosition((Image)parameters.Sender);
-                        int x = (int)point.X / 5;
-                        int y = (int)point.Y / 5;
+                        var x = (int)point.X / 5;
+                        var y = (int)point.Y / 5;
 
-                        for (int i = -1; i < 2; i++)
+                        for (var i = -1; i < 2; i++)
                         {
-                            for (int j = -1; j < 2; j++)
+                            for (var j = -1; j < 2; j++)
                             {
-                                await DrawBitmap.SetPixel(x + i, y + j, DestColor);
+                                await this.DrawBitmap.SetPixel(x + i, y + j, this.DestColor);
                             }
                         }
-                        int width = (int)DrawBitmap.Size.Width * 5;
-                        int height = (int)DrawBitmap.Size.Height * 5;
+                        var width = (int)this.DrawBitmap.Size.Width * 5;
+                        var height = (int)this.DrawBitmap.Size.Height * 5;
 
-                        ImgWidth -= 1;
-                        ImgWidth += 1;
+                        this.ImgWidth -= 1;
+                        this.ImgWidth += 1;
                         //Image控件不会自动刷新, 解决方案是改变一次宽高, 可能是bug https://github.com/AvaloniaUI/Avalonia/issues/1995
                     }
                 }
@@ -276,24 +276,24 @@ namespace ScriptGraphicHelper.ViewModels
 
         public ICommand Img_PointerMoved => new Command(async (param) =>
         {
-            if (pen_IsChecked && IsDown)
+            if (this.pen_IsChecked && this.IsDown)
             {
                 if (param != null)
                 {
-                    CommandParameters parameters = (CommandParameters)param;
+                    var parameters = (CommandParameters)param;
                     var eventArgs = (PointerEventArgs)parameters.EventArgs;
                     var point = eventArgs.GetPosition((Image)parameters.Sender);
-                    int x = (int)point.X / 5;
-                    int y = (int)point.Y / 5;
-                    for (int i = -1; i < 2; i++)
+                    var x = (int)point.X / 5;
+                    var y = (int)point.Y / 5;
+                    for (var i = -1; i < 2; i++)
                     {
-                        for (int j = -1; j < 2; j++)
+                        for (var j = -1; j < 2; j++)
                         {
-                            await DrawBitmap.SetPixel(x + i, y + j, DestColor);
+                            await this.DrawBitmap.SetPixel(x + i, y + j, this.DestColor);
                         }
                     }
-                    ImgWidth -= 1;
-                    ImgWidth += 1;
+                    this.ImgWidth -= 1;
+                    this.ImgWidth += 1;
                 }
             }
         });
@@ -301,43 +301,43 @@ namespace ScriptGraphicHelper.ViewModels
         public ICommand Img_PointerReleased => new Command(async (param) =>
         {
 
-            if (IsDown && !Pen_IsChecked)
+            if (this.IsDown && !this.Pen_IsChecked)
             {
                 if (param != null)
                 {
-                    CommandParameters parameters = (CommandParameters)param;
+                    var parameters = (CommandParameters)param;
                     var eventArgs = (PointerEventArgs)parameters.EventArgs;
                     var point = eventArgs.GetPosition((Image)parameters.Sender);
-                    int x = (int)point.X / 5;
-                    int y = (int)point.Y / 5;
-                    SrcColor = await DrawBitmap.GetPixel(x, y);
-                    DrawBitmap.SetPixels(SrcColor, destColor, Tolerance, reverse_IsChecked);
-                    ImgWidth -= 1;
-                    ImgWidth += 1;
+                    var x = (int)point.X / 5;
+                    var y = (int)point.Y / 5;
+                    this.SrcColor = await this.DrawBitmap.GetPixel(x, y);
+                    this.DrawBitmap.SetPixels(this.SrcColor, this.destColor, this.Tolerance, this.reverse_IsChecked);
+                    this.ImgWidth -= 1;
+                    this.ImgWidth += 1;
                 }
             }
-            IsDown = false;
+            this.IsDown = false;
         });
 
         public ICommand GetColorInfos_Click => new Command(async (param) =>
         {
-            GetColorInfosBtnState = false;
+            this.GetColorInfosBtnState = false;
 
             CutImg_Click();
-            if (getColorInfosModeSelectedIndex == 0)
+            if (this.getColorInfosModeSelectedIndex == 0)
             {
-                ImgEditor.ResultColorInfos = await DrawBitmap.GetAllColorInfos(GetColorInfosSize);
+                ImgEditor.ResultColorInfos = await this.DrawBitmap.GetAllColorInfos(this.GetColorInfosSize);
             }
             else
             {
-                ImgEditor.ResultColorInfos = await DrawBitmap.GetColorInfos(GetColorInfosSize, GetColorInfosThreshold);
+                ImgEditor.ResultColorInfos = await this.DrawBitmap.GetColorInfos(this.GetColorInfosSize, this.GetColorInfosThreshold);
             }
-            ImgWidth -= 1;
-            ImgWidth += 1;
+            this.ImgWidth -= 1;
+            this.ImgWidth += 1;
             await Task.Delay(1000);
             Reset_Click();
 
-            GetColorInfosBtnState = true;
+            this.GetColorInfosBtnState = true;
         });
     }
 }

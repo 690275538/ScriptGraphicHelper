@@ -23,6 +23,7 @@ namespace ScriptGraphicHelper.Views
         public ImgEditor(Range range, byte[] data)
         {
             InitializeComponent();
+            this.WindowStartupLocation = WindowStartupLocation.CenterScreen;
             this.DataContext = new ImgEditorViewModel(range, data);
 #if DEBUG
             this.AttachDevTools();
