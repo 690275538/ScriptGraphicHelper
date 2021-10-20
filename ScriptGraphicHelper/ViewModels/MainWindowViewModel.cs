@@ -318,7 +318,8 @@ namespace ScriptGraphicHelper.ViewModels
                         }
                     }
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 MessageBox.ShowAsync(ex.ToString());
             }
@@ -494,11 +495,10 @@ namespace ScriptGraphicHelper.ViewModels
                 }
                 else if (this.FormatSelectedIndex == FormatMode.anchorsFindStr)
                 {
-                    var rect = GetRange();
                     var width = ColorInfo.Width;
                     var height = ColorInfo.Height;
                     var str = CreateColorStrHelper.Create(FormatMode.anchorsFindStr4Test, this.ColorInfos);
-                    var result = GraphicHelper.AnchorsFindColor(rect, width, height, str.Trim('"'), sims[this.SimSelectedIndex]);
+                    var result = GraphicHelper.AnchorsFindColor(new Range(0, 0, width - 1, height - 1), width, height, str.Trim('"'), sims[this.SimSelectedIndex]);
 
                     this.TestResult = result.ToString();
 
@@ -512,8 +512,7 @@ namespace ScriptGraphicHelper.ViewModels
                 }
                 else
                 {
-                    var rect = GetRange();
-                    var str = CreateColorStrHelper.Create(FormatMode.findStr4Test, this.ColorInfos, rect);
+                    var str = CreateColorStrHelper.Create(FormatMode.findStr4Test, this.ColorInfos);
                     var strArray = str.Split("\",\"");
                     if (strArray[1].Length <= 3)
                     {
@@ -522,7 +521,7 @@ namespace ScriptGraphicHelper.ViewModels
                         return;
                     }
                     var _str = strArray[0].Split(",\"");
-                    var result = GraphicHelper.FindMultiColor((int)rect.Left, (int)rect.Top, (int)rect.Right, (int)rect.Bottom, _str[^1].Trim('"'), strArray[1].Trim('"'), sims[this.SimSelectedIndex]);
+                    var result = GraphicHelper.FindMultiColor(0, 0, (int)(ImgWidth - 1), (int)(ImgHeight - 1), _str[^1].Trim('"'), strArray[1].Trim('"'), sims[this.SimSelectedIndex]);
 
                     this.TestResult = result.ToString();
 

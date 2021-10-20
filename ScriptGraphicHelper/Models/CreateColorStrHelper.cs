@@ -53,7 +53,7 @@ namespace ScriptGraphicHelper.Models
                     FormatMode.anchorsFindStr => AnchorsFindStr(colorInfos, rect),
                     FormatMode.anchorsCompareStr4Test => AnchorsCompareStr4Test(colorInfos),
                     FormatMode.anchorsFindStr4Test => AnchorsCompareStr4Test(colorInfos),
-                    FormatMode.findStr4Test => FindStr4Test(colorInfos, rect),
+                    FormatMode.findStr4Test => FindStr4Test(colorInfos),
                     _ => CompareStr(colorInfos),
                 };
             }
@@ -85,7 +85,7 @@ namespace ScriptGraphicHelper.Models
                 FormatMode.anchorsFindStr => AnchorsFindStr(colorInfos, rect),
                 FormatMode.anchorsCompareStr4Test => AnchorsCompareStr4Test(colorInfos),
                 FormatMode.anchorsFindStr4Test => AnchorsCompareStr4Test(colorInfos),
-                FormatMode.findStr4Test => FindStr4Test(colorInfos, rect),
+                FormatMode.findStr4Test => FindStr4Test(colorInfos),
                 _ => CompareStr(colorInfos),
             };
         }
@@ -628,7 +628,7 @@ namespace ScriptGraphicHelper.Models
         }
 
 
-        public static string FindStr4Test(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        public static string FindStr4Test(ObservableCollection<ColorInfo> colorInfos)
         {
             var result = string.Empty;
 
@@ -642,10 +642,6 @@ namespace ScriptGraphicHelper.Models
                     {
                         inited = true;
                         firstPoint = colorInfo.Point;
-                        if (Setting.Instance.AddRange)
-                        {
-                            result += rect.ToString() + ",";
-                        }
                         result += "\"" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") + colorInfo.Color.B.ToString("x2") + "\",\"";
                     }
                     else
