@@ -10,10 +10,11 @@ using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
-    class AdbHelper : BaseScreenshotHelper
+    class AdbHelper : BaseHelper
     {
-        public override string Path { get; set; } = AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/") + "Assets/Adb/";
-        public override string Name { get; set; } = "Adb连接";
+        public override Action<Bitmap>? Action { get; set; }
+        public override string Path { get; } = AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/") + "Assets/Adb/";
+        public override string Name { get; } = "Adb连接";
 
         private List<KeyValuePair<int, string>> DeviceInfos = new();
 
@@ -29,78 +30,75 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             return true;
         }
-        public override void Dispose() { }
-        public override async Task<List<KeyValuePair<int, string>>> ListAll()
+        public override void Close() { }
+        public override async Task<List<KeyValuePair<int, string>>> Initialize()
         {
-            await Task.Run(() =>
-            {
-                //PipeCmd("kill-server");
-                //PipeCmd("start-server");
-            });
-
             this.DeviceInfos.Clear();
-            TcpConfig config = new();
-            config.Title = "Adb无线调试";
-            await config.ShowDialog(MainWindow.Instance);
-            if (config.IsTapped && TcpConfig.Port != 9317 && TcpConfig.Port != 5678)
+            AdbConfig config = new();
+            var result = await config.ShowDialog<(string, int)?>(MainWindow.Instance);
+
+            if (result != null)
             {
-                PipeCmd("connect " + TcpConfig.Address + ":" + TcpConfig.Port.ToString());
+                PipeCmd("connect " + result.Value.Item1 + ":" + result.Value.Item2);
             }
-
-            var task = Task.Run(() =>
-            {
-                var output = PipeCmd("devices");
-                var array = output.Substring(output.IndexOf("List of devices attached") + 16).Split("\r\n");
-                for (var i = 0; i < array.Length; i++)
-                {
-                    var deviceInfo = array[i].Split("dev");
-                    if (deviceInfo.Length == 2)
-                    {
-                        this.DeviceInfos.Add(new KeyValuePair<int, string>(this.DeviceInfos.Count, deviceInfo[0].Trim()));
-                    }
-                }
-                if (this.DeviceInfos.Count == 0)
-                {
-                    this.DeviceInfos.Add(new KeyValuePair<int, string>(0, "null"));
-                }
-
-                return this.DeviceInfos;
-            });
-            return await task;
+            return await GetList();
         }
 
-        public override async Task<Bitmap> ScreenShot(int index)
+        public override async Task<List<KeyValuePair<int, string>>> GetList()
         {
-            var task = Task.Run(() =>
-            {
-                var name = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
-                var fullName = this.Path + "Screenshot/" + name;
-                PipeCmd($"-s { this.DeviceInfos[index].Value }  exec-out screencap -p > { fullName }");
-                for (var i = 0; i < 50; i++)
-                {
-                    if (File.Exists(fullName))
-                    {
-                        break;
-                    }
-                    Thread.Sleep(100);
-                }
-                try
-                {
-                    FileStream stream = new(fullName, FileMode.Open, FileAccess.Read);
-                    var bitmap = new Bitmap(stream);
-                    stream.Position = 0;
-                    var sKBitmap = SKBitmap.Decode(stream);
-                    GraphicHelper.KeepScreen(sKBitmap);
-                    sKBitmap.Dispose();
-                    stream.Dispose();
-                    return bitmap;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(e.Message);
-                }
-            });
-            return await task;
+            this.DeviceInfos.Clear();
+            return await Task.Run(() =>
+             {
+                 var output = PipeCmd("devices");
+                 var array = output.Substring(output.IndexOf("List of devices attached") + 16).Split("\r\n");
+                 for (var i = 0; i < array.Length; i++)
+                 {
+                     var deviceInfo = array[i].Split("dev");
+                     if (deviceInfo.Length == 2)
+                     {
+                         this.DeviceInfos.Add(new KeyValuePair<int, string>(this.DeviceInfos.Count, deviceInfo[0].Trim()));
+                     }
+                 }
+                 if (this.DeviceInfos.Count == 0)
+                 {
+                     this.DeviceInfos.Add(new KeyValuePair<int, string>(0, "null"));
+                 }
+
+                 return this.DeviceInfos;
+             });
+        }
+
+        public override async void ScreenShot(int index)
+        {
+            await Task.Run(() =>
+             {
+                 var name = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                 var fullName = this.Path + "Screenshot/" + name;
+                 PipeCmd($"-s { this.DeviceInfos[index].Value }  exec-out screencap -p > { fullName }");
+                 for (var i = 0; i < 50; i++)
+                 {
+                     if (File.Exists(fullName))
+                     {
+                         break;
+                     }
+                     Thread.Sleep(100);
+                 }
+                 try
+                 {
+                     FileStream stream = new(fullName, FileMode.Open, FileAccess.Read);
+                     var bitmap = new Bitmap(stream);
+                     stream.Position = 0;
+                     var sKBitmap = SKBitmap.Decode(stream);
+                     GraphicHelper.KeepScreen(sKBitmap);
+                     sKBitmap.Dispose();
+                     stream.Dispose();
+                     this.Action?.Invoke(bitmap);
+                 }
+                 catch (Exception e)
+                 {
+                     throw new Exception(e.Message);
+                 }
+             });
         }
 
 

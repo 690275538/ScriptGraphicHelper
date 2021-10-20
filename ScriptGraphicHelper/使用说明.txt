@@ -3,6 +3,7 @@
 
 自定义格式参数说明请看文本末尾
 
+win7打开报错的请自行打补丁(所有没打的都打上), 个人建议升win10
 Mac暂时只能使用aj连接模式, tcp连接模式(mac上需要把scriptGraphichelper改为可执行文件, chmod +x filename)
 
 模拟器模式

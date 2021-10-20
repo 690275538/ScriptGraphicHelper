@@ -36,10 +36,10 @@ namespace ScriptGraphicHelper.Models
             }
         }
 
-        public static List<BaseScreenshotHelper> Helpers = new();
+        public static List<BaseHelper> Helpers = new();
         public static ObservableCollection<string> Init()
         {
-            Helpers = new List<BaseScreenshotHelper>();
+            Helpers = new List<BaseHelper>();
 
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
@@ -80,7 +80,7 @@ namespace ScriptGraphicHelper.Models
             {
                 foreach (var emulator in Helpers)
                 {
-                    emulator.Dispose();
+                    emulator.Close();
                 }
                 Result.Clear();
                 Info.Clear();
@@ -110,19 +110,19 @@ namespace ScriptGraphicHelper.Models
                 State = LinkState.Starting;
             }
         }
-        public async static Task<ObservableCollection<string>> GetAll()
+        public async static Task<ObservableCollection<string>> Initialize()
         {
             ObservableCollection<string> result = new();
-            Info = await Helpers[Select].ListAll();
+            Info = await Helpers[Select].Initialize();
             foreach (var item in Info)
             {
                 result.Add(item.Value);
             }
             return result;
         }
-        public async static Task<Bitmap> ScreenShot()
+        public static void ScreenShot()
         {
-            return await Helpers[Select].ScreenShot(Index);
+            Helpers[Select].ScreenShot(Index);
         }
     }
 }

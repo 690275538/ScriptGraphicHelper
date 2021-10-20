@@ -1,6 +1,8 @@
 ﻿using Avalonia;
 using Avalonia.Media;
 using ScriptGraphicHelper.Converters;
+using ScriptGraphicHelper.Views;
+using System;
 using System.Collections.ObjectModel;
 
 namespace ScriptGraphicHelper.Models

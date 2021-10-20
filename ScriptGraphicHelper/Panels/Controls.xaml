@@ -59,7 +59,7 @@
                         SelectedIndex="{Binding EmulatorSelectedIndex, Mode=TwoWay}">
                         <i:Interaction.Behaviors>
                             <ic:EventTriggerBehavior EventName="Tapped">
-                                <icc:InvokeCommandAction Command="{Binding GetTcpList}" />
+                                <icc:InvokeCommandAction Command="{Binding GetList}" />
                             </ic:EventTriggerBehavior>
                         </i:Interaction.Behaviors>
                     </ComboBox>
@@ -234,14 +234,19 @@
                         BorderThickness="0"
                         FontSize="14"
                         SelectedIndex="{Binding ScaleFactor, Mode=TwoWay, Converter={StaticResource ScaleFactor}}">
+                        <ComboBoxItem>30%</ComboBoxItem>
                         <ComboBoxItem>40%</ComboBoxItem>
+                        <ComboBoxItem>50%</ComboBoxItem>
                         <ComboBoxItem>60%</ComboBoxItem>
+                        <ComboBoxItem>70%</ComboBoxItem>
                         <ComboBoxItem>80%</ComboBoxItem>
+                        <ComboBoxItem>90%</ComboBoxItem>
                         <ComboBoxItem>100%</ComboBoxItem>
-                        <ComboBoxItem>150%</ComboBoxItem>
+                        <ComboBoxItem>120%</ComboBoxItem>
+                        <ComboBoxItem>140%</ComboBoxItem>
+                        <ComboBoxItem>160%</ComboBoxItem>
+                        <ComboBoxItem>180%</ComboBoxItem>
                         <ComboBoxItem>200%</ComboBoxItem>
-                        <ComboBoxItem>250%</ComboBoxItem>
-                        <ComboBoxItem>300%</ComboBoxItem>
                     </ComboBox>
                 </Border>
             </StackPanel>

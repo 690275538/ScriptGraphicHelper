@@ -32,20 +32,21 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
     }
 
-    class MoblieTcpHelper : BaseScreenshotHelper
+    class MoblieTcpHelper : BaseHelper
     {
-        public override string Path { get; set; } = "TCP连接";
-        public override string Name { get; set; } = "TCP连接";
+        public override Action<Bitmap>? Action { get; set; }
+        public override string Path { get; } = "TCP连接";
+        public override string Name { get; } = "TCP连接";
 
-        private TcpListener Listener;
+        private TcpListener? Listener;
 
         public List<TcpClientInfo> TcpClientInfos { get; set; } = new List<TcpClientInfo>();
 
-        public override void Dispose()
+        public override void Close()
         {
             try
             {
-                this.Listener.Stop();
+                this.Listener?.Stop();
             }
             catch { };
 
@@ -105,23 +106,26 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             }
             catch (Exception e)
             {
-                MessageBox.ShowAsync(e.Message);
+                MessageBox.ShowAsync(e.ToString());
             }
         }
 
-        public override async Task<List<KeyValuePair<int, string>>> ListAll()
+        public override async Task<List<KeyValuePair<int, string>>> Initialize()
         {
-            TcpConfig tcpConfig = new();
-            TcpConfig.Address = string.Join("|", GetLocalAddress());
-            await tcpConfig.ShowDialog(MainWindow.Instance);
+            var  tcpConfig = new TcpConfig(Util.GetLocalAddress());
 
-            var address = TcpConfig.Address;
-            var port = TcpConfig.Port;
+            var result = await tcpConfig.ShowDialog<(string,int)?>(MainWindow.Instance);
 
-            this.Listener = new TcpListener(IPAddress.Parse(address), port);
-            this.Listener.Start();
+            if (result != null)
+            {
+                var address = result.Value.Item1;
+                var port = result.Value.Item2;
 
-            this.Listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Listener);
+                this.Listener = new TcpListener(IPAddress.Parse(address), port);
+                this.Listener.Start();
+
+                this.Listener.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Listener);
+            }
 
             var task = Task.Run(() =>
             {
@@ -135,7 +139,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             return await task;
         }
 
-        public async Task<List<KeyValuePair<int, string>>> GetList()
+        public override async Task<List<KeyValuePair<int, string>>> GetList()
         {
             var task = Task.Run(() =>
             {
@@ -195,7 +199,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             }
             catch (Exception e)
             {
-                MessageBox.ShowAsync(e.Message);
+                MessageBox.ShowAsync(e.ToString());
             }
             return false;
         }
@@ -220,9 +224,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             return src;
         }
 
-        public override async Task<Bitmap> ScreenShot(int index)
+        public override async void ScreenShot(int index)
         {
-            var task = Task.Run(() =>
+            await Task.Run(() =>
             {
                 try
                 {
@@ -265,14 +269,13 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     GraphicHelper.KeepScreen(sKBitmap);
                     var bitmap = new Bitmap(GraphicHelper.PxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
                     sKBitmap.Dispose();
-                    return bitmap;
+                    this.Action?.Invoke(bitmap);
                 }
                 catch (Exception e)
                 {
                     throw new Exception(e.Message);
                 }
             });
-            return await task;
         }
     }
 }

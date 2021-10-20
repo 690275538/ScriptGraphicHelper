@@ -1,11 +1,11 @@
 <Window
-    x:Class="ScriptGraphicHelper.Views.TcpConfig"
+    x:Class="ScriptGraphicHelper.Views.AJConfig"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Title="tcp配置"
-    Width="250"
+    Title="AJ配置"
+    Width="280"
     Height="240"
     CanResize="false"
     Icon="/Assets/ico.ico"
@@ -24,7 +24,7 @@
                     Margin="20,30"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center">
-                    地址
+                    本地地址
                 </TextBlock>
                 <Border
                     Margin="10,30"
@@ -50,7 +50,7 @@
                     Margin="20,10"
                     HorizontalAlignment="Left"
                     VerticalAlignment="Center">
-                    端口
+                    远程地址
                 </TextBlock>
                 <Border
                     Margin="10,10"
@@ -58,7 +58,7 @@
                     BorderThickness="0,0,0,2"
                     CornerRadius="0">
                     <TextBox
-                        Name="Port"
+                        Name="RemoteAddress"
                         Width="150"
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
@@ -69,9 +69,9 @@
             </StackPanel>
         </StackPanel>
         <Button
-            Width="210"
+            Width="230"
             Height="40"
-            Margin="20"
+            Margin="25,20"
             HorizontalAlignment="Left"
             VerticalAlignment="Bottom"
             HorizontalContentAlignment="Center"

@@ -523,7 +523,6 @@ namespace ScriptGraphicHelper.Models
                         ptr[location] = 0x1A;
                         ptr[location + 1] = 0xB1;
                         ptr[location + 2] = 0xF9;
-
                     }
 
                     drawBmpData.Dispose();

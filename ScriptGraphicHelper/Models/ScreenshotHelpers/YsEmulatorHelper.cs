@@ -9,10 +9,11 @@ using static System.Environment;
 
 namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
-    class YsEmulatorHelper : BaseScreenshotHelper
+    class YsEmulatorHelper : BaseHelper
     {
-        public override string Path { get; set; } = string.Empty;
-        public override string Name { get; set; } = string.Empty;
+        public override Action<Bitmap>? Action { get; set; }
+        public override string Path { get; } = string.Empty;
+        public override string Name { get; } = string.Empty;
         public string BmpPath { get; set; }
         public YsEmulatorHelper()//初始化 , 获取模拟器路径
         {
@@ -29,7 +30,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 }
             }
         }
-        public override void Dispose() { }
+        public override void Close() { }
 
         public string[] List(int index)
         {
@@ -61,9 +62,15 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 return false;
             }
         }
-        public override async Task<List<KeyValuePair<int, string>>> ListAll()
+        public override async Task<List<KeyValuePair<int, string>>> Initialize()
         {
-            var task = Task.Run(() =>
+
+            return await GetList();
+        }
+
+        public override async Task<List<KeyValuePair<int, string>>> GetList()
+        {
+            return await Task.Run(() =>
             {
                 var resultArray = PipeCmd("list").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
                 var result = new List<KeyValuePair<int, string>>();
@@ -81,44 +88,44 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 }
                 return result;
             });
-            return await task;
         }
-        public override async Task<Bitmap> ScreenShot(int Index)
+
+        public override async void ScreenShot(int Index)
         {
-            var task = Task.Run(() =>
-            {
-                if (!IsStart(Index))
-                {
-                    throw new Exception("模拟器未启动 ! ");
-                }
-                var BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
-                Screencap(Index, "/mnt/sdcard/Pictures", BmpName);
-                for (var i = 0; i < 10; i++)
-                {
-                    Task.Delay(200).Wait();
-                    if (File.Exists(this.BmpPath + "\\" + BmpName))
-                    {
-                        break;
-                    }
-                }
-                try
-                {
-                    FileStream stream = new(this.BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
-                    var bitmap = new Bitmap(stream);
-                    stream.Position = 0;
-                    var sKBitmap = SKBitmap.Decode(stream);
-                    GraphicHelper.KeepScreen(sKBitmap);
-                    sKBitmap.Dispose();
-                    stream.Dispose();
-                    return bitmap;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(e.Message);
-                }
-            });
-            return await task;
+            await Task.Run(() =>
+             {
+                 if (!IsStart(Index))
+                 {
+                     throw new Exception("模拟器未启动 ! ");
+                 }
+                 var BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                 Screencap(Index, "/mnt/sdcard/Pictures", BmpName);
+                 for (var i = 0; i < 10; i++)
+                 {
+                     Task.Delay(200).Wait();
+                     if (File.Exists(this.BmpPath + "\\" + BmpName))
+                     {
+                         break;
+                     }
+                 }
+                 try
+                 {
+                     FileStream stream = new(this.BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
+                     var bitmap = new Bitmap(stream);
+                     stream.Position = 0;
+                     var sKBitmap = SKBitmap.Decode(stream);
+                     GraphicHelper.KeepScreen(sKBitmap);
+                     sKBitmap.Dispose();
+                     stream.Dispose();
+                     this.Action?.Invoke(bitmap);
+                 }
+                 catch (Exception e)
+                 {
+                     throw new Exception(e.Message);
+                 }
+             });
         }
+
         public void Screencap(int index, string savePath, string saveName)//截图
         {
             PipeCmd("adb -index:" + index.ToString() + " -command:\"shell /system/bin/screencap -p " + savePath.TrimEnd('/') + "/Screenshots/" + saveName + "\"");

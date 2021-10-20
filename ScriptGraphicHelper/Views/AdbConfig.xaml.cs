@@ -4,16 +4,12 @@ using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Markup.Xaml;
 using System;
-using System.Collections.Generic;
 
 namespace ScriptGraphicHelper.Views
 {
-    public class TcpConfig : Window
+    public class AdbConfig : Window
     {
-        public TcpConfig()
-        {
-            InitializeComponent();
-        }
+        private static string? LastAddress;
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
@@ -21,30 +17,20 @@ namespace ScriptGraphicHelper.Views
 
         }
 
-        private List<string> Addresses;
-
-        public TcpConfig(List<string> addresses)
+        public AdbConfig()
         {
-            this.Addresses = addresses;
             InitializeComponent();
         }
 
         private void WindowOpened(object sender, EventArgs e)
         {
-            var comboBox = this.FindControl<ComboBox>("AddressList");
-            comboBox.Items = Addresses;
-            foreach (var address in Addresses)
-            {
-                if (address.StartsWith("192.168"))
-                {
-                    comboBox.SelectedItem = address;
-                }
-            }
+            this.FindControl<TextBox>("Address").Text = LastAddress ?? "192.168.";
         }
 
         private void Ok_Tapped(object sender, RoutedEventArgs e)
         {
-            var address = (string)this.FindControl<ComboBox>("AddressList").SelectedItem;
+            var address = this.FindControl<TextBox>("Address").Text.Trim();
+            LastAddress = address;
             var port = int.Parse(this.FindControl<TextBox>("Port").Text.Trim());
             Close((address, port));
         }
@@ -60,7 +46,8 @@ namespace ScriptGraphicHelper.Views
             switch (key)
             {
                 case Key.Enter:
-                    var address = (string)this.FindControl<ComboBox>("AddressList").SelectedItem;
+                    var address = this.FindControl<TextBox>("Address").Text.Trim();
+                    LastAddress = address;
                     var port = int.Parse(this.FindControl<TextBox>("Port").Text.Trim());
                     Close((address, port));
                     break;

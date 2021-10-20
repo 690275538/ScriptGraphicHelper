@@ -8,9 +8,9 @@ using System.Collections.Generic;
 
 namespace ScriptGraphicHelper.Views
 {
-    public class TcpConfig : Window
+    public class AJConfig : Window
     {
-        public TcpConfig()
+        public AJConfig()
         {
             InitializeComponent();
         }
@@ -23,7 +23,7 @@ namespace ScriptGraphicHelper.Views
 
         private List<string> Addresses;
 
-        public TcpConfig(List<string> addresses)
+        public AJConfig(List<string> addresses)
         {
             this.Addresses = addresses;
             InitializeComponent();
@@ -33,6 +33,7 @@ namespace ScriptGraphicHelper.Views
         {
             var comboBox = this.FindControl<ComboBox>("AddressList");
             comboBox.Items = Addresses;
+
             foreach (var address in Addresses)
             {
                 if (address.StartsWith("192.168"))
@@ -45,13 +46,8 @@ namespace ScriptGraphicHelper.Views
         private void Ok_Tapped(object sender, RoutedEventArgs e)
         {
             var address = (string)this.FindControl<ComboBox>("AddressList").SelectedItem;
-            var port = int.Parse(this.FindControl<TextBox>("Port").Text.Trim());
-            Close((address, port));
-        }
-
-        private void Skip_Tapped(object sender, RoutedEventArgs e)
-        {
-            Close();
+            var remoteAddress = this.FindControl<TextBox>("RemoteAddress").Text.Trim();
+            Close((address, remoteAddress));
         }
 
         private void Window_KeyDown(object sender, KeyEventArgs e)
@@ -60,9 +56,9 @@ namespace ScriptGraphicHelper.Views
             switch (key)
             {
                 case Key.Enter:
-                    var address = (string)this.FindControl<ComboBox>("AddressList").SelectedItem;
-                    var port = int.Parse(this.FindControl<TextBox>("Port").Text.Trim());
-                    Close((address, port));
+                    var address = (string)this.FindControl<ComboBox>("Address").SelectedItem;
+                    var remoteAddress = this.FindControl<TextBox>("RemoteAddress").Text.Trim();
+                    Close((address, remoteAddress));
                     break;
 
                 case Key.Escape: Close(); break;

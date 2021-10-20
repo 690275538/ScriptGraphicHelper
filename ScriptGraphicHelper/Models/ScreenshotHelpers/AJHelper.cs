@@ -8,88 +8,126 @@ using SkiaSharp;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
-
-    class AJHelper : BaseScreenshotHelper
+    internal class RunData
     {
-        public override string Path { get; set; } = string.Empty;
-        public override string Name { get; set; } = string.Empty;
+        public string id { get; set; } = string.Empty;
+        public string name { get; set; } = string.Empty;
+        public string command { get; set; } = "run";
+        public string script { get; set; } = string.Empty;
+    }
 
-        private int Step = 0;
-        private string RunCode = string.Empty;
+    internal class RunCommand
+    {
+        public int id { get; set; }
+        public string type { get; set; } = "command";
+        public RunData? data { get; set; } = null;
+    }
 
-        private TcpClient MyTcpClient;
+    class AJHelper : BaseHelper
+    {
+        public override string Path { get; } = "AJ连接";
+        public override string Name { get; } = "AJ连接";
+        public override Action<Bitmap>? Action { get; set; }
 
-        private NetworkStream networkStream;
+        public string LocalIP { get; set; } = string.Empty;
 
-        private bool IsInit = false;
+        public string RemoteIP { get; set; } = string.Empty;
+
+        private TcpListener? Server;
+
+        private TcpClient? Client;
+
+        private int runStep;
+
+        private string runCode = string.Empty;
+
+        private string deviceName { get; set; } = string.Empty;
 
         public AJHelper()
         {
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Assets/screenshotHelper.js"))
+
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Assets/script.js"))
             {
-                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"Assets/screenshotHelper.js");
-                this.RunCode = sr.ReadToEnd();
-                this.Step = 0;
-                this.Path = "AJ连接";
-                this.Name = "AJ连接";
+                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"Assets/script.js");
+                this.runCode = sr.ReadToEnd();
+                this.runStep = 0;
+            }
+            else
+            {
+                throw new FileNotFoundException($"{AppDomain.CurrentDomain.BaseDirectory}Assets/script.js");
             }
         }
 
-        public override void Dispose()
+        private byte[] GetRunCommandBytes(string runCode, string id)
         {
-            if (this.IsInit)
+            RunCommand command = new()
             {
-                try
+                id = runStep,
+                data = new RunData()
                 {
-                    this.networkStream.Close();
-                    this.MyTcpClient.Close();
+                    id = id,
+                    name = id,
+                    script = runCode
                 }
-                catch { };
-            }
+            };
+            this.runStep++;
+            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(command));
+            var recv = new byte[data.Length + 8];
+            var len = data.Length.ToBytes();
+            len.CopyTo(recv, 0);
+            recv[7] = 1;
+            data.CopyTo(recv, 8);
+            return recv;
         }
 
-        public override bool IsStart(int Index)
+        public override async Task<List<KeyValuePair<int, string>>> Initialize()
         {
-            return true;
-        }
+            var config = new AJConfig(Util.GetLocalAddress());
 
-        public override async Task<List<KeyValuePair<int, string>>> ListAll()
-        {
-            TcpConfig tcpConfig = new();
-            TcpConfig.Port = 9317;
-            tcpConfig.Title = "AJ配置";
-            await tcpConfig.ShowDialog(MainWindow.Instance);
+            var result = await config.ShowDialog<(string,string)?>(MainWindow.Instance);
 
-            var address = TcpConfig.Address;
-            var port = TcpConfig.Port;
-
-            var task = Task.Run(async () =>
+            if (result != null)
             {
-                List<KeyValuePair<int, string>> result = new();
+                LocalIP = result.Value.Item1;
+                RemoteIP = result.Value.Item2;
 
-                if (tcpConfig.IsTapped && address != string.Empty && port != -1)
+                await Task.Run(async () =>
                 {
                     try
                     {
-                        this.MyTcpClient = new TcpClient(address, port);
-                        this.networkStream = this.MyTcpClient.GetStream();
-                        var buf = new byte[256];
-                        for (var i = 0; i < 40; i++)
+                        this.Client = new TcpClient(RemoteIP, 9317);
+                        var networkStream = this.Client.GetStream();
+                        for (var i = 0; i < 50; i++)
                         {
-                            Task.Delay(100).Wait();
-                            if (this.networkStream.DataAvailable)
+                            Thread.Sleep(100);
+                            if (networkStream.DataAvailable)
                             {
-                                var length = this.networkStream.Read(buf, 0, 256);
-                                var info = Encoding.UTF8.GetString(buf, 8, length - 8);
-                                var obj = (JObject)JsonConvert.DeserializeObject(info);
-                                var data = (JObject)obj.GetValue("data");
-                                var deviceName = (string)data.GetValue("device_name") ?? string.Empty;
+
+                                var buf = new byte[256];
+                                var len = networkStream.Read(buf, 0, 256);
+                                var info = Encoding.UTF8.GetString(buf, 8, len - 8);
+
+                                var obj = (JObject?)JsonConvert.DeserializeObject(info);
+                                if (obj != null)
+                                {
+                                    var data = (JObject?)obj.GetValue("data");
+                                    if (data != null)
+                                    {
+                                        var name = (string?)data.GetValue("device_name");
+                                        if (name != null)
+                                        {
+                                            this.deviceName = name;
+                                        }
+                                    }
+                                }
 
                                 var send = new byte[59]
                                 {
@@ -103,154 +141,123 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                                     0x32,0x7D,0x7D
                                 };
 
-                                await this.networkStream.WriteAsync(send);
+                                await networkStream.WriteAsync(send);
 
-                                var mainCode = "let _engines = engines.all(); for (let i = 0; i < _engines.length; i++) { if (_engines[i].getSource().toString().indexOf(\"cap_script\") != -1 && _engines[i] != engines.myEngine()) { _engines[i].forceStop(); } } threads.start(function () { if (!requestScreenCapture()) { alert(\"请求截图权限失败\"); exit(); } else { toastLog(\"请求截图权限成功\"); } }); setInterval(() => { }, 1000);";
+                                var capScript = "let _engines = engines.all(); for (let i = 0; i < _engines.length; i++) { if (_engines[i].getSource().toString().indexOf(\"cap_script\") != -1 && _engines[i] != engines.myEngine()) { _engines[i].forceStop(); } } threads.start(function () { if (!requestScreenCapture()) { alert(\"请求截图权限失败\"); exit(); } else { toastLog(\"请求截图权限成功\"); } }); setInterval(() => { }, 1000);";
 
-                                await this.networkStream.WriteAsync(GetRunCommandBytes(mainCode, "cap_script"));
-
-                                result.Add(new KeyValuePair<int, string>(key: 0, value: deviceName));
-                                this.IsInit = true;
-                                return result;
-                            }
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        MessageBox.ShowAsync(e.Message);
-                    }
-                }
-                result.Add(new KeyValuePair<int, string>(key: 0, value: "null"));
-                return result;
-            });
-            return await task;
-        }
-
-        private int Bytes2Int(byte[] src, int offset = 0)
-        {
-            int value;
-            value = ((src[offset] & 0xFF) << 24)
-                    | ((src[offset + 1] & 0xFF) << 16)
-                    | ((src[offset + 2] & 0xFF) << 8)
-                    | (src[offset + 3] & 0xFF);
-            return value;
-        }
-
-        private byte[] Int2Bytes(int value)
-        {
-            var src = new byte[4];
-            src[0] = (byte)((value >> 24) & 0xFF);
-            src[1] = (byte)((value >> 16) & 0xFF);
-            src[2] = (byte)((value >> 8) & 0xFF);
-            src[3] = (byte)(value & 0xFF);
-            return src;
-        }
-
-        public class RunData
-        {
-            public string id { get; set; } = string.Empty;
-            public string name { get; set; } = string.Empty;
-            public string command { get; set; } = "run";
-            public string script { get; set; } = string.Empty;
-        }
-
-        public class RunCommand
-        {
-            public int id { get; set; }
-            public string type { get; set; } = "command";
-            public RunData? data { get; set; } = null;
-        }
-
-
-        private byte[] GetRunCommandBytes(string runCode, string id)
-        {
-            RunCommand command = new()
-            {
-                id = Step,
-                data = new RunData()
-                {
-                    id = id,
-                    name = id,
-                    script = runCode
-                }
-            };
-            this.Step++;
-            var data = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(command));
-            var recv = new byte[data.Length + 8];
-            var len = Int2Bytes(data.Length);
-            len.CopyTo(recv, 0);
-            recv[7] = 1;
-            data.CopyTo(recv, 8);
-            return recv;
-        }
-
-        public override async Task<Bitmap> ScreenShot(int Index)
-        {
-            var task = Task.Run(() =>
-            {
-                try
-                {
-                    this.networkStream.Write(GetRunCommandBytes(this.RunCode, "screenshotHelper"));
-
-                    var client = new TcpClient();
-                    for (var i = 0; i < 300; i++)
-                    {
-                        Task.Delay(100).Wait();
-                        try
-                        {
-                            client.Connect(TcpConfig.Address, 5678);
-                            if (client.Connected)
-                            {
+                                await networkStream.WriteAsync(GetRunCommandBytes(capScript, "cap_script"));
+                                this.Server = new TcpListener(IPAddress.Parse(this.LocalIP), 5678);
+                                this.Server.Start();
+                                this.Server.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Server);
                                 break;
                             }
                         }
-                        catch { }
                     }
-
-                    var stream = client.GetStream();
-
-                    var offset = 0;
-                    var info = new byte[4];
-                    for (var i = 0; i < 100; i++)
+                    catch (Exception ex)
                     {
-                        Task.Delay(100).Wait();
-                        if (stream.DataAvailable)
+                        MessageBox.ShowAsync(ex.ToString());
+                    }
+                });
+            }
+
+           
+            return await GetList();
+        }
+
+        public override async Task<List<KeyValuePair<int, string>>> GetList()
+        {
+            return await Task.Run(() =>
+             {
+                 var result = new List<KeyValuePair<int, string>>();
+                 result.Add(new KeyValuePair<int, string>(key: 0, value: this.deviceName));
+                 return result;
+             });
+        }
+
+        private void ConnectCallback(IAsyncResult ar)
+        {
+            if (ar.AsyncState != null)
+            {
+                var listener = (TcpListener)ar.AsyncState;
+
+                if (listener.Server == null || !listener.Server.IsBound)
+                {
+                    return;
+                }
+
+                var client = listener.EndAcceptTcpClient(ar);
+
+                var stream = client.GetStream();
+
+                var offset = 0;
+                var header = new byte[4];
+                for (var i = 0; i < 100; i++)
+                {
+                    Thread.Sleep(50);
+                    if (stream.DataAvailable)
+                    {
+                        while (offset < 4)
                         {
-                            while (offset < 4)
-                            {
-                                var len = stream.Read(info, offset, 4 - offset);
-                                offset += 4;
-                            }
-                            break;
+                            var len = stream.Read(header, offset, 4 - offset);
+                            offset += len;
                         }
+                        break;
                     }
+                }
 
-                    var length = Bytes2Int(info);
+                var imgLen = header.ToInt();
 
-                    var data = new byte[length];
+                var imgData = new byte[imgLen];
 
-                    offset = 0;
+                offset = 0;
 
-                    while (offset < length)
+                while (offset < imgLen)
+                {
+                    if (stream.DataAvailable)
                     {
-                        var len = stream.Read(data, offset, length - offset);
+                        var len = stream.Read(imgData, offset, imgLen - offset);
                         offset += len;
                     }
+                }
 
-                    var sKBitmap = SKBitmap.Decode(data);
-                    GraphicHelper.KeepScreen(sKBitmap);
-                    var bitmap = new Bitmap(GraphicHelper.PxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
-                    sKBitmap.Dispose();
-                    stream.Dispose();
-                    client.Dispose();
-                    return bitmap;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(e.Message);
-                }
-            });
-            return await task;
+                var sKBitmap = SKBitmap.Decode(imgData);
+                var pxFormat = sKBitmap.ColorType == SKColorType.Rgba8888 ? PixelFormat.Rgba8888 : PixelFormat.Bgra8888;
+                var bitmap = new Bitmap(pxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
+                sKBitmap.Dispose();
+
+                stream.Close();
+                client.Close();
+
+                this.Action?.Invoke(bitmap);
+                this.Server?.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Server);
+            }
+        }
+
+        public override void ScreenShot(int Index)
+        {
+            if (this.Client == null)
+            {
+                throw new Exception("tcp连接失效");
+            }
+            this.runCode = this.runCode.Replace("let remoteIP;", $"let remoteIP = '{this.LocalIP}'");
+            this.Client.GetStream().Write(GetRunCommandBytes(this.runCode, "screenshotHelper"));
+        }
+
+        public override bool IsStart(int Index)
+        {
+            return true;
+        }
+
+
+        public override void Close()
+        {
+            try
+            {
+                this.Server?.Stop();
+                this.Client?.Close();
+                this.Client?.Dispose();
+            }
+            catch { };
         }
     }
 }

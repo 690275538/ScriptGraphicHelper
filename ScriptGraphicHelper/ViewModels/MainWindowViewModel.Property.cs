@@ -252,6 +252,15 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref this.pointY, value);
         }
 
+        private string pointColor;
+
+        public string PointColor
+        {
+            get => this.pointColor;
+            set => this.RaiseAndSetIfChanged(ref this.pointColor, value);
+        }
+
+
         private double rectWidth = 0;
         public double RectWidth
         {

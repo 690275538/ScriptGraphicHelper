@@ -234,7 +234,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
             catch (Exception e)
             {
-                MessageBox.ShowAsync(e.Message);
+                MessageBox.ShowAsync(e.ToString());
             }
         }
 

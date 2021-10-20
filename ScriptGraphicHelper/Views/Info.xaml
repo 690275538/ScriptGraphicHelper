@@ -6,52 +6,56 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="关于"
     Width="280"
-    Height="200"
+    Height="170"
+    CanResize="false"
     Icon="/Assets/ico.ico"
     mc:Ignorable="d">
     <Window.Styles>
-        <Style Selector="Button">
+        <Style Selector="TextBlock.h1">
+
+            <Setter Property="TextDecorations" Value="Underline" />
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="BorderThickness" Value="0" />
             <Setter Property="Foreground" Value="#419df2" />
+            <Setter Property="VerticalAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="Cursor" Value="Hand" />
         </Style>
-        <Style Selector="Button:pointerover /template/ ContentPresenter#PART_ContentPresenter">
-            <Setter Property="Background" Value="Transparent" />
+        <Style Selector="TextBlock.h1:pointerover">
+            <Setter Property="Foreground" Value="#a1cef8" />
         </Style>
+
     </Window.Styles>
     <Grid Background="#2d2d30">
         <StackPanel Margin="25,20">
             <StackPanel Margin="10" Orientation="Horizontal">
                 <TextBlock
-                    Width="70"
+                    Width="75"
                     VerticalAlignment="Center"
                     FontSize="15"
-                    Text="开发者" />
-                <Button Tapped="AddQQ_Tapped">
+                    Text="开发者:" />
+                <TextBlock Classes="h1" Tapped="AddQQ_Tapped">
                     yiszza
-                </Button>
+                </TextBlock>
             </StackPanel>
             <StackPanel Margin="10" Orientation="Horizontal">
                 <TextBlock
-                    Width="70"
+                    Width="75"
                     VerticalAlignment="Center"
                     FontSize="15"
-                    Text="QQ群" />
-                <Button Tapped="JoinGroup_Tapped">
+                    Text="QQ群:" />
+                <TextBlock Classes="h1" Tapped="JoinGroup_Tapped">
                     717647184
-                </Button>
+                </TextBlock>
             </StackPanel>
             <StackPanel Margin="10" Orientation="Horizontal">
                 <TextBlock
-                    Width="70"
+                    Width="75"
                     VerticalAlignment="Center"
                     FontSize="15"
-                    Text="开源地址" />
-                <Button Tapped="Address_Tapped">
+                    Text="开源地址:" />
+                <TextBlock Classes="h1" Tapped="Address_Tapped">
                     scriptGraphicHelper
-                </Button>
+                </TextBlock>
             </StackPanel>
         </StackPanel>
     </Grid>

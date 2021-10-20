@@ -8,12 +8,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
+
 namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
-    class LdEmulatorHelper : BaseScreenshotHelper
+    class LdEmulatorHelper : BaseHelper
     {
-        public override string Path { get; set; } = string.Empty;
-        public override string Name { get; set; } = string.Empty;
+        public override Action<Bitmap>? Action { get; set; }
+        public override string Path { get; } = string.Empty;
+        public override string Name { get; } = string.Empty;
         public string BmpPath { get; set; } = string.Empty;
         public LdEmulatorHelper(int version)//初始化 , 获取雷电模拟器路径
         {
@@ -85,7 +87,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 this.Path = string.Empty;
             }
         }
-        public override void Dispose() { }
+        public override void Close() { }
 
         public string PipeCmd(string theCommand, bool select = false)
         {
@@ -175,9 +177,14 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             return false;
         }
 
-        public override async Task<List<KeyValuePair<int, string>>> ListAll()
+        public override async Task<List<KeyValuePair<int, string>>> Initialize()
         {
-            var task = Task.Run(() =>
+            return await GetList();
+        }
+
+        public override async Task<List<KeyValuePair<int, string>>> GetList()
+        {
+            return await Task.Run(() =>
             {
                 var resultArray = PipeCmd("list2").Trim("\n".ToCharArray()).Split("\n".ToCharArray());
                 List<KeyValuePair<int, string>> result = new();
@@ -188,12 +195,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 }
                 return result;
             });
-            return await task;
         }
 
-        public override async Task<Bitmap> ScreenShot(int index)
+        public override async void ScreenShot(int index)
         {
-            var task = Task.Run(() =>
+            await Task.Run(() =>
             {
                 if (!IsStart(index))
                 {
@@ -222,14 +228,13 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     GraphicHelper.KeepScreen(sKBitmap);
                     sKBitmap.Dispose();
                     stream.Dispose();
-                    return bitmap;
+                    this.Action?.Invoke(bitmap);
                 }
                 catch (Exception e)
                 {
                     throw new Exception(e.Message);
                 }
             });
-            return await task;
         }
         public void Screencap(int ldIndex, string savePath, string saveName)//截图
         {

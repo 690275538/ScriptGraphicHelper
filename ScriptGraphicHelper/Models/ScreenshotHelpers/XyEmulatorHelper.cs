@@ -8,10 +8,11 @@ using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
-    class XyEmulatorHelper : BaseScreenshotHelper
+    class XyEmulatorHelper : BaseHelper
     {
-        public override string Path { get; set; } = string.Empty;
-        public override string Name { get; set; } = string.Empty;
+        public override Action<Bitmap>? Action { get; set; }
+        public override string Path { get; } = string.Empty;
+        public override string Name { get; } = string.Empty;
         public string BmpPath { get; set; } = string.Empty;
         public override bool IsStart(int index)
         {
@@ -19,10 +20,15 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             result = result.Trim();
             return result == "Running";
         }
-        public override void Dispose() { }
-        public override async Task<List<KeyValuePair<int, string>>> ListAll()
+        public override void Close() { }
+        public override async Task<List<KeyValuePair<int, string>>> Initialize()
         {
-            var task = Task.Run(() =>
+            return await GetList();
+        }
+
+        public override async Task<List<KeyValuePair<int, string>>> GetList()
+        {
+            return await Task.Run(() =>
             {
                 var resultArray = PipeCmd("listvms").Trim("\r\n".ToCharArray()).Split("\r\n");
                 var result = new List<KeyValuePair<int, string>>();
@@ -36,48 +42,46 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 }
                 return result;
             });
-            return await task;
         }
 
-        public override async Task<Bitmap> ScreenShot(int index)
+        public override async void ScreenShot(int index)
         {
-            var task = Task.Run(() =>
-            {
-                if (!IsStart(index))
-                {
-                    throw new Exception("模拟器未启动 ! ");
-                }
-                if (this.BmpPath == string.Empty)
-                {
-                    this.BmpPath = BmpPathGet(index);
-                }
-                var BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
-                Screencap(index, "/mnt/sdcard/Pictures", BmpName);
-                for (var i = 0; i < 10; i++)
-                {
-                    Task.Delay(200).Wait();
-                    if (File.Exists(this.BmpPath + "\\" + BmpName))
-                    {
-                        break;
-                    }
-                }
-                try
-                {
-                    FileStream stream = new(this.BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
-                    var bitmap = new Bitmap(stream);
-                    stream.Position = 0;
-                    var sKBitmap = SKBitmap.Decode(stream);
-                    GraphicHelper.KeepScreen(sKBitmap);
-                    sKBitmap.Dispose();
-                    stream.Dispose();
-                    return bitmap;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(e.Message);
-                }
-            });
-            return await task;
+            await Task.Run(() =>
+             {
+                 if (!IsStart(index))
+                 {
+                     throw new Exception("模拟器未启动 ! ");
+                 }
+                 if (this.BmpPath == string.Empty)
+                 {
+                     this.BmpPath = BmpPathGet(index);
+                 }
+                 var BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                 Screencap(index, "/mnt/sdcard/Pictures", BmpName);
+                 for (var i = 0; i < 10; i++)
+                 {
+                     Task.Delay(200).Wait();
+                     if (File.Exists(this.BmpPath + "\\" + BmpName))
+                     {
+                         break;
+                     }
+                 }
+                 try
+                 {
+                     FileStream stream = new(this.BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
+                     var bitmap = new Bitmap(stream);
+                     stream.Position = 0;
+                     var sKBitmap = SKBitmap.Decode(stream);
+                     GraphicHelper.KeepScreen(sKBitmap);
+                     sKBitmap.Dispose();
+                     stream.Dispose();
+                     this.Action?.Invoke(bitmap);
+                 }
+                 catch (Exception e)
+                 {
+                     throw new Exception(e.Message);
+                 }
+             });
         }
 
         public XyEmulatorHelper()//初始化, 获取模拟器路径
