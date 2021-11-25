@@ -12,7 +12,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class AdbHelper : BaseHelper
     {
-        public override Action<Bitmap>? Action { get; set; }
+        public override Action<Bitmap> Action { get; set; }
         public override string Path { get; } = AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/") + "assets/adb/";
         public override string Name { get; } = "Adb连接";
 
@@ -72,8 +72,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             await Task.Run(() =>
              {
-                 var name = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
-                 var fullName = this.Path + "Screenshot/" + name;
+                 var name = "screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                 var fullName = this.Path + "screenshot/" + name;
                  PipeCmd($"-s { this.DeviceInfos[index].Value }  exec-out screencap -p > { fullName }");
                  for (var i = 0; i < 50; i++)
                  {
@@ -106,7 +106,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public string PipeCmd(string theCommand)
         {
-            var command = $"/C { this.Path }adb.exe { theCommand }";
+            var command = $"/C {this.Path}adb.exe {theCommand}";
             ProcessStartInfo start = new("cmd.exe")
             {
                 Arguments = command,

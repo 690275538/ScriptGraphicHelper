@@ -63,8 +63,7 @@
                         HorizontalAlignment="Left"
                         VerticalAlignment="Top"
                         Background="Transparent"
-                        BorderThickness="0"
-                        Text="5678" />
+                        BorderThickness="0" />
                 </Border>
             </StackPanel>
         </StackPanel>

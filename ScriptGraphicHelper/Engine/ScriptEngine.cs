@@ -16,11 +16,11 @@ namespace ScriptGraphicHelper.Engine
     {
         private static List<MetadataReference> References;
 
-        private Domain alc;
+        private readonly Domain alc;
 
         private WeakReference<Assembly> assembly;
 
-        private List<SyntaxTree> trees = new();
+        private readonly List<SyntaxTree> trees = new();
 
         public ScriptEngine()
         {

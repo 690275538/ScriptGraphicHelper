@@ -9,7 +9,7 @@ namespace ScriptGraphicHelper.Views
 {
     public class AdbConfig : Window
     {
-        private static string? LastAddress;
+        private static string LastAddress;
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);

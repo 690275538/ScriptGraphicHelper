@@ -10,6 +10,7 @@ namespace ScriptGraphicHelper.Views
 {
     public class AJConfig : Window
     {
+        private static string RemoteAddress = "192.168.";
         public AJConfig()
         {
             InitializeComponent();
@@ -41,12 +42,15 @@ namespace ScriptGraphicHelper.Views
                     comboBox.SelectedItem = address;
                 }
             }
+
+          this.FindControl<TextBox>("RemoteAddress").Text = RemoteAddress;
         }
 
         private void Ok_Tapped(object sender, RoutedEventArgs e)
         {
             var address = (string)this.FindControl<ComboBox>("AddressList").SelectedItem;
             var remoteAddress = this.FindControl<TextBox>("RemoteAddress").Text.Trim();
+            RemoteAddress = remoteAddress;
             Close((address, remoteAddress));
         }
 
@@ -58,6 +62,7 @@ namespace ScriptGraphicHelper.Views
                 case Key.Enter:
                     var address = (string)this.FindControl<ComboBox>("Address").SelectedItem;
                     var remoteAddress = this.FindControl<TextBox>("RemoteAddress").Text.Trim();
+                    RemoteAddress = remoteAddress;
                     Close((address, remoteAddress));
                     break;
 

@@ -11,6 +11,8 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Models
 {
@@ -117,16 +119,20 @@ namespace ScriptGraphicHelper.Models
         private static string DiyCompareStr_Script(ObservableCollection<ColorInfo> colorInfos)
         {
             var engine = new ScriptEngine();
-            engine.LoadScript(AppDomain.CurrentDomain.BaseDirectory + @"assets/DiyFormat.csx");
+            engine.LoadScript(AppDomain.CurrentDomain.BaseDirectory + @"assets/diyFormat.csx");
 
             var compile = engine.Compile();
             if (!compile.Success)
             {
+                var errorMessage = new List<string>();
                 foreach (var msg in compile.Diagnostics)
                 {
-                    MessageBox.ShowAsync("编译失败:" + msg.ToString());
+                    errorMessage.Add(msg.ToString());
                 }
+                MessageBox.ShowAsync("编译失败:\r\n" + string.Join("\r\n", errorMessage.ToArray()));
+                return string.Empty;
             }
+
             var result = engine.Execute("CreateColorStrHelper.DiyFormat", "CreateCmpColor", new object[] { colorInfos.ToList() });
             engine.UnExecute();
             return result;
@@ -135,19 +141,24 @@ namespace ScriptGraphicHelper.Models
         private static string DiyFindStr_Script(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             var engine = new ScriptEngine();
-            engine.LoadScript(AppDomain.CurrentDomain.BaseDirectory + @"assets/DiyFormat.csx");
+            engine.LoadScript(AppDomain.CurrentDomain.BaseDirectory + @"assets/diyFormat.csx");
 
             var compile = engine.Compile();
             if (!compile.Success)
             {
+                var errorMessage = new List<string>();
                 foreach (var msg in compile.Diagnostics)
                 {
-                    MessageBox.ShowAsync("编译失败:" + msg.ToString());
+                    errorMessage.Add(msg.ToString());
                 }
+                MessageBox.ShowAsync("编译失败:\r\n" + string.Join("\r\n", errorMessage.ToArray()));
+                return string.Empty;
             }
+
             var result = engine.Execute("CreateColorStrHelper.DiyFormat", "CreateFindColor", new object[] { colorInfos.ToList(), rect });
             engine.UnExecute();
             return result;
+
         }
 
 
