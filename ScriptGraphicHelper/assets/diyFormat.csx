@@ -48,6 +48,8 @@ namespace CreateColorStrHelper
         //----------------------------------------------------------------------------------------------------------------------------------//
 
 
+        //更多例子请查看 https://gitee.com/yiszza/ScriptGraphicHelper/blob/multi-platform/ScriptGraphicHelper/Models/CreateColorStrHelper.cs
+
         //例子: 大漠找色格式
         public static string CreateFindColor(List<ColorInfo> colorInfos, Range rect)
         {
