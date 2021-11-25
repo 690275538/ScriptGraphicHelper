@@ -36,7 +36,7 @@
                 ToolTip.Tip="模式配置">
                 <Image Width="24" Height="24">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/mode.svg" />
+                        <svg:SvgImage Source="/assets/mode.svg" />
                     </Image.Source>
                 </Image>
                 <Border
@@ -112,7 +112,7 @@
                 ToolTip.Tip="相似度">
                 <Image Width="24" Height="24">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/sim.svg" />
+                        <svg:SvgImage Source="/assets/sim.svg" />
                     </Image.Source>
                 </Image>
                 <Border
@@ -147,7 +147,7 @@
                 ToolTip.Tip="测试结果">
                 <Image Width="24" Height="24">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/test.svg" />
+                        <svg:SvgImage Source="/assets/test.svg" />
                     </Image.Source>
                 </Image>
                 <Border
@@ -172,7 +172,7 @@
                 ToolTip.Tip="生成格式">
                 <Image Width="24" Height="24">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/format.svg" />
+                        <svg:SvgImage Source="/assets/format.svg" />
                     </Image.Source>
                 </Image>
                 <Border
@@ -215,7 +215,7 @@
                 ToolTip.Tip="缩放系数">
                 <Image Width="24" Height="24">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/microscope.svg" />
+                        <svg:SvgImage Source="/assets/microscope.svg" />
                     </Image.Source>
                 </Image>
                 <Border
@@ -256,7 +256,7 @@
                 ToolTip.Tip="框选范围">
                 <Image Width="24" Height="24">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/rect.svg" />
+                        <svg:SvgImage Source="/assets/rect.svg" />
                     </Image.Source>
                 </Image>
                 <Border

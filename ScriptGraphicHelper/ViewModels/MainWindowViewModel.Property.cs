@@ -14,7 +14,7 @@ namespace ScriptGraphicHelper.ViewModels
 {
     public partial class MainWindowViewModel : ViewModelBase
     {
-        private Cursor windowCursor = new Cursor(StandardCursorType.Arrow);
+        private Cursor windowCursor = new(StandardCursorType.Arrow);
         public Cursor WindowCursor
         {
             get => this.windowCursor;
@@ -69,8 +69,6 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     this.DataGrid_IsVisible = false;
                     this.ImgMargin = new Thickness(170, 50, 340, 20);
-                    ColorInfo.Width = this.ImgWidth;
-                    ColorInfo.Height = this.imgHeight;
                 }
                 else
                 {
@@ -115,7 +113,7 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref this.titleBarWidth, value);
         }
 
-        private TabItems<TabItem> tabItems = new TabItems<TabItem>();
+        private TabItems<TabItem> tabItems = new();
         public TabItems<TabItem> TabItems
         {
             get => this.tabItems;
@@ -162,7 +160,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
-        private Thickness imgMargin = new Thickness(170, 50, 280, 20);
+        private Thickness imgMargin = new(170, 50, 280, 20);
         public Thickness ImgMargin
         {
             get => this.imgMargin;

@@ -54,15 +54,15 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         public AJHelper()
         {
 
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"Assets/script.js"))
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"assets/script.js"))
             {
-                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"Assets/script.js");
+                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"assets/script.js");
                 this.runCode = sr.ReadToEnd();
                 this.runStep = 0;
             }
             else
             {
-                throw new FileNotFoundException($"{AppDomain.CurrentDomain.BaseDirectory}Assets/script.js");
+                throw new FileNotFoundException($"{AppDomain.CurrentDomain.BaseDirectory}assets/script.js");
             }
         }
 
@@ -168,8 +168,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             return await Task.Run(() =>
              {
-                 var result = new List<KeyValuePair<int, string>>();
-                 result.Add(new KeyValuePair<int, string>(key: 0, value: this.deviceName));
+                 var result = new List<KeyValuePair<int, string>>
+                 {
+                     new KeyValuePair<int, string>(key: 0, value: this.deviceName)
+                 };
                  return result;
              });
         }

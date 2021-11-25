@@ -10,7 +10,7 @@ namespace ScriptGraphicHelper.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var color = (Color)value;
-            return string.Format("#{0}{1}{2}", color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2"));
+            return string.Format("#{0}{1}{2}{3}", color.A.ToString("X2"), color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2"));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -20,7 +20,7 @@ namespace ScriptGraphicHelper.Converters
             {
                 str = "#" + str;
             }
-            return Color.Parse(str.PadRight(7, '0'));
+            return Color.Parse(str.PadRight(9, '0'));
         }
     }
     class Color2BrushConverter : IValueConverter
@@ -28,7 +28,7 @@ namespace ScriptGraphicHelper.Converters
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             var color = (Color)value;
-            return Brush.Parse(string.Format("#{0}{1}{2}", color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2")));
+            return Brush.Parse(string.Format("#{0}{1}{2}{3}", color.A.ToString("X2"), color.R.ToString("X2"), color.G.ToString("X2"), color.B.ToString("X2")));
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

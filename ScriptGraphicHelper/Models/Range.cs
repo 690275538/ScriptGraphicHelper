@@ -19,6 +19,13 @@
             this.Mode_1 = mode_1;
             this.Mode_2 = mode_2;
         }
+        /// <summary>
+        /// 格式化范围
+        /// </summary>
+        /// <param name="mode"></param>
+        /// 1. 返回 sx, sy, ex, ey 格式
+        /// 2. 返回 sx, sy, width, height 格式
+        /// <returns/>
         public string ToString(int mode = 0)
         {
 

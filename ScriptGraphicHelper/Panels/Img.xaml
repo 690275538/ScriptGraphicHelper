@@ -26,7 +26,7 @@
                 IsVisible="{Binding FindedPoint_IsVisible}"
                 ZIndex="1">
                 <Image.Source>
-                    <svg:SvgImage Source="/Assets/location.svg" />
+                    <svg:SvgImage Source="/assets/location.svg" />
                 </Image.Source>
             </Image>
             <Image

@@ -1,6 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using Microsoft.Win32;
 using Newtonsoft.Json.Linq;
+using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -219,21 +220,18 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                         break;
                     }
                 }
-                try
-                {
-                    FileStream stream = new(this.BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
-                    var bitmap = new Bitmap(stream);
-                    stream.Position = 0;
-                    var sKBitmap = SKBitmap.Decode(stream);
-                    GraphicHelper.KeepScreen(sKBitmap);
-                    sKBitmap.Dispose();
-                    stream.Dispose();
-                    this.Action?.Invoke(bitmap);
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(e.Message);
-                }
+                FileStream stream = new(this.BmpPath + "\\" + BmpName, FileMode.Open, FileAccess.Read);
+                var bitmap = new Bitmap(stream);
+                stream.Position = 0;
+                var sKBitmap = SKBitmap.Decode(stream);
+                GraphicHelper.KeepScreen(sKBitmap);
+                sKBitmap.Dispose();
+                stream.Dispose();
+                this.Action?.Invoke(bitmap);
+            }).ContinueWith((t) =>
+            {
+                if (t.Exception != null)
+                    MessageBox.ShowAsync(t.Exception.ToString());
             });
         }
         public void Screencap(int ldIndex, string savePath, string saveName)//截图

@@ -8,7 +8,7 @@
     Width="250"
     Height="240"
     CanResize="false"
-    Icon="/Assets/ico.ico"
+    Icon="/assets/ico.ico"
     KeyDown="Window_KeyDown"
     Opened="WindowOpened"
     mc:Ignorable="d">

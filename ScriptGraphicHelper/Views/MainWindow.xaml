@@ -17,7 +17,7 @@
     DragDrop.AllowDrop="True"
     FontSize="14"
     FontStyle="Normal"
-    Icon="/Assets/ico.ico"
+    Icon="/assets/ico.ico"
     KeyDown="Window_KeyDown"
     Opened="Window_Opened"
     WindowStartupLocation="CenterScreen"
@@ -191,7 +191,7 @@
                     Height="16"
                     VerticalAlignment="Center">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/settings.svg" />
+                        <svg:SvgImage Source="/assets/settings.svg" />
                     </Image.Source>
                 </Image>
                 <Button.Styles>
@@ -215,7 +215,7 @@
                     Height="16"
                     VerticalAlignment="Center">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/info.svg" />
+                        <svg:SvgImage Source="/assets/info.svg" />
                     </Image.Source>
                 </Image>
                 <Button.Styles>
@@ -239,7 +239,7 @@
                     Height="16"
                     VerticalAlignment="Center">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/minsize.svg" />
+                        <svg:SvgImage Source="/assets/minsize.svg" />
                     </Image.Source>
                 </Image>
                 <Button.Styles>
@@ -265,7 +265,7 @@
                     Height="16"
                     VerticalAlignment="Center">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/default.svg" />
+                        <svg:SvgImage Source="/assets/default.svg" />
                     </Image.Source>
                 </Image>
                 <Button.Styles>
@@ -290,7 +290,7 @@
                     Height="16"
                     VerticalAlignment="Center">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/fullscreen.svg" />
+                        <svg:SvgImage Source="/assets/fullscreen.svg" />
                     </Image.Source>
                 </Image>
                 <Button.Styles>
@@ -315,7 +315,7 @@
                     Height="16"
                     VerticalAlignment="Center">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/close.svg" />
+                        <svg:SvgImage Source="/assets/close.svg" />
                     </Image.Source>
                 </Image>
                 <Button.Styles>

@@ -311,7 +311,7 @@ namespace ScriptGraphicHelper.ViewModels
                     var x = (int)point.X / 5;
                     var y = (int)point.Y / 5;
                     this.SrcColor = await this.DrawBitmap.GetPixel(x, y);
-                    this.DrawBitmap.SetPixels(this.SrcColor, this.destColor, this.Tolerance, this.reverse_IsChecked);
+                    this.DrawBitmap.SetPixels(this.SrcColor, this.DestColor, this.Tolerance, this.reverse_IsChecked);
                     this.ImgWidth -= 1;
                     this.ImgWidth += 1;
                 }

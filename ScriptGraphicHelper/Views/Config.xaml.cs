@@ -34,6 +34,8 @@ namespace ScriptGraphicHelper.Views
             var ysPath = this.FindControl<TextBox>("YsPath");
             var xyPath = this.FindControl<TextBox>("XyPath");
             var dmRegcode = this.FindControl<TextBox>("DmRegcode");
+            var diyFormatMode = this.FindControl<ComboBox>("DiyFormatMode");
+
             addRange.IsChecked = Setting.Instance.AddRange;
             addInfo.IsChecked = Setting.Instance.AddInfo;
             isOffset.IsChecked = Setting.Instance.IsOffset;
@@ -41,6 +43,8 @@ namespace ScriptGraphicHelper.Views
             ysPath.Text = Setting.Instance.YsPath;
             xyPath.Text = Setting.Instance.XyPath;
             dmRegcode.Text = Setting.Instance.DmRegcode;
+
+            diyFormatMode.SelectedIndex = Setting.Instance.DiyFormatMode.Trim() == "script" ? 1 : 0;
         }
 
         private void Ok_Tapped(object sender, RoutedEventArgs e)
@@ -54,6 +58,8 @@ namespace ScriptGraphicHelper.Views
                 var ysPath = this.FindControl<TextBox>("YsPath");
                 var xyPath = this.FindControl<TextBox>("XyPath");
                 var dmRegcode = this.FindControl<TextBox>("DmRegcode");
+                var diyFormatMode = this.FindControl<ComboBox>("DiyFormatMode");
+
                 Setting.Instance.AddRange = addRange.IsChecked ?? false;
                 Setting.Instance.AddInfo = addInfo.IsChecked ?? false;
                 Setting.Instance.IsOffset = isOffset.IsChecked ?? false;
@@ -66,8 +72,10 @@ namespace ScriptGraphicHelper.Views
                 Setting.Instance.YsPath = ysPath.Text ?? string.Empty;
                 Setting.Instance.XyPath = xyPath.Text ?? string.Empty;
                 Setting.Instance.DmRegcode = dmRegcode.Text ?? string.Empty;
+                Setting.Instance.DiyFormatMode = diyFormatMode.SelectedIndex == 1 ? "script" : "json";
+
                 var settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json", settingStr);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\setting.json", settingStr);
                 Close();
             }
             catch { }

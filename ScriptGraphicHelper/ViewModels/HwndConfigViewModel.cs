@@ -119,7 +119,7 @@ namespace ScriptGraphicHelper.ViewModels
                 var eventArgs = (PointerPressedEventArgs)parameters.EventArgs;
                 if (eventArgs.GetCurrentPoint(null).Properties.IsLeftButtonPressed)
                 {
-                    var cur = Win32Api.LoadCursorFromFile(AppDomain.CurrentDomain.BaseDirectory + @"Assets/aiming.cur");
+                    var cur = Win32Api.LoadCursorFromFile(AppDomain.CurrentDomain.BaseDirectory + @"assets/aiming.cur");
                     Win32Api.SetSystemCursor(cur, Win32Api.OCR_NORMAL);
                 }
 

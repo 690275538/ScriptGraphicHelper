@@ -62,6 +62,12 @@ namespace ScriptGraphicHelper.Views
             title.Text = this.Title;
             var tb = this.FindControl<TextBlock>("Message");
             tb.Text = this.Message;
+
+
+            this.MaxWidth = this.Screens.Primary.WorkingArea.Width * 0.9;
+            this.MaxHeight = this.Screens.Primary.WorkingArea.Height * 0.8;
+
+            tb.MaxWidth = this.MaxWidth - 100;
         }
 
         private async void Close_Tapped(object sender, RoutedEventArgs e)

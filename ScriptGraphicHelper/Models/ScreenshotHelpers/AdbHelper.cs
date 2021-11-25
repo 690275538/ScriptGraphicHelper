@@ -13,16 +13,16 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
     class AdbHelper : BaseHelper
     {
         public override Action<Bitmap>? Action { get; set; }
-        public override string Path { get; } = AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/") + "Assets/Adb/";
+        public override string Path { get; } = AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/") + "assets/adb/";
         public override string Name { get; } = "Adb连接";
 
         private List<KeyValuePair<int, string>> DeviceInfos = new();
 
         public AdbHelper()
         {
-            if (!Directory.Exists(this.Path + "/Screenshot"))
+            if (!Directory.Exists(this.Path + "/screenshot"))
             {
-                Directory.CreateDirectory(this.Path + "/Screenshot");
+                Directory.CreateDirectory(this.Path + "/screenshot");
             }
         }
 
@@ -83,22 +83,19 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                      }
                      Thread.Sleep(100);
                  }
-                 try
-                 {
-                     FileStream stream = new(fullName, FileMode.Open, FileAccess.Read);
-                     var bitmap = new Bitmap(stream);
-                     stream.Position = 0;
-                     var sKBitmap = SKBitmap.Decode(stream);
-                     GraphicHelper.KeepScreen(sKBitmap);
-                     sKBitmap.Dispose();
-                     stream.Dispose();
-                     this.Action?.Invoke(bitmap);
-                 }
-                 catch (Exception e)
-                 {
-                     throw new Exception(e.Message);
-                 }
-             });
+                 FileStream stream = new(fullName, FileMode.Open, FileAccess.Read);
+                 var bitmap = new Bitmap(stream);
+                 stream.Position = 0;
+                 var sKBitmap = SKBitmap.Decode(stream);
+                 GraphicHelper.KeepScreen(sKBitmap);
+                 sKBitmap.Dispose();
+                 stream.Dispose();
+                 this.Action?.Invoke(bitmap);
+             }).ContinueWith((t) =>
+             {
+                 if (t.Exception != null)
+                     MessageBox.ShowAsync(t.Exception.ToString());
+             }); ;
         }
 
 

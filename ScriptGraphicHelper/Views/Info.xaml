@@ -8,7 +8,7 @@
     Width="280"
     Height="170"
     CanResize="false"
-    Icon="/Assets/ico.ico"
+    Icon="/assets/ico.ico"
     mc:Ignorable="d">
     <Window.Styles>
         <Style Selector="TextBlock.h1">

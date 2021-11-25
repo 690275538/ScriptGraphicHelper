@@ -39,7 +39,7 @@ namespace ScriptGraphicHelper.Models
                         ptr[k] = data[k];
                         ptr[k + 1] = data[k + 1];
                         ptr[k + 2] = data[k + 2];
-                        ptr[k + 3] = 255;
+                        ptr[k + 3] = data[k + 3];
                     }
                 }
             }
@@ -54,17 +54,15 @@ namespace ScriptGraphicHelper.Models
             {
                 if (x >= 0 && y >= 0 && x < Width && y < Height)
                 {
-                    using (var drawBmpData = drawBitmap.Lock())
+                    using var drawBmpData = drawBitmap.Lock();
+                    unsafe
                     {
-                        unsafe
-                        {
-                            var ptr = (byte*)drawBmpData.Address;
-                            var k = y * drawBmpData.RowBytes + x * 4;
-                            ptr[k] = color.B;
-                            ptr[k + 1] = color.G;
-                            ptr[k + 2] = color.R;
-                            ptr[k + 3] = 255;
-                        }
+                        var ptr = (byte*)drawBmpData.Address;
+                        var k = y * drawBmpData.RowBytes + x * 4;
+                        ptr[k] = color.B;
+                        ptr[k + 1] = color.G;
+                        ptr[k + 2] = color.R;
+                        ptr[k + 3] = color.A;
                     }
                 }
             });
@@ -76,14 +74,12 @@ namespace ScriptGraphicHelper.Models
              {
                  if (x >= 0 && y >= 0 && x < Width && y < Height)
                  {
-                     using (var drawBmpData = drawBitmap.Lock())
+                     using var drawBmpData = drawBitmap.Lock();
+                     unsafe
                      {
-                         unsafe
-                         {
-                             var ptr = (byte*)drawBmpData.Address;
-                             var k = y * drawBmpData.RowBytes + x * 4;
-                             return Color.FromRgb(ptr[k + 2], ptr[k + 1], ptr[k]);
-                         }
+                         var ptr = (byte*)drawBmpData.Address;
+                         var k = y * drawBmpData.RowBytes + x * 4;
+                         return Color.FromRgb(ptr[k + 2], ptr[k + 1], ptr[k]);
                      }
                  }
                  return Colors.White;
@@ -92,15 +88,15 @@ namespace ScriptGraphicHelper.Models
 
         public static async void SetPixels(this WriteableBitmap drawBitmap, Color src, Color dest, int offset, bool reverse)
         {
+
+            var srcR = src.R; var srcG = src.G; var srcB = src.B; var srcA = src.A;
+            var destR = dest.R; var destG = dest.G; var destB = dest.B; var destA = dest.A;
+            var similarity = (int)(255 - 255 * ((100 - offset) / 100.0));
+
             await Task.Run(() =>
             {
                 if (reverse)
                 {
-
-                    var srcR = src.R; var srcG = src.G; var srcB = src.B;
-                    var destR = dest.R; var destG = dest.G; var destB = dest.B;
-                    var similarity = (int)(255 - 255 * ((100 - offset) / 100.0));
-
                     var step = 0;
                     var drawBmpData = drawBitmap.Lock();
                     unsafe
@@ -115,6 +111,7 @@ namespace ScriptGraphicHelper.Models
                                     ptr[step] = destB;
                                     ptr[step + 1] = destG;
                                     ptr[step + 2] = destR;
+                                    ptr[step + 3] = destA;
                                 }
                                 step += 4;
                             }
@@ -124,10 +121,6 @@ namespace ScriptGraphicHelper.Models
                 }
                 else
                 {
-                    var srcR = src.R; var srcG = src.G; var srcB = src.B;
-                    var destR = dest.R; var destG = dest.G; var destB = dest.B;
-                    var similarity = (int)(255 - 255 * ((100 - offset) / 100.0));
-
                     var step = 0;
                     var drawBmpData = drawBitmap.Lock();
                     unsafe
@@ -142,6 +135,7 @@ namespace ScriptGraphicHelper.Models
                                     ptr[step] = destB;
                                     ptr[step + 1] = destG;
                                     ptr[step + 2] = destR;
+                                    ptr[step + 3] = destA;
                                 }
                                 step += 4;
                             }
@@ -281,7 +275,7 @@ namespace ScriptGraphicHelper.Models
                         bmpPtr[step] = rawBmpPtr[k];
                         bmpPtr[step + 1] = rawBmpPtr[k + 1];
                         bmpPtr[step + 2] = rawBmpPtr[k + 2];
-                        bmpPtr[step + 3] = 255;
+                        bmpPtr[step + 3] = rawBmpPtr[k + 3];
                     }
                 }
             }
@@ -312,7 +306,7 @@ namespace ScriptGraphicHelper.Models
                         ptr[k] = Data[k];
                         ptr[k + 1] = Data[k + 1];
                         ptr[k + 2] = Data[k + 2];
-                        ptr[k + 3] = 255;
+                        ptr[k + 3] = Data[k + 3];
                     }
                 }
             }

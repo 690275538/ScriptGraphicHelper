@@ -19,6 +19,7 @@
         public string Ldpath3 { get; set; } = string.Empty;
         public string Ldpath4 { get; set; } = string.Empty;
         public string Ldpath64 { get; set; } = string.Empty;
+        public string DiyFormatMode { get; set; } = "json";
         public GetColorInfosConfig GetColorInfosConfig { get; set; } = new GetColorInfosConfig();
 
     }

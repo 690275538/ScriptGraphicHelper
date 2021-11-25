@@ -66,7 +66,7 @@ namespace ScriptGraphicHelper.Views
             }
             
             var settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json", settingStr);
+            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\setting.json", settingStr);
 
         }
 

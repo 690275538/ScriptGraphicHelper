@@ -1,10 +1,16 @@
 ﻿using Avalonia;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Converters;
+using ScriptGraphicHelper.Engine;
 using ScriptGraphicHelper.Views;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 
 namespace ScriptGraphicHelper.Models
 {
@@ -90,9 +96,64 @@ namespace ScriptGraphicHelper.Models
             };
         }
 
-        public static DiyFormat GetDiyFormat()
+        private static string DiyCompareStr(ObservableCollection<ColorInfo> colorInfos)
         {
-            var sr = File.OpenText(System.AppDomain.CurrentDomain.BaseDirectory + @"Assets/diyFormat.json");
+            if (Setting.Instance.DiyFormatMode == "script")
+            {
+                return DiyCompareStr_Script(colorInfos);
+            }
+            return DiyCompareStr_Json(colorInfos);
+        }
+
+        private static string DiyFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        {
+            if (Setting.Instance.DiyFormatMode == "script")
+            {
+                return DiyFindStr_Script(colorInfos, rect);
+            }
+            return DiyFindStr_Json(colorInfos, rect);
+        }
+
+        private static string DiyCompareStr_Script(ObservableCollection<ColorInfo> colorInfos)
+        {
+            var engine = new ScriptEngine();
+            engine.LoadScript(AppDomain.CurrentDomain.BaseDirectory + @"assets/DiyFormat.csx");
+
+            var compile = engine.Compile();
+            if (!compile.Success)
+            {
+                foreach (var msg in compile.Diagnostics)
+                {
+                    MessageBox.ShowAsync("编译失败:" + msg.ToString());
+                }
+            }
+            var result = engine.Execute("CreateColorStrHelper.DiyFormat", "CreateCmpColor", new object[] { colorInfos.ToList() });
+            engine.UnExecute();
+            return result;
+        }
+
+        private static string DiyFindStr_Script(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        {
+            var engine = new ScriptEngine();
+            engine.LoadScript(AppDomain.CurrentDomain.BaseDirectory + @"assets/DiyFormat.csx");
+
+            var compile = engine.Compile();
+            if (!compile.Success)
+            {
+                foreach (var msg in compile.Diagnostics)
+                {
+                    MessageBox.ShowAsync("编译失败:" + msg.ToString());
+                }
+            }
+            var result = engine.Execute("CreateColorStrHelper.DiyFormat", "CreateFindColor", new object[] { colorInfos.ToList(), rect });
+            engine.UnExecute();
+            return result;
+        }
+
+
+        private static DiyFormat GetDiyFormatJson()
+        {
+            var sr = File.OpenText(System.AppDomain.CurrentDomain.BaseDirectory + @"assets/diyFormat.json");
             var result = sr.ReadToEnd();
             sr.Close();
 
@@ -108,9 +169,9 @@ namespace ScriptGraphicHelper.Models
             return format ?? new DiyFormat();
         }
 
-        public static string DiyCompareStr(ObservableCollection<ColorInfo> colorInfos)
+        private static string DiyCompareStr_Json(ObservableCollection<ColorInfo> colorInfos)
         {
-            var diyFormat = GetDiyFormat();
+            var diyFormat = GetDiyFormatJson();
             var colorStr = string.Empty;
             foreach (var colorInfo in colorInfos)
             {
@@ -157,9 +218,9 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string DiyFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        private static string DiyFindStr_Json(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
-            var diyFormat = GetDiyFormat();
+            var diyFormat = GetDiyFormatJson();
             var isInit = false;
             Point startPoint = new();
             var colorStr = new string[2];
@@ -265,7 +326,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string DmFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        private static string DmFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             var result = string.Empty;
 
@@ -342,7 +403,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string AnjianFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        private static string AnjianFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             var result = string.Empty;
             var inited = false;
@@ -379,7 +440,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string AutojsFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        private static string AutojsFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             var result = string.Empty;
             Point firstPoint = new();
@@ -417,7 +478,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string EcFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        private static string EcFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             var result = string.Empty;
             Point firstPoint = new();
@@ -456,7 +517,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string CompareStr(ObservableCollection<ColorInfo> colorInfos)
+        private static string CompareStr(ObservableCollection<ColorInfo> colorInfos)
         {
             var result = "\"";
             foreach (var colorInfo in colorInfos)
@@ -472,7 +533,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string AnjianCompareStr(ObservableCollection<ColorInfo> colorInfos)
+        private static string AnjianCompareStr(ObservableCollection<ColorInfo> colorInfos)
         {
             var result = "\"";
             if (Setting.Instance.AddInfo)
@@ -491,7 +552,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string CdCompareStr(ObservableCollection<ColorInfo> colorInfos)
+        private static string CdCompareStr(ObservableCollection<ColorInfo> colorInfos)
         {
             var result = "{";
             foreach (var colorInfo in colorInfos)
@@ -553,7 +614,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string AnchorsCompareStr(ObservableCollection<ColorInfo> colorInfos)
+        private static string AnchorsCompareStr(ObservableCollection<ColorInfo> colorInfos)
         {
             var result = "[" + ColorInfo.Width.ToString() + "," + ColorInfo.Height.ToString() + ",\r\n[";
             foreach (var colorInfo in colorInfos)
@@ -578,7 +639,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string AnchorsFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        private static string AnchorsFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
         {
             var result = "[" + ColorInfo.Width.ToString() + "," + ColorInfo.Height.ToString();
             if (Setting.Instance.AddRange)
@@ -611,7 +672,7 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
-        public static string AnchorsCompareStr4Test(ObservableCollection<ColorInfo> colorInfos)
+        private static string AnchorsCompareStr4Test(ObservableCollection<ColorInfo> colorInfos)
         {
             var result = "\"";
             foreach (var colorInfo in colorInfos)
@@ -628,7 +689,7 @@ namespace ScriptGraphicHelper.Models
         }
 
 
-        public static string FindStr4Test(ObservableCollection<ColorInfo> colorInfos)
+        private static string FindStr4Test(ObservableCollection<ColorInfo> colorInfos)
         {
             var result = string.Empty;
 

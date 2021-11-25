@@ -12,7 +12,7 @@
     Title="句柄配置"
     Width="700"
     Height="500"
-    Icon="/Assets/ico.ico"
+    Icon="/assets/ico.ico"
     mc:Ignorable="d">
 
     <Design.DataContext>
@@ -44,7 +44,7 @@
             <StackPanel Name="SelectPanel" Orientation="Horizontal">
                 <Image Width="24" Height="24">
                     <Image.Source>
-                        <svg:SvgImage Source="/Assets/aiming.svg" />
+                        <svg:SvgImage Source="/assets/aiming.svg" />
                     </Image.Source>
                 </Image>
                 <TextBlock

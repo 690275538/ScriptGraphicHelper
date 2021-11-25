@@ -12,13 +12,13 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class HwndHelper : BaseHelper
     {
-        public override Action<Bitmap>? Action { get; set; }
+        public override Action<Bitmap> Action { get; set; }
         public override string Path { get; } = "大漠句柄";
         public override string Name { get; } = "大漠句柄";
 
         private bool Inited = false;
 
-        Dmsoft? Dm;
+        Dmsoft Dm;
 
         public override void Close()
         {
@@ -73,26 +73,56 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             }
             await Task.Run(() =>
              {
-                 try
-                 {
-                     var point = this.Dm.GetClientSize();
-                     var width = (int)point.X;
-                     var height = (int)point.Y;
-                     var data = this.Dm.GetScreenData(width, height);
+                 var point = this.Dm.GetClientSize();
+                 var width = (int)point.X;
+                 var height = (int)point.Y;
+                 var data = this.Dm.GetScreenData(width, height);
 
-                     SKBitmap sKBitmap = new(new SKImageInfo(width, height));
-                     Marshal.Copy(data, 0, sKBitmap.GetPixels(), data.Length);
-                     GraphicHelper.KeepScreen(sKBitmap);
-                     var bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(width, height), new Vector(96, 96), sKBitmap.RowBytes);
-                     sKBitmap.Dispose();
-                     this.Action?.Invoke(bitmap);
+                 SKBitmap sKBitmap = new(new SKImageInfo(width, height));
 
-                 }
-                 catch (Exception e)
+                 var pxFormat = data.Length / height / width;
+
+                 var dataStep = 0;
+
+                 unsafe
                  {
-                     throw new Exception(e.Message);
+                     var intPtr = (byte*)sKBitmap.GetPixels();
+                     for (int y = 0; y < height; y++)
+                     {
+                         var intPtrStep = y * width * 4;
+
+                         for (int x = 0; x < width; x++)
+                         {
+                             intPtr[intPtrStep] = data[dataStep];
+                             intPtr[intPtrStep + 1] = data[dataStep + 1];
+                             intPtr[intPtrStep + 2] = data[dataStep + 2];
+
+                             if (pxFormat == 3)
+                             {
+                                 intPtr[intPtrStep + 3] = 255;
+                                 dataStep += 3;
+                             }
+                             else
+                             {
+                                 intPtr[intPtrStep + 3] = data[dataStep + 3];
+                                 dataStep += 4;
+                             }
+
+                             intPtrStep += 4;
+                         }
+                     }
                  }
-             });
+
+                 Marshal.Copy(data, 0, sKBitmap.GetPixels(), data.Length);
+                 GraphicHelper.KeepScreen(sKBitmap);
+                 var bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(width, height), new Vector(96, 96), sKBitmap.RowBytes);
+                 sKBitmap.Dispose();
+                 this.Action?.Invoke(bitmap);
+             }).ContinueWith((t) =>
+             {
+                 if (t.Exception != null)
+                     MessageBox.ShowAsync(t.Exception.ToString());
+             }); ;
         }
     }
 }

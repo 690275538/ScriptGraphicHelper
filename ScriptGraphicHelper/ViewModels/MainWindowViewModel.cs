@@ -32,7 +32,7 @@ namespace ScriptGraphicHelper.ViewModels
         {
             try
             {
-                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"Assets\setting.json");
+                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"assets\setting.json");
                 var configStr = sr.ReadToEnd();
                 sr.Close();
                 configStr = configStr.Replace("\\\\", "\\").Replace("\\", "\\\\");
@@ -124,6 +124,8 @@ namespace ScriptGraphicHelper.ViewModels
             }
         });
 
+
+        private DateTime AddColorInfoTime = DateTime.Now;
         public ICommand Img_PointerReleased => new Command((param) =>
         {
             if (param != null)
@@ -142,37 +144,44 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                     else
                     {
-                        var color = GraphicHelper.GetPixel(sx, sy);
-
-                        if (this.FormatSelectedIndex == FormatMode.anchorsFindStr || this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
+                        if ((DateTime.Now - AddColorInfoTime).TotalMilliseconds > 500)
                         {
-                            var anchor = AnchorType.None;
-                            var quarterWidth = this.ImgWidth / 4;
-                            if (sx > quarterWidth * 3)
-                            {
-                                anchor = AnchorType.Right;
-                            }
-                            else if (sx > quarterWidth)
-                            {
-                                anchor = AnchorType.Center;
-                            }
-                            else
-                            {
-                                anchor = AnchorType.Left;
-                            }
+                            AddColorInfoTime = DateTime.Now;
+
+                            var color = GraphicHelper.GetPixel(sx, sy);
+
                             if (this.ColorInfos.Count == 0)
                             {
                                 ColorInfo.Width = this.ImgWidth;
                                 ColorInfo.Height = this.ImgHeight;
                             }
-                            this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, anchor, sx, sy, color));
-                        }
-                        else
-                        {
-                            this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, sx, sy, color));
-                        }
 
-                        this.DataGridHeight = (this.ColorInfos.Count + 1) * 40;
+                            if (this.FormatSelectedIndex == FormatMode.anchorsFindStr || this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
+                            {
+                                var anchor = AnchorType.None;
+                                var quarterWidth = this.ImgWidth / 4;
+                                if (sx > quarterWidth * 3)
+                                {
+                                    anchor = AnchorType.Right;
+                                }
+                                else if (sx > quarterWidth)
+                                {
+                                    anchor = AnchorType.Center;
+                                }
+                                else
+                                {
+                                    anchor = AnchorType.Left;
+                                }
+
+                                this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, anchor, sx, sy, color));
+                            }
+                            else
+                            {
+                                this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, sx, sy, color));
+                            }
+
+                            this.DataGridHeight = (this.ColorInfos.Count + 1) * 40;
+                        }
                     }
                 }
                 this.Rect_IsVisible = false;
@@ -207,12 +216,12 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 if (ScreenshotHelperBridge.State == LinkState.success)
                 {
-                    ScreenshotHelperBridge.Index = this.EmulatorSelectedIndex;
+                    ScreenshotHelperBridge.Index = value;
                 }
                 else if (ScreenshotHelperBridge.State == LinkState.Waiting)
                 {
                     this.WindowCursor = new Cursor(StandardCursorType.Wait);
-                    ScreenshotHelperBridge.Changed(this.EmulatorSelectedIndex);
+                    ScreenshotHelperBridge.Changed(value);
                     this.EmulatorInfo = await ScreenshotHelperBridge.Initialize();
                     this.EmulatorSelectedIndex = -1;
 
@@ -290,7 +299,7 @@ namespace ScriptGraphicHelper.ViewModels
             this.Img = await GraphicHelper.TurnRight();
         }
 
-        public void DropImage_Event(object? sender, DragEventArgs e)
+        public void DropImage_Event(object sender, DragEventArgs e)
         {
             try
             {
@@ -596,7 +605,15 @@ namespace ScriptGraphicHelper.ViewModels
             var x = (int)this.PointX;
             var y = (int)this.PointY;
             var key = (string)param;
+
             var color = GraphicHelper.GetPixel(x, y);
+
+
+            if (this.ColorInfos.Count == 0)
+            {
+                ColorInfo.Width = this.ImgWidth;
+                ColorInfo.Height = this.ImgHeight;
+            }
 
             var anchor = AnchorType.None;
             if (this.FormatSelectedIndex == FormatMode.anchorsFindStr || this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
@@ -851,7 +868,6 @@ namespace ScriptGraphicHelper.ViewModels
         public async void CutImg_Click()
         {
             var range = GetRange();
-            var colorInfos = new List<ColorInfo>();
             var imgEditor = new ImgEditor(range, GraphicHelper.GetRectData(range));
             await imgEditor.ShowDialog(MainWindow.Instance);
             if (ImgEditor.Result_ACK && ImgEditor.ResultColorInfos != null && ImgEditor.ResultColorInfos.Count != 0)

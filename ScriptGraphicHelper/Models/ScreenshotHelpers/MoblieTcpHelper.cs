@@ -112,9 +112,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public override async Task<List<KeyValuePair<int, string>>> Initialize()
         {
-            var  tcpConfig = new TcpConfig(Util.GetLocalAddress());
+            var tcpConfig = new TcpConfig(Util.GetLocalAddress());
 
-            var result = await tcpConfig.ShowDialog<(string,int)?>(MainWindow.Instance);
+            var result = await tcpConfig.ShowDialog<(string, int)?>(MainWindow.Instance);
 
             if (result != null)
             {
@@ -228,54 +228,51 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             await Task.Run(() =>
             {
-                try
+                var stream = this.TcpClientInfos[index].Client.GetStream();
+                if (!GetTcpState(index))
                 {
-                    var stream = this.TcpClientInfos[index].Client.GetStream();
-                    if (!GetTcpState(index))
-                    {
-                        throw new Exception("Tcp已断开连接! 请重新连接");
-                    }
-                    stream.WriteByte(MessageType.ScreenShot);
+                    throw new Exception("Tcp已断开连接! 请重新连接");
+                }
+                stream.WriteByte(MessageType.ScreenShot);
 
-                    var offset = 0;
-                    var info = new byte[4];
-                    for (var i = 0; i < 100; i++)
+                var offset = 0;
+                var info = new byte[4];
+                for (var i = 0; i < 100; i++)
+                {
+                    Task.Delay(100).Wait();
+                    if (stream.DataAvailable)
                     {
-                        Task.Delay(100).Wait();
-                        if (stream.DataAvailable)
+                        while (offset < 4)
                         {
-                            while (offset < 4)
-                            {
-                                var len = stream.Read(info, offset, 4 - offset);
-                                offset += 4;
-                            }
-                            break;
+                            var len = stream.Read(info, offset, 4 - offset);
+                            offset += 4;
                         }
+                        break;
                     }
-
-                    var length = Bytes2Int(info);
-
-                    var data = new byte[length];
-
-                    offset = 0;
-
-                    while (offset < length)
-                    {
-                        var len = stream.Read(data, offset, length - offset);
-                        offset += len;
-                    }
-
-                    var sKBitmap = SKBitmap.Decode(data);
-                    GraphicHelper.KeepScreen(sKBitmap);
-                    var bitmap = new Bitmap(GraphicHelper.PxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
-                    sKBitmap.Dispose();
-                    this.Action?.Invoke(bitmap);
                 }
-                catch (Exception e)
+
+                var length = Bytes2Int(info);
+
+                var data = new byte[length];
+
+                offset = 0;
+
+                while (offset < length)
                 {
-                    throw new Exception(e.Message);
+                    var len = stream.Read(data, offset, length - offset);
+                    offset += len;
                 }
-            });
+
+                var sKBitmap = SKBitmap.Decode(data);
+                GraphicHelper.KeepScreen(sKBitmap);
+                var bitmap = new Bitmap(GraphicHelper.PxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
+                sKBitmap.Dispose();
+                this.Action?.Invoke(bitmap);
+            }).ContinueWith((t) =>
+            {
+                if (t.Exception != null)
+                    MessageBox.ShowAsync(t.Exception.ToString());
+            }); ;
         }
     }
 }
