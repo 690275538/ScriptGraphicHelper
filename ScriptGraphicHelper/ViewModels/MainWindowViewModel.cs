@@ -143,7 +143,7 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                     else
                     {
-                        if ((DateTime.Now - this.AddColorInfoTime).TotalMilliseconds > 500)
+                        if ((DateTime.Now - this.AddColorInfoTime).TotalMilliseconds > 350)
                         {
                             this.AddColorInfoTime = DateTime.Now;
 

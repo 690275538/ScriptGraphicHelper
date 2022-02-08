@@ -161,8 +161,9 @@
             Name="HintMessage"
             Width="650"
             Height="45"
+            Margin="0,30,0,0"
             HorizontalAlignment="Center"
-            VerticalAlignment="Center"
+            VerticalAlignment="Top"
             Background="#e8e8e8"
             CornerRadius="5">
             <TextBlock

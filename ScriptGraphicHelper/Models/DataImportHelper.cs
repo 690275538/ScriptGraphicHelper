@@ -2,6 +2,7 @@
 using Avalonia.Media;
 using ScriptGraphicHelper.Converters;
 using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace ScriptGraphicHelper.Models
 {
@@ -34,7 +35,14 @@ namespace ScriptGraphicHelper.Models
             }
             else if (str.IndexOf("none") != -1 || str.IndexOf("left") != -1 || str.IndexOf("center") != -1 || str.IndexOf("right") != -1)
             {
-                return AnthorStr(str);
+                if (str.IndexOf("[") != -1)
+                {
+                    return AnthorStr(str);
+                }
+                else
+                {
+                    return ATAnthorStr(str);
+                }
             }
             else if (info[0] == "autojs")
             {
@@ -336,6 +344,44 @@ namespace ScriptGraphicHelper.Models
                 colorInfo.Point = new Point(int.Parse(arr[1]), int.Parse(arr[2]));
                 colorInfo.Color = Color.Parse(arr[3].Replace("0x", "#"));
                 colorInfos.Add(colorInfo);
+            }
+            return colorInfos;
+        }
+
+        public static ObservableCollection<ColorInfo> ATAnthorStr(string str)
+        {
+            var colorInfos = new ObservableCollection<ColorInfo>();
+            var strArray = str.Split(",");
+            var width = -1;
+            var height = -1;
+
+            for (int i = 0; i < strArray.Length; i++)
+            {
+                var arr = strArray[i].Trim().Trim('"').Split("|");
+
+                if (arr.Length >= 3)
+                {
+                    if (width == -1)
+                    {
+                        width = int.Parse(strArray[i - 2].Trim());
+                        height = int.Parse(strArray[i - 1].Trim());
+                        ColorInfo.Width = width;
+                        ColorInfo.Height = height;
+                    }
+
+                    var colorInfo = new ColorInfo();
+                    switch (arr[0])
+                    {
+                        case "left": colorInfo.Anchor = AnchorType.Left; break;
+                        case "center": colorInfo.Anchor = AnchorType.Center; break;
+                        case "right": colorInfo.Anchor = AnchorType.Right; break;
+                        default: colorInfo.Anchor = AnchorType.None; break;
+                    }
+                    colorInfo.Index = colorInfos.Count;
+                    colorInfo.Point = new Point(int.Parse(arr[1]), int.Parse(arr[2]));
+                    colorInfo.Color = Color.Parse(arr[3].Replace("0x", "#"));
+                    colorInfos.Add(colorInfo);
+                }
             }
             return colorInfos;
         }
