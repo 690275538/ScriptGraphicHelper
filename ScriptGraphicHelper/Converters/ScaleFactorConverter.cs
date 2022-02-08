@@ -6,8 +6,12 @@ namespace ScriptGraphicHelper.Converters
 {
     class ScaleFactorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
+            if (value is null)
+            {
+                return null;
+            }
             var scaleFactor = (double)value;
             return scaleFactor switch
             {
@@ -27,8 +31,12 @@ namespace ScriptGraphicHelper.Converters
                 _ => 7
             };
         }
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
+            if (value is null)
+            {
+                return null;
+            }
             var scaleFactor = (int)value;
             return scaleFactor switch
             {

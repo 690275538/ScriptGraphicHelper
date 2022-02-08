@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Avalonia.Media;
 using System.Collections.Generic;
-using System.Linq;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Models
 {
@@ -29,6 +27,27 @@ namespace ScriptGraphicHelper.Models
             src[3] = (byte)(value & 0xFF);
             return src;
         }
+        public static int ToInt32(this byte[] value, int offset = 0)
+        {
+            int result;
+            result = (value[offset] << 24)
+                    | (value[offset + 1] << 16)
+                    | (value[offset + 2] << 8)
+                    | (value[offset + 3]);
+            return result;
+        }
+
+        public static void WriteInt32(this Stream stream, int number)
+        {
+            stream.Write(number.ToBytes());
+        }
+
+        public static int ReadInt32(this Stream stream)
+        {
+            var bytes = new byte[4];
+            stream.Read(bytes, 0, 4);
+            return bytes.ToInt32();
+        }
 
         public static List<string> GetLocalAddress()
         {
@@ -42,6 +61,11 @@ namespace ScriptGraphicHelper.Models
                 }
             }
             return result;
+        }
+
+        public static string ToHexString(this Color color)
+        {
+            return $"0x{color.R:x2}{color.G:x2}{color.B:x2}";
         }
     }
 }

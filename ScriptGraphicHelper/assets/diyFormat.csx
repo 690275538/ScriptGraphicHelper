@@ -75,9 +75,9 @@ namespace CreateColorStrHelper
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - firstPoint.X;
-                        var OffsetY = colorInfo.Point.Y - firstPoint.Y;
-                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        var offsetX = colorInfo.Point.X - firstPoint.X;
+                        var offsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += offsetX.ToString() + "|" + offsetY.ToString() + "|" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
                         colorInfo.Color.B.ToString("x2") + ",";
                     }
                 }
@@ -109,9 +109,9 @@ namespace CreateColorStrHelper
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - firstPoint.X;
-                        var OffsetY = colorInfo.Point.Y - firstPoint.Y;
-                        result += "[" + OffsetX.ToString() + "," + OffsetY.ToString() + ",\"#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        var offsetX = colorInfo.Point.X - firstPoint.X;
+                        var offsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += "[" + offsetX.ToString() + "," + offsetY.ToString() + ",\"#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
                             colorInfo.Color.B.ToString("x2") + "\"],";
                     }
                 }

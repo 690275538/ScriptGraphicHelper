@@ -104,9 +104,10 @@ namespace ScriptGraphicHelper.ViewModels.Core
                 return false;
             }
 
-            var list = new CommandParameters();
-
-            list.Sender = sender;
+            var list = new CommandParameters
+            {
+                Sender = sender
+            };
 
             if (this.InputConverter is { })
             {

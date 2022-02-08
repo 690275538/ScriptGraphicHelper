@@ -12,7 +12,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class AdbHelper : BaseHelper
     {
-        public override Action<Bitmap> Action { get; set; }
+        public override Action<Bitmap>? SuccessCallBack { get; set; }
+        public override Action<string>? FailCallBack { get; set; }
         public override string Path { get; } = AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/") + "assets/adb/";
         public override string Name { get; } = "Adb连接";
 
@@ -50,15 +51,19 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
             return await Task.Run(() =>
              {
                  var output = PipeCmd("devices");
-                 var array = output.Substring(output.IndexOf("List of devices attached") + 16).Split("\r\n");
+                 var array = output.Split("\r\n");
                  for (var i = 0; i < array.Length; i++)
                  {
-                     var deviceInfo = array[i].Split("dev");
+                     var deviceInfo = array[i].Split("\t");
                      if (deviceInfo.Length == 2)
                      {
-                         this.DeviceInfos.Add(new KeyValuePair<int, string>(this.DeviceInfos.Count, deviceInfo[0].Trim()));
+                         if (deviceInfo[1].Trim() == "device")
+                         {
+                             this.DeviceInfos.Add(new KeyValuePair<int, string>(this.DeviceInfos.Count, deviceInfo[0].Trim()));
+                         }
                      }
                  }
+
                  if (this.DeviceInfos.Count == 0)
                  {
                      this.DeviceInfos.Add(new KeyValuePair<int, string>(0, "null"));
@@ -77,11 +82,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                  PipeCmd($"-s { this.DeviceInfos[index].Value }  exec-out screencap -p > { fullName }");
                  for (var i = 0; i < 50; i++)
                  {
+                     Thread.Sleep(100);
                      if (File.Exists(fullName))
                      {
                          break;
                      }
-                     Thread.Sleep(100);
                  }
                  FileStream stream = new(fullName, FileMode.Open, FileAccess.Read);
                  var bitmap = new Bitmap(stream);
@@ -90,18 +95,12 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                  GraphicHelper.KeepScreen(sKBitmap);
                  sKBitmap.Dispose();
                  stream.Dispose();
-                 this.Action?.Invoke(bitmap);
+                 this.SuccessCallBack?.Invoke(bitmap);
              }).ContinueWith((t) =>
              {
                  if (t.Exception != null)
-                     MessageBox.ShowAsync(t.Exception.ToString());
-             }); ;
-        }
-
-
-        public string[] List(int index)
-        {
-            return Array.Empty<string>();
+                     this.FailCallBack?.Invoke(t.Exception.ToString());
+             });
         }
 
         public string PipeCmd(string theCommand)

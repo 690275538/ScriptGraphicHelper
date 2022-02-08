@@ -7,7 +7,6 @@ using Avalonia.Threading;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Converters;
 using ScriptGraphicHelper.Models;
-using ScriptGraphicHelper.Models.ScreenshotHelpers;
 using ScriptGraphicHelper.Models.UnmanagedMethods;
 using ScriptGraphicHelper.ViewModels.Core;
 using ScriptGraphicHelper.Views;
@@ -144,9 +143,9 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                     else
                     {
-                        if ((DateTime.Now - AddColorInfoTime).TotalMilliseconds > 500)
+                        if ((DateTime.Now - this.AddColorInfoTime).TotalMilliseconds > 500)
                         {
-                            AddColorInfoTime = DateTime.Now;
+                            this.AddColorInfoTime = DateTime.Now;
 
                             var color = GraphicHelper.GetPixel(sx, sy);
 
@@ -156,7 +155,10 @@ namespace ScriptGraphicHelper.ViewModels
                                 ColorInfo.Height = this.ImgHeight;
                             }
 
-                            if (this.FormatSelectedIndex == FormatMode.anchorsFindStr || this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
+                            if (this.FormatSelectedIndex == FormatMode.AnchorsFindStr 
+                            || this.FormatSelectedIndex == FormatMode.AnchorsCmpStr
+                            || this.FormatSelectedIndex == FormatMode.ATAnchorsFindStr
+                            || this.FormatSelectedIndex == FormatMode.ATAnchorsCmpStr)
                             {
                                 var anchor = AnchorType.None;
                                 var quarterWidth = this.ImgWidth / 4;
@@ -225,7 +227,7 @@ namespace ScriptGraphicHelper.ViewModels
                     this.EmulatorInfo = await ScreenshotHelperBridge.Initialize();
                     this.EmulatorSelectedIndex = -1;
 
-                    ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select].Action = new Action<Bitmap>((bitmap) =>
+                    ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select].SuccessCallBack = new Action<Bitmap>((bitmap) =>
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
@@ -241,6 +243,11 @@ namespace ScriptGraphicHelper.ViewModels
                         });
                     });
 
+                    ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select].FailCallBack = new Action<string>((errorMessage) =>
+                    {
+                        MessageBox.ShowAsync(errorMessage);
+                        this.WindowCursor = new Cursor(StandardCursorType.Arrow);
+                    });
 
                 }
                 else if (ScreenshotHelperBridge.State == LinkState.Starting)
@@ -265,7 +272,9 @@ namespace ScriptGraphicHelper.ViewModels
             try
             {
                 this.WindowCursor = new Cursor(StandardCursorType.Wait);
-                if (ScreenshotHelperBridge.Select == -1 || ScreenshotHelperBridge.Index == -1)
+                if (ScreenshotHelperBridge.Select == -1
+                    || ScreenshotHelperBridge.Index == -1 ||
+                    ScreenshotHelperBridge.Info[ScreenshotHelperBridge.Index].Value == "null")
                 {
                     MessageBox.ShowAsync("ÇëÏÈÅäÖÃ -> (Ä£ÄâÆ÷/tcp/¾ä±ú)");
                     this.WindowCursor = new Cursor(StandardCursorType.Arrow);
@@ -478,9 +487,9 @@ namespace ScriptGraphicHelper.ViewModels
             if (this.Img != null && this.ColorInfos.Count > 0)
             {
                 var sims = new int[] { 100, 95, 90, 85, 80, 0 };
-                if (this.FormatSelectedIndex == FormatMode.compareStr || this.FormatSelectedIndex == FormatMode.anjianCompareStr || this.FormatSelectedIndex == FormatMode.cdCompareStr || this.FormatSelectedIndex == FormatMode.diyCompareStr)
+                if (this.FormatSelectedIndex == FormatMode.CmpStr || this.FormatSelectedIndex == FormatMode.AnjianCmpStr || this.FormatSelectedIndex == FormatMode.CDCmpStr || this.FormatSelectedIndex == FormatMode.DiyCmpStr)
                 {
-                    var str = CreateColorStrHelper.Create(FormatMode.compareStr, this.ColorInfos);
+                    var str = CreateColorStrHelper.Create(FormatMode.CmpStr, this.ColorInfos);
 
                     var result = GraphicHelper.CompareColorEx(str.Trim('"'), sims[this.SimSelectedIndex]);
                     if (!result.Result)
@@ -489,11 +498,11 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                     this.TestResult = result.Result.ToString();
                 }
-                else if (this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
+                else if (this.FormatSelectedIndex == FormatMode.AnchorsCmpStr || this.FormatSelectedIndex == FormatMode.ATAnchorsCmpStr)
                 {
                     var width = ColorInfo.Width;
                     var height = ColorInfo.Height;
-                    var str = CreateColorStrHelper.Create(FormatMode.anchorsCompareStr4Test, this.ColorInfos);
+                    var str = CreateColorStrHelper.Create(FormatMode.AnchorsCmpStr4Test, this.ColorInfos);
 
                     var result = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sims[this.SimSelectedIndex]);
                     if (!result.Result)
@@ -502,11 +511,11 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                     this.TestResult = result.Result.ToString();
                 }
-                else if (this.FormatSelectedIndex == FormatMode.anchorsFindStr)
+                else if (this.FormatSelectedIndex == FormatMode.AnchorsFindStr || this.FormatSelectedIndex == FormatMode.ATAnchorsFindStr)
                 {
                     var width = ColorInfo.Width;
                     var height = ColorInfo.Height;
-                    var str = CreateColorStrHelper.Create(FormatMode.anchorsFindStr4Test, this.ColorInfos);
+                    var str = CreateColorStrHelper.Create(FormatMode.AnchorsFindStr4Test, this.ColorInfos);
                     var result = GraphicHelper.AnchorsFindColor(new Range(0, 0, width - 1, height - 1), width, height, str.Trim('"'), sims[this.SimSelectedIndex]);
 
                     this.TestResult = result.ToString();
@@ -521,7 +530,7 @@ namespace ScriptGraphicHelper.ViewModels
                 }
                 else
                 {
-                    var str = CreateColorStrHelper.Create(FormatMode.findStr4Test, this.ColorInfos);
+                    var str = CreateColorStrHelper.Create(FormatMode.FindStr4Test, this.ColorInfos);
                     var strArray = str.Split("\",\"");
                     if (strArray[1].Length <= 3)
                     {
@@ -530,7 +539,7 @@ namespace ScriptGraphicHelper.ViewModels
                         return;
                     }
                     var _str = strArray[0].Split(",\"");
-                    var result = GraphicHelper.FindMultiColor(0, 0, (int)(ImgWidth - 1), (int)(ImgHeight - 1), _str[^1].Trim('"'), strArray[1].Trim('"'), sims[this.SimSelectedIndex]);
+                    var result = GraphicHelper.FindMultiColor(0, 0, (int)(this.ImgWidth - 1), (int)(this.ImgHeight - 1), _str[^1].Trim('"'), strArray[1].Trim('"'), sims[this.SimSelectedIndex]);
 
                     this.TestResult = result.ToString();
 
@@ -555,7 +564,7 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     this.Rect = string.Format("[{0}]", rect.ToString());
                 }
-                else if (this.FormatSelectedIndex == FormatMode.anchorsCompareStr || this.FormatSelectedIndex == FormatMode.anchorsFindStr)
+                else if (this.FormatSelectedIndex == FormatMode.AnchorsCmpStr || this.FormatSelectedIndex == FormatMode.AnchorsFindStr)
                 {
                     this.Rect = rect.ToString(2);
                 }
@@ -602,8 +611,8 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 return;
             }
-            var x = (int)this.PointX;
-            var y = (int)this.PointY;
+            var x = this.PointX;
+            var y = this.PointY;
             var key = (string)param;
 
             var color = GraphicHelper.GetPixel(x, y);
@@ -616,7 +625,10 @@ namespace ScriptGraphicHelper.ViewModels
             }
 
             var anchor = AnchorType.None;
-            if (this.FormatSelectedIndex == FormatMode.anchorsFindStr || this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
+            if (this.FormatSelectedIndex == FormatMode.AnchorsFindStr
+            || this.FormatSelectedIndex == FormatMode.AnchorsCmpStr
+            || this.FormatSelectedIndex == FormatMode.ATAnchorsFindStr
+            || this.FormatSelectedIndex == FormatMode.ATAnchorsCmpStr)
             {
                 if (key == "A")
                     anchor = AnchorType.Left;
@@ -897,7 +909,7 @@ namespace ScriptGraphicHelper.ViewModels
             var imgWidth = this.ImgWidth - 1;
             var imgHeight = this.ImgHeight - 1;
 
-            if (this.FormatSelectedIndex == FormatMode.anchorsFindStr || this.FormatSelectedIndex == FormatMode.anchorsCompareStr)
+            if (this.FormatSelectedIndex == FormatMode.AnchorsFindStr || this.FormatSelectedIndex == FormatMode.AnchorsCmpStr)
             {
                 imgWidth = ColorInfo.Width - 1;
                 imgHeight = ColorInfo.Height - 1;

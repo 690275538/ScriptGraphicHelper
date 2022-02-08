@@ -1,5 +1,4 @@
-﻿using Avalonia.Media.Imaging;
-using ScriptGraphicHelper.Models.ScreenshotHelpers;
+﻿using ScriptGraphicHelper.Models.ScreenshotHelpers;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
@@ -13,7 +12,6 @@ namespace ScriptGraphicHelper.Models
         Waiting = 0,
         Starting = 1,
         success = 2
-
     }
 
     public static class ScreenshotHelperBridge
@@ -26,7 +24,7 @@ namespace ScriptGraphicHelper.Models
         private static int _index = -1;
         public static int Index
         {
-            get { return _index; }
+            get => _index;
             set
             {
                 if (value != -1)
@@ -49,17 +47,16 @@ namespace ScriptGraphicHelper.Models
                 Helpers.Add(new LdEmulatorHelper(3));
                 Helpers.Add(new YsEmulatorHelper());
                 Helpers.Add(new XyEmulatorHelper());
-
-                Helpers.Add(new AdbHelper());
                 try
                 {
                     Helpers.Add(new HwndHelper());
                 }
                 catch { }
+                Helpers.Add(new AdbHelper());
             }
 
-            Helpers.Add(new MoblieTcpHelper());
             Helpers.Add(new AJHelper());
+            Helpers.Add(new ATHelper());
 
             Result = new ObservableCollection<string>();
 
@@ -110,7 +107,7 @@ namespace ScriptGraphicHelper.Models
                 State = LinkState.Starting;
             }
         }
-        public async static Task<ObservableCollection<string>> Initialize()
+        public static async Task<ObservableCollection<string>> Initialize()
         {
             ObservableCollection<string> result = new();
             Info = await Helpers[Select].Initialize();

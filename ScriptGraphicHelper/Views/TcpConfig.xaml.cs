@@ -1,4 +1,3 @@
-using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
@@ -32,8 +31,8 @@ namespace ScriptGraphicHelper.Views
         private void WindowOpened(object sender, EventArgs e)
         {
             var comboBox = this.FindControl<ComboBox>("AddressList");
-            comboBox.Items = Addresses;
-            foreach (var address in Addresses)
+            comboBox.Items = this.Addresses;
+            foreach (var address in this.Addresses)
             {
                 if (address.StartsWith("192.168"))
                 {

@@ -11,11 +11,11 @@
 # 功能
 
 - 模拟器模式: 调用模拟器命令行进行截图, 无需手动连接adb(适用于雷电、夜神、逍遥)
-- tcp连接模式: 与设备通过tcp通信进行截图(需要安装服务助手.apk)
-- aj连接模式: 调用aj的vscode tcp端口进行截图(需要autojs.pro 8+, 并开启调试服务和悬浮窗)
-- adb连接模式: 与设备通过adb进行截图(usb/wifi)
+- AJ连接模式: 调用aj的tcp调试端口进行截图(需要安装autojs.pro 8, 并开启调试服务和悬浮窗)
+- AT连接模式: 调用astator的tcp调试端口进行截图(需要安装[astator](https://gitee.com/astator/astator), 并开启调试服务和悬浮窗)
+- ADB连接模式: 与设备通过adb进行截图(usb/wifi)
 - 句柄模式: 调用大漠进行前后台截图
-- 支持大漠、按键、触动、autojs、easyclick 以及自定义的格式代码生成
+- 支持大漠、按键、触动、autojs、easyclick、astator以及自定义的格式代码生成
 - 多分辨率适配的测试和代码生成(锚点格式)
 
 <br/>

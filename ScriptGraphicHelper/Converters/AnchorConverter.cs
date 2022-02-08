@@ -13,8 +13,12 @@ namespace ScriptGraphicHelper.Converters
     }
     class AnchorConverter : IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
+            if (value is null)
+            {
+                return null;
+            }
             var anchor = (AnchorType)value;
             return anchor switch
             {
@@ -26,8 +30,12 @@ namespace ScriptGraphicHelper.Converters
             };
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
+            if (value is null)
+            {
+                return null;
+            }
             var anchor = (int)value;
             return anchor switch
             {

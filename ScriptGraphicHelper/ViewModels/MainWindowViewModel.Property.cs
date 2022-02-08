@@ -57,7 +57,7 @@ namespace ScriptGraphicHelper.ViewModels
             }
         }
 
-        private FormatMode formatSelectedIndex = FormatMode.compareStr;
+        private FormatMode formatSelectedIndex = FormatMode.CmpStr;
         public FormatMode FormatSelectedIndex
         {
             get => this.formatSelectedIndex;
@@ -65,7 +65,10 @@ namespace ScriptGraphicHelper.ViewModels
             {
                 this.RaiseAndSetIfChanged(ref this.formatSelectedIndex, value);
                 Setting.Instance.FormatSelectedIndex = (int)value;
-                if (value == FormatMode.anchorsFindStr || value == FormatMode.anchorsCompareStr)
+                if (value == FormatMode.AnchorsFindStr
+                    || value == FormatMode.AnchorsCmpStr
+                    || value == FormatMode.ATAnchorsFindStr
+                    || value == FormatMode.ATAnchorsCmpStr)
                 {
                     this.DataGrid_IsVisible = false;
                     this.ImgMargin = new Thickness(170, 50, 340, 20);
@@ -305,10 +308,7 @@ namespace ScriptGraphicHelper.ViewModels
         public ObservableCollection<ColorInfo> ColorInfos
         {
             get => this.colorInfos;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref this.colorInfos, value);
-            }
+            set => this.RaiseAndSetIfChanged(ref this.colorInfos, value);
         }
 
         private int dataGridSelectedIndex;

@@ -31,7 +31,7 @@ namespace ScriptGraphicHelper.Models
         private int width;
         public int Width
         {
-            get { return this.width; }
+            get => this.width;
             set
             {
                 this.width = value;

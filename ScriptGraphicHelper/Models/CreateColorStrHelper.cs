@@ -1,7 +1,4 @@
 ﻿using Avalonia;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp.Scripting;
-using Microsoft.CodeAnalysis.Scripting;
 using Newtonsoft.Json;
 using ScriptGraphicHelper.Converters;
 using ScriptGraphicHelper.Engine;
@@ -11,30 +8,32 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using System.Threading.Tasks;
 
 namespace ScriptGraphicHelper.Models
 {
     public enum FormatMode
     {
-        compareStr = 0,
-        dmFindStr = 1,
-        anjianFindStr = 2,
-        anjianCompareStr = 3,
-        cdFindStr = 4,
-        cdCompareStr = 5,
-        autojsFindStr = 6,
-        autojsCompareStr = 7,
-        ecFindStr = 8,
-        ecCompareStr = 9,
-        diyFindStr = 10,
-        diyCompareStr = 11,
-        anchorsFindStr = 12,
-        anchorsCompareStr = 13,
-        anchorsFindStr4Test = 14,
-        anchorsCompareStr4Test = 15,
-        findStr4Test = 16
+        CmpStr = 0,
+        DMFindStr = 1,
+        AnjianFindStr = 2,
+        AnjianCmpStr = 3,
+        AutojsFindStr = 4,
+        AutojsCmpStr = 5,
+        DiyFindStr = 6,
+        DiyCmpStr = 7,
+        AnchorsFindStr = 8,
+        AnchorsCmpStr = 9,
+        ATFindStr = 10,
+        ATCmpStr = 11,
+        ATAnchorsFindStr = 12,
+        ATAnchorsCmpStr = 13,
+        CDFindStr = 14,
+        CDCmpStr = 15,
+        ECFindStr = 16,
+        ECCmpStr = 17,
+        AnchorsFindStr4Test = 18,
+        AnchorsCmpStr4Test = 19,
+        FindStr4Test = 20
 
     };
     public static class CreateColorStrHelper
@@ -45,23 +44,27 @@ namespace ScriptGraphicHelper.Models
             {
                 return mode switch
                 {
-                    FormatMode.compareStr => CompareStr(colorInfos),
-                    FormatMode.dmFindStr => DmFindStr(colorInfos, rect),
-                    FormatMode.anjianFindStr => AnjianFindStr(colorInfos, rect),
-                    FormatMode.anjianCompareStr => AnjianCompareStr(colorInfos),
-                    FormatMode.cdFindStr => CdFindStr(colorInfos, rect),
-                    FormatMode.cdCompareStr => CdCompareStr(colorInfos),
-                    FormatMode.autojsFindStr => AutojsFindStr(colorInfos, rect),
-                    FormatMode.autojsCompareStr => AutojsCompareStr(colorInfos),
-                    FormatMode.ecFindStr => EcFindStr(colorInfos, rect),
-                    FormatMode.ecCompareStr => EcCompareStr(colorInfos),
-                    FormatMode.diyFindStr => DiyFindStr(colorInfos, rect),
-                    FormatMode.diyCompareStr => DiyCompareStr(colorInfos),
-                    FormatMode.anchorsCompareStr => AnchorsCompareStr(colorInfos),
-                    FormatMode.anchorsFindStr => AnchorsFindStr(colorInfos, rect),
-                    FormatMode.anchorsCompareStr4Test => AnchorsCompareStr4Test(colorInfos),
-                    FormatMode.anchorsFindStr4Test => AnchorsCompareStr4Test(colorInfos),
-                    FormatMode.findStr4Test => FindStr4Test(colorInfos),
+                    FormatMode.CmpStr => CompareStr(colorInfos),
+                    FormatMode.DMFindStr => DmFindStr(colorInfos, rect),
+                    FormatMode.AnjianFindStr => AnjianFindStr(colorInfos, rect),
+                    FormatMode.AnjianCmpStr => AnjianCompareStr(colorInfos),
+                    FormatMode.CDFindStr => CdFindStr(colorInfos, rect),
+                    FormatMode.CDCmpStr => CdCompareStr(colorInfos),
+                    FormatMode.AutojsFindStr => AutojsFindStr(colorInfos, rect),
+                    FormatMode.AutojsCmpStr => AutojsCompareStr(colorInfos),
+                    FormatMode.ECFindStr => EcFindStr(colorInfos, rect),
+                    FormatMode.ECCmpStr => EcCompareStr(colorInfos),
+                    FormatMode.DiyFindStr => DiyFindStr(colorInfos, rect),
+                    FormatMode.DiyCmpStr => DiyCompareStr(colorInfos),
+                    FormatMode.AnchorsCmpStr => AnchorsCompareStr(colorInfos),
+                    FormatMode.AnchorsFindStr => AnchorsFindStr(colorInfos, rect),
+                    FormatMode.ATCmpStr => AstatorCompareStr(colorInfos),
+                    FormatMode.ATFindStr => AstatorFindStr(colorInfos, rect),
+                    FormatMode.ATAnchorsCmpStr => AstatorAnchorsCompareStr(colorInfos),
+                    FormatMode.ATAnchorsFindStr => AstatorAnchorsFindStr(colorInfos, rect),
+                    FormatMode.AnchorsCmpStr4Test => AnchorsCompareStr4Test(colorInfos),
+                    FormatMode.AnchorsFindStr4Test => AnchorsCompareStr4Test(colorInfos),
+                    FormatMode.FindStr4Test => FindStr4Test(colorInfos),
                     _ => CompareStr(colorInfos),
                 };
             }
@@ -70,30 +73,29 @@ namespace ScriptGraphicHelper.Models
                 MessageBox.ShowAsync(e.ToString());
                 return string.Empty;
             }
-
         }
         public static string Create(FormatMode mode, ObservableCollection<ColorInfo> colorInfos)
         {
             Range rect = new(0, 0, 0, 0);
             return mode switch
             {
-                FormatMode.compareStr => CompareStr(colorInfos),
-                FormatMode.dmFindStr => DmFindStr(colorInfos, rect),
-                FormatMode.anjianFindStr => AnjianFindStr(colorInfos, rect),
-                FormatMode.anjianCompareStr => AnjianCompareStr(colorInfos),
-                FormatMode.cdFindStr => CdFindStr(colorInfos, rect),
-                FormatMode.cdCompareStr => CdCompareStr(colorInfos),
-                FormatMode.autojsFindStr => AutojsFindStr(colorInfos, rect),
-                FormatMode.autojsCompareStr => AutojsCompareStr(colorInfos),
-                FormatMode.ecFindStr => EcFindStr(colorInfos, rect),
-                FormatMode.ecCompareStr => EcCompareStr(colorInfos),
-                FormatMode.diyFindStr => DiyFindStr(colorInfos, rect),
-                FormatMode.diyCompareStr => DiyCompareStr(colorInfos),
-                FormatMode.anchorsCompareStr => AnchorsCompareStr(colorInfos),
-                FormatMode.anchorsFindStr => AnchorsFindStr(colorInfos, rect),
-                FormatMode.anchorsCompareStr4Test => AnchorsCompareStr4Test(colorInfos),
-                FormatMode.anchorsFindStr4Test => AnchorsCompareStr4Test(colorInfos),
-                FormatMode.findStr4Test => FindStr4Test(colorInfos),
+                FormatMode.CmpStr => CompareStr(colorInfos),
+                FormatMode.DMFindStr => DmFindStr(colorInfos, rect),
+                FormatMode.AnjianFindStr => AnjianFindStr(colorInfos, rect),
+                FormatMode.AnjianCmpStr => AnjianCompareStr(colorInfos),
+                FormatMode.CDFindStr => CdFindStr(colorInfos, rect),
+                FormatMode.CDCmpStr => CdCompareStr(colorInfos),
+                FormatMode.AutojsFindStr => AutojsFindStr(colorInfos, rect),
+                FormatMode.AutojsCmpStr => AutojsCompareStr(colorInfos),
+                FormatMode.ECFindStr => EcFindStr(colorInfos, rect),
+                FormatMode.ECCmpStr => EcCompareStr(colorInfos),
+                FormatMode.DiyFindStr => DiyFindStr(colorInfos, rect),
+                FormatMode.DiyCmpStr => DiyCompareStr(colorInfos),
+                FormatMode.AnchorsCmpStr => AnchorsCompareStr(colorInfos),
+                FormatMode.AnchorsFindStr => AnchorsFindStr(colorInfos, rect),
+                FormatMode.AnchorsCmpStr4Test => AnchorsCompareStr4Test(colorInfos),
+                FormatMode.AnchorsFindStr4Test => AnchorsCompareStr4Test(colorInfos),
+                FormatMode.FindStr4Test => FindStr4Test(colorInfos),
                 _ => CompareStr(colorInfos),
             };
         }
@@ -259,8 +261,8 @@ namespace ScriptGraphicHelper.Models
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - startPoint.X;
-                        var OffsetY = colorInfo.Point.Y - startPoint.Y;
+                        var offsetX = colorInfo.Point.X - startPoint.X;
+                        var offsetY = colorInfo.Point.Y - startPoint.Y;
 
                         var res = diyFormat.FollowColorFormat;
 
@@ -272,11 +274,11 @@ namespace ScriptGraphicHelper.Models
 
                         if (res.IndexOf("{x}") != -1)
                         {
-                            res = res.Replace("{x}", OffsetX.ToString());
+                            res = res.Replace("{x}", offsetX.ToString());
                         }
                         if (res.IndexOf("{y}") != -1)
                         {
-                            res = res.Replace("{y}", OffsetY.ToString());
+                            res = res.Replace("{y}", offsetY.ToString());
                         }
                         if (res.IndexOf("{color}") != -1)
                         {
@@ -363,9 +365,9 @@ namespace ScriptGraphicHelper.Models
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - firstPoint.X;
-                        var OffsetY = colorInfo.Point.Y - firstPoint.Y;
-                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        var offsetX = colorInfo.Point.X - firstPoint.X;
+                        var offsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += offsetX.ToString() + "|" + offsetY.ToString() + "|" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
                         colorInfo.Color.B.ToString("x2") + ",";
 
                     }
@@ -395,9 +397,9 @@ namespace ScriptGraphicHelper.Models
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - firstPoint.X;
-                        var OffsetY = colorInfo.Point.Y - firstPoint.Y;
-                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|0x" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        var offsetX = colorInfo.Point.X - firstPoint.X;
+                        var offsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += offsetX.ToString() + "|" + offsetY.ToString() + "|0x" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
                         colorInfo.Color.B.ToString("x2") + ",";
                     }
                 }
@@ -439,9 +441,9 @@ namespace ScriptGraphicHelper.Models
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - firstPoint.X;
-                        var OffsetY = colorInfo.Point.Y - firstPoint.Y;
-                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.Color.B.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        var offsetX = colorInfo.Point.X - firstPoint.X;
+                        var offsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += offsetX.ToString() + "|" + offsetY.ToString() + "|" + colorInfo.Color.B.ToString("x2") + colorInfo.Color.G.ToString("x2") +
                         colorInfo.Color.R.ToString("x2") + ",";
                     }
                 }
@@ -470,9 +472,9 @@ namespace ScriptGraphicHelper.Models
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - firstPoint.X;
-                        var OffsetY = colorInfo.Point.Y - firstPoint.Y;
-                        result += "[" + OffsetX.ToString() + "," + OffsetY.ToString() + ",\"#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        var offsetX = colorInfo.Point.X - firstPoint.X;
+                        var offsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += "[" + offsetX.ToString() + "," + offsetY.ToString() + ",\"#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
                             colorInfo.Color.B.ToString("x2") + "\"],";
                     }
                 }
@@ -508,9 +510,9 @@ namespace ScriptGraphicHelper.Models
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - firstPoint.X;
-                        var OffsetY = colorInfo.Point.Y - firstPoint.Y;
-                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|0x" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        var offsetX = colorInfo.Point.X - firstPoint.X;
+                        var offsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += offsetX.ToString() + "|" + offsetY.ToString() + "|0x" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
                         colorInfo.Color.B.ToString("x2") + ",";
                     }
                 }
@@ -597,9 +599,9 @@ namespace ScriptGraphicHelper.Models
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - firstPoint.X;
-                        var OffsetY = colorInfo.Point.Y - firstPoint.Y;
-                        result += "[" + OffsetX.ToString() + "," + OffsetY.ToString() + ",\"#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        var offsetX = colorInfo.Point.X - firstPoint.X;
+                        var offsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += "[" + offsetX.ToString() + "," + offsetY.ToString() + ",\"#" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
                             colorInfo.Color.B.ToString("x2") + "\"],";
                     }
                 }
@@ -683,6 +685,76 @@ namespace ScriptGraphicHelper.Models
             return result;
         }
 
+        private static string AstatorCompareStr(ObservableCollection<ColorInfo> colorInfos)
+        {
+            var result = "\"";
+            foreach (var colorInfo in colorInfos)
+            {
+                if (colorInfo.IsChecked)
+                {
+                    result += $"{colorInfo.Point.X}|{colorInfo.Point.Y}|{colorInfo.Color.ToHexString()},";
+                }
+            }
+            result = result.Trim(',');
+            result += "\"";
+            return result;
+        }
+
+        private static string AstatorAnchorsCompareStr(ObservableCollection<ColorInfo> colorInfos)
+        {
+            var result = $"\"{ColorInfo.Width},{ColorInfo.Height},";
+            foreach (var colorInfo in colorInfos)
+            {
+                if (colorInfo.IsChecked)
+                {
+                    result += $"{colorInfo.Anchor.ToString().ToLower()}|{colorInfo.Point.X}|{colorInfo.Point.Y}|{colorInfo.Color.ToHexString()},";
+                }
+            }
+            result = result.Trim(',');
+            result += "\"";
+            return result;
+        }
+        private static string AstatorFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        {
+            var result = string.Empty;
+            if (Setting.Instance.AddRange)
+            {
+                result += $"\"{rect.ToString()}\",";
+            }
+            result += "\"";
+            foreach (var colorInfo in colorInfos)
+            {
+                if (colorInfo.IsChecked)
+                {
+                    result += $"{colorInfo.Point.X}|{colorInfo.Point.Y}|{colorInfo.Color.ToHexString()},";
+                }
+            }
+            result = result.Trim(',');
+            result += "\"";
+            return result;
+        }
+
+        private static string AstatorAnchorsFindStr(ObservableCollection<ColorInfo> colorInfos, Range rect)
+        {
+            var result = string.Empty;
+            if (Setting.Instance.AddRange)
+            {
+                result += $"\"{rect.ToString(2)}\",";
+            }
+
+            result += $"\"{ColorInfo.Width},{ColorInfo.Height},";
+            foreach (var colorInfo in colorInfos)
+            {
+                if (colorInfo.IsChecked)
+                {
+                    result += $"{colorInfo.Anchor.ToString().ToLower()}|{colorInfo.Point.X}|{colorInfo.Point.Y}|{colorInfo.Color.ToHexString()},";
+                }
+            }
+            result = result.Trim(',');
+            result += "\"";
+            return result;
+        }
+
         private static string AnchorsCompareStr4Test(ObservableCollection<ColorInfo> colorInfos)
         {
             var result = "\"";
@@ -718,9 +790,9 @@ namespace ScriptGraphicHelper.Models
                     }
                     else
                     {
-                        var OffsetX = colorInfo.Point.X - firstPoint.X;
-                        var OffsetY = colorInfo.Point.Y - firstPoint.Y;
-                        result += OffsetX.ToString() + "|" + OffsetY.ToString() + "|" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
+                        var offsetX = colorInfo.Point.X - firstPoint.X;
+                        var offsetY = colorInfo.Point.Y - firstPoint.Y;
+                        result += offsetX.ToString() + "|" + offsetY.ToString() + "|" + colorInfo.Color.R.ToString("x2") + colorInfo.Color.G.ToString("x2") +
                         colorInfo.Color.B.ToString("x2") + ",";
 
                     }

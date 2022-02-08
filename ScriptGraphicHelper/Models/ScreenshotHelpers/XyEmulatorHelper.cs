@@ -1,5 +1,4 @@
 ﻿using Avalonia.Media.Imaging;
-using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
 using System.Collections.Generic;
@@ -11,7 +10,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class XyEmulatorHelper : BaseHelper
     {
-        public override Action<Bitmap>? Action { get; set; }
+        public override Action<Bitmap>? SuccessCallBack { get; set; }
+        public override Action<string>? FailCallBack { get; set; }
         public override string Path { get; } = string.Empty;
         public override string Name { get; } = string.Empty;
         public string BmpPath { get; set; } = string.Empty;
@@ -74,12 +74,12 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                  GraphicHelper.KeepScreen(sKBitmap);
                  sKBitmap.Dispose();
                  stream.Dispose();
-                 this.Action?.Invoke(bitmap);
+                 this.SuccessCallBack?.Invoke(bitmap);
              }).ContinueWith((t) =>
              {
                  if (t.Exception != null)
-                     MessageBox.ShowAsync(t.Exception.ToString());
-             }); ;
+                     this.FailCallBack?.Invoke(t.Exception.ToString());
+             });
         }
 
         public XyEmulatorHelper()//初始化, 获取模拟器路径

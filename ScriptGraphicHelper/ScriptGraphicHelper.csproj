@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net5.0</TargetFramework>
-		<Nullable>disable</Nullable>
+		<Nullable>enable</Nullable>
 		<Platforms>x64;x86</Platforms>
 		<ApplicationIcon>assets\ico.ico</ApplicationIcon>
 		<Version>1.3.6</Version>
@@ -92,14 +92,14 @@
 		<None Include="..\.editorconfig" Link=".editorconfig" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="0.10.10" />
-		<PackageReference Include="Avalonia.Desktop" Version="0.10.10" />
-		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.10" />
-		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.10" />
-		<PackageReference Include="Avalonia.Svg.Skia" Version="0.10.10" />
-		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.10.4" />
+		<PackageReference Include="Avalonia" Version="0.10.11" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.11" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.11" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11" />
+		<PackageReference Include="Avalonia.Svg.Skia" Version="0.10.11.1" />
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.11.5" />
 		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.0.1" />
-		<PackageReference Include="Microsoft.Win32.Registry" Version="6.0.0-preview.6.21315.2" />
+		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 	<ItemGroup>
@@ -175,7 +175,7 @@
 		<None Update="assets\aiming.cur">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="mouse.dll">
+		<None Update="Assets\mouse.dll">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>

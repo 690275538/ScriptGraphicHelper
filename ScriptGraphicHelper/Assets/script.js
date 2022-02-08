@@ -1,24 +1,8 @@
-
 importClass(java.io.OutputStream);
 importClass(java.net.Socket);
 importClass(java.net.ServerSocket);
-
-let engine = null;
-let _engines = engines.all();
-
-for (let i = 0; i < _engines.length; i++) {
-    if (_engines[i].getSource().toString().indexOf("cap_script") != -1) {
-        engine = _engines[i];
-    }
-}
-
-if (engine == null) {
-    alert("获取常驻脚本对象失败, 请在图色助手重新连接aj!");
-    exit();
-}
-
-let img = engine.getRuntime().images.captureScreen();
-
+importClass(java.nio.ByteBuffer);
+importClass(java.nio.ByteOrder);
 
 function int2Bytes(num) {
     let bytes = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 4);
@@ -28,32 +12,91 @@ function int2Bytes(num) {
     return bytes;
 }
 
+function makePackData(key, desc, buffer) {
+    var size = 4 + 4 + 256 + 4 + 256 + 4;
+    if (buffer != null) {
+        size += buffer.length;
+    }
 
-let socket;
-let stream;
-let remoteIP;
+    var byteBuffer = ByteBuffer.allocate(size);
+    byteBuffer.order(ByteOrder.BIG_ENDIAN);
 
-try {
-    socket = new Socket(remoteIP, 5678);
-    stream = socket.getOutputStream();
+    byteBuffer.put(int2Bytes(size - 4));
 
-    let img_data = images.toBytes(img);
+    var keyBytes = new java.lang.String(key).getBytes();
+    byteBuffer.put(int2Bytes(keyBytes.length));
+    byteBuffer.put(keyBytes);
 
-    let img_len = int2Bytes(img_data.length);
+    if (desc != null) {
+        byteBuffer.position(4 + 4 + 256);
+        var descBytes = new java.lang.String(desc).getBytes();
+        byteBuffer.put(int2Bytes(descBytes.length));
+        byteBuffer.put(descBytes);
+    }
 
-    stream.write(img_len);
-    stream.write(img_data);
+    if (buffer != null) {
+        byteBuffer.position(4 + 4 + 256 + 4 + 256);
+        byteBuffer.put(int2Bytes(buffer.length));
+        byteBuffer.put(buffer);
+    }
+
+    return byteBuffer.array();
 }
-catch (error) {
-    print(error);
+
+function send() {
+    let socket;
+    let stream;
+    let remoteIP;
+
+    try {
+        socket = new Socket(remoteIP, 5678);
+        stream = socket.getOutputStream();
+
+        if (!app.versionName.startsWith("Pro 8")) {
+            var data = makePackData("screenShot_fail", "AJ连接模式仅支持autojsPro 8!", null);
+            stream.write(data);
+            return;
+        }
+
+
+        let engine = null;
+        let _engines = engines.all();
+
+        for (let i = 0; i < _engines.length; i++) {
+            if (_engines[i].getSource().toString().indexOf("cap_script") != -1) {
+                engine = _engines[i];
+            }
+        }
+
+        if (engine == null) {
+            var data = makePackData("screenShot_fail", "获取常驻脚本对象失败, 请在图色助手重新连接aj!", null);
+            stream.write(data);
+            return;
+        }
+
+        let img = engine.getRuntime().images.captureScreen();
+        if (img != null) {
+            let img_data = images.toBytes(img);
+            var data = makePackData("screenShot_success", null, img_data);
+            stream.write(data);
+        }
+        else {
+            var data = makePackData("screenShot_fail", "获取截图失败!", null);
+            stream.write(data);
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+    finally {
+        if (stream != null) {
+            stream.close();
+        }
+
+        if (socket != null) {
+            socket.close();
+        }
+    }
 }
 
-if (stream != null) {
-    stream.close();
-}
-
-if (socket != null) {
-    socket.close();
-}
-
-exit();
+send();

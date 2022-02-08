@@ -343,7 +343,7 @@ namespace ScriptGraphicHelper.Models
             return bitmap;
         }
 
-        public async static Task<List<ColorInfo>> GetColorInfos(this WriteableBitmap drawBitmap, int size, int threshold)
+        public static async Task<List<ColorInfo>> GetColorInfos(this WriteableBitmap drawBitmap, int size, int threshold)
         {
             return await Task.Run(() =>
             {
@@ -446,10 +446,11 @@ namespace ScriptGraphicHelper.Models
         }
 
 
-        public async static Task<List<ColorInfo>> GetAllColorInfos(this WriteableBitmap drawBitmap, int size)
+        public static async Task<List<ColorInfo>> GetAllColorInfos(this WriteableBitmap drawBitmap, int size)
         {
-            return await Task.Run(() =>
+            return await Task.Run(async () =>
             {
+                var s = await drawBitmap.GetFindStrData();
                 var result = new List<ColorInfo>();
                 var temps = new List<ColorInfo>();
 
@@ -551,6 +552,75 @@ namespace ScriptGraphicHelper.Models
             }
 
             return result;
+        }
+
+
+
+        public static async Task<string> GetFindStrData(this WriteableBitmap drawBitmap)
+        {
+            return await Task.Run(() =>
+            {
+                var drawBmpData = drawBitmap.Lock();
+                unsafe
+                {
+                    var isIgnore = false;
+                    var ignoreColor = new byte[] { 255, 0, 0 };
+                    var ptr = (byte*)drawBmpData.Address;
+                    var site = 0;
+                    var ltColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+                    site = (Width - 1) * 4;
+                    var rtColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+                    site = (Height - 1) * RowStride;
+                    var lbColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+                    site = (Height - 1) * RowStride + (Width - 1) * 4;
+                    var rbColor = new byte[] { ptr[site], ptr[site + 1], ptr[site + 2] };
+
+                    if (ltColor.SequenceEqual(rtColor) && ltColor.SequenceEqual(lbColor) && ltColor.SequenceEqual(rbColor))
+                    {
+                        isIgnore = true;
+                        ignoreColor = ltColor;
+                    }
+
+
+                    var width = Width - 2;
+                    var stride = width + 4 - width % 4;
+
+                    var binaryStr = string.Empty;
+
+                    for (var y = 1; y < Height - 1; y++)
+                    {
+                        var location = y * RowStride + 4;
+                        var str = string.Empty;
+                        for (var x = 1; x < Width - 1; x++, location += 4)
+                        {
+                            var r = ptr[location + 2];
+                            var g = ptr[location + 1];
+                            var b = ptr[location];
+
+                            if (isIgnore && b == ignoreColor[0] && g == ignoreColor[1] && r == ignoreColor[2])
+                            {
+                                str += "0";
+                            }
+                            else
+                            {
+                                str += "1";
+                            }
+                        }
+                        binaryStr += str.PadRight(stride, '0');
+                    }
+
+                    var result = stride.ToString() + "$";
+
+                    for (var i = 0; i < binaryStr.Length; i += 4)
+                    {
+                        result += Convert.ToString(Convert.ToInt32(binaryStr[i..(i + 4)], 2), 16);
+                    }
+
+
+                    drawBmpData.Dispose();
+                    return result;
+                }
+            });
         }
     }
 }

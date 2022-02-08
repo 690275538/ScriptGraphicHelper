@@ -12,7 +12,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class HwndHelper : BaseHelper
     {
-        public override Action<Bitmap> Action { get; set; }
+        public override Action<Bitmap>? SuccessCallBack { get; set; }
+        public override Action<string>? FailCallBack { get; set; }
         public override string Path { get; } = "大漠句柄";
         public override string Name { get; } = "大漠句柄";
 
@@ -87,11 +88,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                  unsafe
                  {
                      var intPtr = (byte*)sKBitmap.GetPixels();
-                     for (int y = 0; y < height; y++)
+                     for (var y = 0; y < height; y++)
                      {
                          var intPtrStep = y * width * 4;
 
-                         for (int x = 0; x < width; x++)
+                         for (var x = 0; x < width; x++)
                          {
                              intPtr[intPtrStep] = data[dataStep];
                              intPtr[intPtrStep + 1] = data[dataStep + 1];
@@ -117,12 +118,12 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                  GraphicHelper.KeepScreen(sKBitmap);
                  var bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(width, height), new Vector(96, 96), sKBitmap.RowBytes);
                  sKBitmap.Dispose();
-                 this.Action?.Invoke(bitmap);
+                 this.SuccessCallBack?.Invoke(bitmap);
              }).ContinueWith((t) =>
              {
                  if (t.Exception != null)
-                     MessageBox.ShowAsync(t.Exception.ToString());
-             }); ;
+                     this.FailCallBack?.Invoke(t.Exception.ToString());
+             });
         }
     }
 }

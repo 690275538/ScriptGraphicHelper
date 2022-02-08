@@ -64,7 +64,7 @@ namespace ScriptGraphicHelper.Views
                 Setting.Instance.Width = this.Width;
                 Setting.Instance.Height = this.Height;
             }
-            
+
             var settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
             File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\setting.json", settingStr);
 
@@ -98,7 +98,7 @@ namespace ScriptGraphicHelper.Views
         {
             var info = new Info();
             info.ShowDialog(this);
-           // this.WindowState = WindowState.Minimized;
+            // this.WindowState = WindowState.Minimized;
         }
 
         private double defaultWidth;

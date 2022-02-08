@@ -35,7 +35,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
     {
         public override string Path { get; } = "AJ连接";
         public override string Name { get; } = "AJ连接";
-        public override Action<Bitmap>? Action { get; set; }
+        public override Action<Bitmap>? SuccessCallBack { get; set; }
+        public override Action<string>? FailCallBack { get; set; }
 
         public string LocalIP { get; set; } = string.Empty;
 
@@ -92,18 +93,18 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             var config = new AJConfig(Util.GetLocalAddress());
 
-            var result = await config.ShowDialog<(string,string)?>(MainWindow.Instance);
+            var result = await config.ShowDialog<(string, string)?>(MainWindow.Instance);
 
             if (result != null)
             {
-                LocalIP = result.Value.Item1;
-                RemoteIP = result.Value.Item2;
+                this.LocalIP = result.Value.Item1;
+                this.RemoteIP = result.Value.Item2;
 
                 await Task.Run(async () =>
                 {
                     try
                     {
-                        this.Client = new TcpClient(RemoteIP, 9317);
+                        this.Client = new TcpClient(this.RemoteIP, 9317);
                         var networkStream = this.Client.GetStream();
                         for (var i = 0; i < 50; i++)
                         {
@@ -160,7 +161,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 });
             }
 
-           
+
             return await GetList();
         }
 
@@ -176,62 +177,44 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
              });
         }
 
-        private void ConnectCallback(IAsyncResult ar)
+        private async void ConnectCallback(IAsyncResult ar)
         {
             if (ar.AsyncState != null)
             {
-                var listener = (TcpListener)ar.AsyncState;
-
-                if (listener.Server == null || !listener.Server.IsBound)
+                try
                 {
-                    return;
-                }
-
-                var client = listener.EndAcceptTcpClient(ar);
-
-                var stream = client.GetStream();
-
-                var offset = 0;
-                var header = new byte[4];
-                for (var i = 0; i < 100; i++)
-                {
-                    Thread.Sleep(50);
-                    if (stream.DataAvailable)
+                    var listener = (TcpListener)ar.AsyncState;
+                    if (listener.Server == null || !listener.Server.IsBound)
                     {
-                        while (offset < 4)
-                        {
-                            var len = stream.Read(header, offset, 4 - offset);
-                            offset += len;
-                        }
-                        break;
+                        return;
                     }
-                }
 
-                var imgLen = header.ToInt();
+                    var client = listener.EndAcceptTcpClient(ar);
+                    var stream = client.GetStream();
 
-                var imgData = new byte[imgLen];
+                    var data = await Stick.ReadPackAsync(stream);
 
-                offset = 0;
-
-                while (offset < imgLen)
-                {
-                    if (stream.DataAvailable)
+                    if (data.Key == "screenShot_success")
                     {
-                        var len = stream.Read(imgData, offset, imgLen - offset);
-                        offset += len;
+                        var sKBitmap = SKBitmap.Decode(data.Buffer);
+                        var pxFormat = sKBitmap.ColorType == SKColorType.Rgba8888 ? PixelFormat.Rgba8888 : PixelFormat.Bgra8888;
+                        var bitmap = new Bitmap(pxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
+                        sKBitmap.Dispose();
+                        this.SuccessCallBack?.Invoke(bitmap);
                     }
+                    else if (data.Key == "screenShot_fail")
+                    {
+                        this.FailCallBack?.Invoke(data.Description);
+                    }
+
+                    stream.Close();
+                    client.Close();
+                    this.Server?.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Server);
                 }
-
-                var sKBitmap = SKBitmap.Decode(imgData);
-                var pxFormat = sKBitmap.ColorType == SKColorType.Rgba8888 ? PixelFormat.Rgba8888 : PixelFormat.Bgra8888;
-                var bitmap = new Bitmap(pxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
-                sKBitmap.Dispose();
-
-                stream.Close();
-                client.Close();
-
-                this.Action?.Invoke(bitmap);
-                this.Server?.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Server);
+                catch (Exception ex)
+                {
+                    this.FailCallBack?.Invoke(ex.ToString());
+                }
             }
         }
 
