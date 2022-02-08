@@ -26,7 +26,6 @@
 
 - mac： aj连接模式, tcp模式(mac上需要把scriptGraphichelper改为可执行文件, chmod +x filename)
 
-
 <br/>
 
 # 展示
@@ -39,4 +38,4 @@
 
 # 请我喝杯咖啡?
 
-<img src="./screenshot/二维码.png" style="zoom:30%;" />
+<img src="./screenshot/二维码.png"/>

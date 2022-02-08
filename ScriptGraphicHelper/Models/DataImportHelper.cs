@@ -369,17 +369,19 @@ namespace ScriptGraphicHelper.Models
                         ColorInfo.Height = height;
                     }
 
-                    var colorInfo = new ColorInfo();
-                    switch (arr[0])
+                    var colorInfo = new ColorInfo
                     {
-                        case "left": colorInfo.Anchor = AnchorType.Left; break;
-                        case "center": colorInfo.Anchor = AnchorType.Center; break;
-                        case "right": colorInfo.Anchor = AnchorType.Right; break;
-                        default: colorInfo.Anchor = AnchorType.None; break;
-                    }
-                    colorInfo.Index = colorInfos.Count;
-                    colorInfo.Point = new Point(int.Parse(arr[1]), int.Parse(arr[2]));
-                    colorInfo.Color = Color.Parse(arr[3].Replace("0x", "#"));
+                        Anchor = arr[0] switch
+                        {
+                            "left" => AnchorType.Left,
+                            "center" => AnchorType.Center,
+                            "right" => AnchorType.Right,
+                            _ => AnchorType.None,
+                        },
+                        Index = colorInfos.Count,
+                        Point = new Point(int.Parse(arr[1]), int.Parse(arr[2])),
+                        Color = Color.Parse(arr[3].Replace("0x", "#"))
+                    };
                     colorInfos.Add(colorInfo);
                 }
             }
