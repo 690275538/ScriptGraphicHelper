@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace ScriptGraphicHelper.Converters
 {
-    public enum AnchorType
+    public enum AnchorMode
     {
         None = -1,
         Left = 0,
@@ -19,13 +19,13 @@ namespace ScriptGraphicHelper.Converters
             {
                 return null;
             }
-            var anchor = (AnchorType)value;
+            var anchor = (AnchorMode)value;
             return anchor switch
             {
-                AnchorType.None => 0,
-                AnchorType.Left => 1,
-                AnchorType.Center => 2,
-                AnchorType.Right => 3,
+                AnchorMode.None => -1,
+                AnchorMode.Left => 0,
+                AnchorMode.Center => 1,
+                AnchorMode.Right => 2,
                 _ => 0
             };
         }
@@ -39,11 +39,11 @@ namespace ScriptGraphicHelper.Converters
             var anchor = (int)value;
             return anchor switch
             {
-                0 => AnchorType.None,
-                1 => AnchorType.Left,
-                2 => AnchorType.Center,
-                3 => AnchorType.Right,
-                _ => AnchorType.None,
+                -1 => AnchorMode.None,
+                0 => AnchorMode.Left,
+                1 => AnchorMode.Center,
+                2 => AnchorMode.Right,
+                _ => AnchorMode.None,
             };
         }
     }

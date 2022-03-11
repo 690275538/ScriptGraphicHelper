@@ -108,7 +108,7 @@ namespace ScriptGraphicHelper.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref this.getColorInfosModeSelectedIndex, value);
-                Setting.Instance.GetColorInfosConfig.ModeSelectedIndex = value;
+                Settings.Instance.ImgEditor.ModeSelectedIndex = value;
             }
         }
 
@@ -119,7 +119,7 @@ namespace ScriptGraphicHelper.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref this.getColorInfosThreshold, value);
-                Setting.Instance.GetColorInfosConfig.Threshold = value;
+                Settings.Instance.ImgEditor.Threshold = value;
             }
         }
 
@@ -130,7 +130,7 @@ namespace ScriptGraphicHelper.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref this.getColorInfosSize, value);
-                Setting.Instance.GetColorInfosConfig.Size = value;
+                Settings.Instance.ImgEditor.Size = value;
             }
         }
 
@@ -143,9 +143,9 @@ namespace ScriptGraphicHelper.ViewModels
             this.WindowHeight = this.ImgHeight + 40;
 
             this.GetColorInfosBtnState = true;
-            this.GetColorInfosModeSelectedIndex = Setting.Instance.GetColorInfosConfig.ModeSelectedIndex;
-            this.GetColorInfosSize = Setting.Instance.GetColorInfosConfig.Size;
-            this.GetColorInfosThreshold = Setting.Instance.GetColorInfosConfig.Threshold;
+            this.GetColorInfosModeSelectedIndex = Settings.Instance.ImgEditor.ModeSelectedIndex;
+            this.GetColorInfosSize = Settings.Instance.ImgEditor.Size;
+            this.GetColorInfosThreshold = Settings.Instance.ImgEditor.Threshold;
 
             ImgEditorHelper.StartX = (int)range.Left;
             ImgEditorHelper.StartY = (int)range.Top;

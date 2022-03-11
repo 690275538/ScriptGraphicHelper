@@ -44,7 +44,7 @@ namespace ScriptGraphicHelper.Views
         {
             AddHandler(DragDrop.DropEvent, (this.DataContext as MainWindowViewModel).DropImage_Event);
             this.Handle = this.PlatformImpl.Handle.Handle;
-            this.ClientSize = new Size(Setting.Instance.Width, Setting.Instance.Height);
+            this.ClientSize = new Size(Settings.Instance.Width, Settings.Instance.Height);
             this.Timer.Tick += new EventHandler(HintMessage_Closed);
             this.Timer.Interval = new TimeSpan(0, 0, 8);
             this.Timer.Start();
@@ -61,12 +61,11 @@ namespace ScriptGraphicHelper.Views
         {
             if (this.WindowState != WindowState.FullScreen)
             {
-                Setting.Instance.Width = this.Width;
-                Setting.Instance.Height = this.Height;
+                Settings.Instance.Width = this.Width;
+                Settings.Instance.Height = this.Height;
             }
-
-            var settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
-            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\setting.json", settingStr);
+            var settingStr = JsonConvert.SerializeObject(Settings.Instance, Formatting.Indented, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore });
+            File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\settings.json", settingStr);
 
         }
 

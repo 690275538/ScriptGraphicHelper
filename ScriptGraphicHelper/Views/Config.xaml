@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="配置"
     Width="285"
-    Height="510"
+    Height="460"
     CanResize="false"
     Icon="/assets/ico.ico"
     Opened="Window_Opened"
@@ -117,38 +117,9 @@
                         BorderThickness="0" />
                 </Border>
             </StackPanel>
-            <StackPanel
-                Margin="10"
-                HorizontalAlignment="Right"
-                Orientation="Horizontal">
-                <TextBlock
-                    Width="100"
-                    VerticalAlignment="Center"
-                    Text="自定义生成模式" />
-                <Border
-                    Margin="10,0,0,0"
-                    BorderBrush="#666666"
-                    BorderThickness="0,0,0,1"
-                    CornerRadius="0">
-                    <ComboBox
-                        Name="DiyFormatMode"
-                        Width="120"
-                        HorizontalAlignment="Right"
-                        VerticalAlignment="Center"
-                        HorizontalContentAlignment="Center"
-                        VerticalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderBrush="#666666"
-                        BorderThickness="0"
-                        FontSize="14">
-                        <ComboBoxItem>json</ComboBoxItem>
-                        <ComboBoxItem>script</ComboBoxItem>
-                    </ComboBox>
-                </Border>
-            </StackPanel>
             <Button
                 Name="Ok"
-                Width="225"
+                Width="230"
                 Height="35"
                 Margin="10,20,10,10"
                 HorizontalContentAlignment="Center"

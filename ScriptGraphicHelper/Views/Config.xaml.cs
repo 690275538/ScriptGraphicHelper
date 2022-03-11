@@ -36,15 +36,13 @@ namespace ScriptGraphicHelper.Views
             var dmRegcode = this.FindControl<TextBox>("DmRegcode");
             var diyFormatMode = this.FindControl<ComboBox>("DiyFormatMode");
 
-            addRange.IsChecked = Setting.Instance.AddRange;
-            addInfo.IsChecked = Setting.Instance.AddInfo;
-            isOffset.IsChecked = Setting.Instance.IsOffset;
-            diySim.Text = Setting.Instance.DiySim.ToString();
-            ysPath.Text = Setting.Instance.YsPath;
-            xyPath.Text = Setting.Instance.XyPath;
-            dmRegcode.Text = Setting.Instance.DmRegcode;
-
-            diyFormatMode.SelectedIndex = Setting.Instance.DiyFormatMode.Trim() == "script" ? 1 : 0;
+            addRange.IsChecked = Settings.Instance.AddRange;
+            addInfo.IsChecked = Settings.Instance.AddInfo;
+            isOffset.IsChecked = Settings.Instance.IsOffset;
+            diySim.Text = Settings.Instance.DiySim.ToString();
+            ysPath.Text = Settings.Instance.YsPath;
+            xyPath.Text = Settings.Instance.XyPath;
+            dmRegcode.Text = Settings.Instance.DmRegcode;
         }
 
         private void Ok_Tapped(object sender, RoutedEventArgs e)
@@ -60,22 +58,21 @@ namespace ScriptGraphicHelper.Views
                 var dmRegcode = this.FindControl<TextBox>("DmRegcode");
                 var diyFormatMode = this.FindControl<ComboBox>("DiyFormatMode");
 
-                Setting.Instance.AddRange = addRange.IsChecked ?? false;
-                Setting.Instance.AddInfo = addInfo.IsChecked ?? false;
-                Setting.Instance.IsOffset = isOffset.IsChecked ?? false;
+                Settings.Instance.AddRange = addRange.IsChecked ?? false;
+                Settings.Instance.AddInfo = addInfo.IsChecked ?? false;
+                Settings.Instance.IsOffset = isOffset.IsChecked ?? false;
 
                 if (int.TryParse(diySim.Text.Trim(), out var sim))
                 {
-                    Setting.Instance.DiySim = sim;
+                    Settings.Instance.DiySim = sim;
                 }
 
-                Setting.Instance.YsPath = ysPath.Text ?? string.Empty;
-                Setting.Instance.XyPath = xyPath.Text ?? string.Empty;
-                Setting.Instance.DmRegcode = dmRegcode.Text ?? string.Empty;
-                Setting.Instance.DiyFormatMode = diyFormatMode.SelectedIndex == 1 ? "script" : "json";
+                Settings.Instance.YsPath = ysPath.Text ?? string.Empty;
+                Settings.Instance.XyPath = xyPath.Text ?? string.Empty;
+                Settings.Instance.DmRegcode = dmRegcode.Text ?? string.Empty;
 
-                var settingStr = JsonConvert.SerializeObject(Setting.Instance, Formatting.Indented);
-                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\setting.json", settingStr);
+                var settingStr = JsonConvert.SerializeObject(Settings.Instance, Formatting.Indented);
+                File.WriteAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\settings.json", settingStr);
                 Close();
             }
             catch { }

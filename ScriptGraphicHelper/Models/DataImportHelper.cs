@@ -307,7 +307,7 @@ namespace ScriptGraphicHelper.Models
                     var colorInfo = new ColorInfo
                     {
                         Index = colorInfos.Count,
-                        Anchor = AnchorType.None,
+                        Anchor = AnchorMode.None,
                         Point = new Point(startPoint.X + int.Parse(array[0]), startPoint.Y + int.Parse(array[1])),
                         Color = Color.Parse("#" + array[2])
                     };
@@ -319,30 +319,32 @@ namespace ScriptGraphicHelper.Models
 
         public static ObservableCollection<ColorInfo> AnthorStr(string str)
         {
+            str = str.Trim().Replace("\r\n", "").Replace("\n", "").Replace("\t", "");
             var colorInfos = new ObservableCollection<ColorInfo>();
             var strArray = str.Split(",");
             var width = int.Parse(strArray[0].Trim().Trim('['));
             var height = int.Parse(strArray[1].Trim());
             ColorInfo.Width = width;
             ColorInfo.Height = height;
-
             var startIndex = str.IndexOf("[[");
             var endIndex = str.IndexOf("]]", startIndex);
-            var array = str.Substring(startIndex, endIndex - startIndex).Replace("\r\n", "").Replace("[", "").Split("],");
+            var array = str.Substring(startIndex, endIndex - startIndex).Replace("[", "").Split("],");
             foreach (var item in array)
             {
                 var arr = item.Trim().Split(",");
-                var colorInfo = new ColorInfo();
-                switch (arr[0])
+                var colorInfo = new ColorInfo
                 {
-                    case "left": colorInfo.Anchor = AnchorType.Left; break;
-                    case "center": colorInfo.Anchor = AnchorType.Center; break;
-                    case "right": colorInfo.Anchor = AnchorType.Right; break;
-                    default: colorInfo.Anchor = AnchorType.None; break;
-                }
-                colorInfo.Index = colorInfos.Count;
-                colorInfo.Point = new Point(int.Parse(arr[1]), int.Parse(arr[2]));
-                colorInfo.Color = Color.Parse(arr[3].Replace("0x", "#"));
+                    Anchor = arr[0] switch
+                    {
+                        "left" => AnchorMode.Left,
+                        "center" => AnchorMode.Center,
+                        "right" => AnchorMode.Right,
+                        _ => AnchorMode.None,
+                    },
+                    Index = colorInfos.Count,
+                    Point = new Point(int.Parse(arr[1]), int.Parse(arr[2])),
+                    Color = Color.Parse(arr[3].Replace("0x", "#"))
+                };
                 colorInfos.Add(colorInfo);
             }
             return colorInfos;
@@ -361,7 +363,7 @@ namespace ScriptGraphicHelper.Models
 
                 if (arr.Length >= 3)
                 {
-                    if (width == -1)
+                    if (width == -1 || height == -1)
                     {
                         width = int.Parse(strArray[i - 2].Trim());
                         height = int.Parse(strArray[i - 1].Trim());
@@ -373,10 +375,10 @@ namespace ScriptGraphicHelper.Models
                     {
                         Anchor = arr[0] switch
                         {
-                            "left" => AnchorType.Left,
-                            "center" => AnchorType.Center,
-                            "right" => AnchorType.Right,
-                            _ => AnchorType.None,
+                            "left" => AnchorMode.Left,
+                            "center" => AnchorMode.Center,
+                            "right" => AnchorMode.Right,
+                            _ => AnchorMode.None,
                         },
                         Index = colorInfos.Count,
                         Point = new Point(int.Parse(arr[1]), int.Parse(arr[2])),

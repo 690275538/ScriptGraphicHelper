@@ -15,6 +15,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -29,19 +30,34 @@ namespace ScriptGraphicHelper.ViewModels
     {
         public MainWindowViewModel()
         {
-            try
+            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"assets\settings.json"))
             {
-                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"assets\setting.json");
-                var configStr = sr.ReadToEnd();
-                sr.Close();
-                configStr = configStr.Replace("\\\\", "\\").Replace("\\", "\\\\");
-                Setting.Instance = JsonConvert.DeserializeObject<Setting>(configStr) ?? new Setting();
-                this.WindowWidth = Setting.Instance.Width;
-                this.WindowHeight = Setting.Instance.Height;
-                this.SimSelectedIndex = Setting.Instance.SimSelectedIndex;
-                this.FormatSelectedIndex = (FormatMode)Setting.Instance.FormatSelectedIndex;
+                var settingsStr = File.ReadAllText(AppDomain.CurrentDomain.BaseDirectory + @"assets\settings.json").Replace("\\\\", "\\").Replace("\\", "\\\\");
+                var settings = JsonConvert.DeserializeObject<Settings>(settingsStr);
+                if (settings is null)
+                {
+                    settings = new Settings
+                    {
+                        Formats = FormatConfig.CreateFormats()
+                    };
+                }
+                Settings.Instance = settings;
             }
-            catch { }
+            else
+            {
+                Settings.Instance = new Settings
+                {
+                    Formats = FormatConfig.CreateFormats()
+                };
+            }
+
+            this.FormatItems = FormatConfig.GetEnabledFormats();
+
+            this.WindowWidth = Settings.Instance.Width;
+            this.WindowHeight = Settings.Instance.Height;
+            this.SimSelectedIndex = Settings.Instance.SimSelectedIndex;
+            this.FormatSelectedIndex = Settings.Instance.FormatSelectedIndex;
+
 
             this.ColorInfos = new ObservableCollection<ColorInfo>();
             this.LoupeWriteBmp = LoupeWriteBitmap.Init(241, 241);
@@ -143,7 +159,7 @@ namespace ScriptGraphicHelper.ViewModels
                     }
                     else
                     {
-                        if ((DateTime.Now - this.AddColorInfoTime).TotalMilliseconds > 350)
+                        if ((DateTime.Now - this.AddColorInfoTime).TotalMilliseconds > 200)
                         {
                             this.AddColorInfoTime = DateTime.Now;
 
@@ -155,32 +171,22 @@ namespace ScriptGraphicHelper.ViewModels
                                 ColorInfo.Height = this.ImgHeight;
                             }
 
-                            if (this.FormatSelectedIndex == FormatMode.AnchorsFindStr 
-                            || this.FormatSelectedIndex == FormatMode.AnchorsCmpStr
-                            || this.FormatSelectedIndex == FormatMode.ATAnchorsFindStr
-                            || this.FormatSelectedIndex == FormatMode.ATAnchorsCmpStr)
+                            var anchor = AnchorMode.None;
+                            var quarterWidth = this.ImgWidth / 4;
+                            if (sx > quarterWidth * 3)
                             {
-                                var anchor = AnchorType.None;
-                                var quarterWidth = this.ImgWidth / 4;
-                                if (sx > quarterWidth * 3)
-                                {
-                                    anchor = AnchorType.Right;
-                                }
-                                else if (sx > quarterWidth)
-                                {
-                                    anchor = AnchorType.Center;
-                                }
-                                else
-                                {
-                                    anchor = AnchorType.Left;
-                                }
-
-                                this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, anchor, sx, sy, color));
+                                anchor = AnchorMode.Right;
+                            }
+                            else if (sx > quarterWidth)
+                            {
+                                anchor = AnchorMode.Center;
                             }
                             else
                             {
-                                this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, sx, sy, color));
+                                anchor = AnchorMode.Left;
                             }
+
+                            this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, anchor, sx, sy, color));
 
                             this.DataGridHeight = (this.ColorInfos.Count + 1) * 40;
                         }
@@ -208,6 +214,7 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     temp.Add(item.Value);
                 }
+                ScreenshotHelperBridge.Info = list;
                 this.EmulatorInfo = temp;
             }
         });
@@ -308,7 +315,7 @@ namespace ScriptGraphicHelper.ViewModels
             this.Img = await GraphicHelper.TurnRight();
         }
 
-        public void DropImage_Event(object sender, DragEventArgs e)
+        public void DropImage_Event(object? sender, DragEventArgs e)
         {
             try
             {
@@ -487,60 +494,51 @@ namespace ScriptGraphicHelper.ViewModels
             if (this.Img != null && this.ColorInfos.Count > 0)
             {
                 var sims = new int[] { 100, 95, 90, 85, 80, 0 };
-                if (this.FormatSelectedIndex == FormatMode.CmpStr || this.FormatSelectedIndex == FormatMode.AnjianCmpStr || this.FormatSelectedIndex == FormatMode.CDCmpStr || this.FormatSelectedIndex == FormatMode.DiyCmpStr)
+                if (this.CurrentFormat.IsCompareMode is true)
                 {
-                    var str = CreateColorStrHelper.Create(FormatMode.CmpStr, this.ColorInfos);
+                    CompareResult result;
+                    if (this.CurrentFormat.AnchorIsEnabled is true)
+                    {
+                        var width = ColorInfo.Width;
+                        var height = ColorInfo.Height;
+                        var testStr = CreateColorStrHelper.Create(FormatMode.AnchorsCmpStrTest, this.ColorInfos);
+                        result = GraphicHelper.AnchorsCompareColor(width, height, testStr.Trim('"'), sims[this.SimSelectedIndex]);
+                    }
+                    else
+                    {
+                        var testStr = CreateColorStrHelper.Create(FormatMode.CmpStrTest, this.ColorInfos);
+                        result = GraphicHelper.CompareColorEx(testStr.Trim('"'), sims[this.SimSelectedIndex]);
+                    }
 
-                    var result = GraphicHelper.CompareColorEx(str.Trim('"'), sims[this.SimSelectedIndex]);
                     if (!result.Result)
                     {
                         MessageBox.ShowAsync(result.ErrorMessage);
                     }
                     this.TestResult = result.Result.ToString();
-                }
-                else if (this.FormatSelectedIndex == FormatMode.AnchorsCmpStr || this.FormatSelectedIndex == FormatMode.ATAnchorsCmpStr)
-                {
-                    var width = ColorInfo.Width;
-                    var height = ColorInfo.Height;
-                    var str = CreateColorStrHelper.Create(FormatMode.AnchorsCmpStr4Test, this.ColorInfos);
-
-                    var result = GraphicHelper.AnchorsCompareColor(width, height, str.Trim('"'), sims[this.SimSelectedIndex]);
-                    if (!result.Result)
-                    {
-                        MessageBox.ShowAsync(result.ErrorMessage);
-                    }
-                    this.TestResult = result.Result.ToString();
-                }
-                else if (this.FormatSelectedIndex == FormatMode.AnchorsFindStr || this.FormatSelectedIndex == FormatMode.ATAnchorsFindStr)
-                {
-                    var width = ColorInfo.Width;
-                    var height = ColorInfo.Height;
-                    var str = CreateColorStrHelper.Create(FormatMode.AnchorsFindStr4Test, this.ColorInfos);
-                    var result = GraphicHelper.AnchorsFindColor(new Range(0, 0, width - 1, height - 1), width, height, str.Trim('"'), sims[this.SimSelectedIndex]);
-
-                    this.TestResult = result.ToString();
-
-                    if (result.X >= 0 && result.Y >= 0)
-                    {
-                        this.FindedPoint_Margin = new(result.X * this.ScaleFactor - 36, result.Y * this.ScaleFactor - 69, 0, 0);
-                        this.FindedPoint_IsVisible = true;
-                        await Task.Delay(2500);
-                        this.FindedPoint_IsVisible = false;
-                    }
                 }
                 else
                 {
-                    var str = CreateColorStrHelper.Create(FormatMode.FindStr4Test, this.ColorInfos);
-                    var strArray = str.Split("\",\"");
-                    if (strArray[1].Length <= 3)
+                    if (colorInfos.Count < 2)
                     {
-                        MessageBox.ShowAsync("多点找色至少需要勾选两个颜色才可进行测试!", "错误");
+                        MessageBox.ShowAsync("错误", "多点找色至少需要勾选两个颜色才可进行测试!");
                         this.TestResult = "error";
                         return;
                     }
-                    var _str = strArray[0].Split(",\"");
-                    var result = GraphicHelper.FindMultiColor(0, 0, (int)(this.ImgWidth - 1), (int)(this.ImgHeight - 1), _str[^1].Trim('"'), strArray[1].Trim('"'), sims[this.SimSelectedIndex]);
-
+                    Point result;
+                    if (this.CurrentFormat.AnchorIsEnabled is true)
+                    {
+                        var width = ColorInfo.Width;
+                        var height = ColorInfo.Height;
+                        var testStr = CreateColorStrHelper.Create(FormatMode.AnchorsFindStrTest, this.ColorInfos);
+                        result = GraphicHelper.AnchorsFindColor(new Range(0, 0, width - 1, height - 1), width, height, testStr.Trim('"'), sims[this.SimSelectedIndex]);
+                    }
+                    else
+                    {
+                        var testStr = CreateColorStrHelper.Create(FormatMode.FindStrTest, this.ColorInfos);
+                        var strArray = testStr.Split("\",\"");
+                        var _str = strArray[0].Split(",\"");
+                        result = GraphicHelper.FindMultiColor(0, 0, (int)(this.ImgWidth - 1), (int)(this.ImgHeight - 1), _str[^1].Trim('"'), strArray[1].Trim('"'), sims[this.SimSelectedIndex]);
+                    }
                     this.TestResult = result.ToString();
 
                     if (result.X >= 0 && result.Y >= 0)
@@ -564,7 +562,7 @@ namespace ScriptGraphicHelper.ViewModels
                 {
                     this.Rect = string.Format("[{0}]", rect.ToString());
                 }
-                else if (this.FormatSelectedIndex == FormatMode.AnchorsCmpStr || this.FormatSelectedIndex == FormatMode.AnchorsFindStr)
+                else if (FormatConfig.GetFormat(this.FormatItems[this.formatSelectedIndex])!.AnchorIsEnabled is true)
                 {
                     this.Rect = rect.ToString(2);
                 }
@@ -573,7 +571,7 @@ namespace ScriptGraphicHelper.ViewModels
                     this.Rect = rect.ToString();
                 }
 
-                this.CreateStr = CreateColorStrHelper.Create(this.FormatSelectedIndex, this.ColorInfos, rect);
+                this.CreateStr = CreateColorStrHelper.Create(this.CurrentFormat.Name, this.ColorInfos, rect);
                 CreateStr_Copy_Click();
             }
         }
@@ -624,19 +622,15 @@ namespace ScriptGraphicHelper.ViewModels
                 ColorInfo.Height = this.ImgHeight;
             }
 
-            var anchor = AnchorType.None;
-            if (this.FormatSelectedIndex == FormatMode.AnchorsFindStr
-            || this.FormatSelectedIndex == FormatMode.AnchorsCmpStr
-            || this.FormatSelectedIndex == FormatMode.ATAnchorsFindStr
-            || this.FormatSelectedIndex == FormatMode.ATAnchorsCmpStr)
-            {
-                if (key == "A")
-                    anchor = AnchorType.Left;
-                else if (key == "S")
-                    anchor = AnchorType.Center;
-                else if (key == "D")
-                    anchor = AnchorType.Right;
-            }
+            var anchor = AnchorMode.None;
+
+            if (key == "A")
+                anchor = AnchorMode.Left;
+            else if (key == "S")
+                anchor = AnchorMode.Center;
+            else if (key == "D")
+                anchor = AnchorMode.Right;
+
             this.ColorInfos.Add(new ColorInfo(this.ColorInfos.Count, anchor, x, y, color));
             this.DataGridHeight = (this.ColorInfos.Count + 1) * 40;
         });
@@ -746,7 +740,7 @@ namespace ScriptGraphicHelper.ViewModels
                         var sim = sims[this.SimSelectedIndex];
                         if (sim == 0)
                         {
-                            sim = Setting.Instance.DiySim;
+                            sim = Settings.Instance.DiySim;
                         }
                         var result = DataImportHelper.Import(text);
 
@@ -778,16 +772,16 @@ namespace ScriptGraphicHelper.ViewModels
         public async void Key_SetConfig()
         {
             var config = new Config();
-            var setting = Setting.Instance;
+            var setting = Settings.Instance;
             var ysPath = setting.YsPath;
             var xyPath = setting.XyPath;
-            var ldpath3 = setting.Ldpath3;
-            var ldpath4 = setting.Ldpath4;
-            var ldpath64 = setting.Ldpath64;
+            var ldpath3 = setting.LdPath3;
+            var ldpath4 = setting.LdPath4;
+            var ldpath64 = setting.LdPath64;
 
             await config.ShowDialog(MainWindow.Instance);
 
-            if (ysPath != setting.YsPath || xyPath != setting.XyPath || ldpath3 != setting.Ldpath3 || ldpath4 != setting.Ldpath4 || ldpath64 != setting.Ldpath64)
+            if (ysPath != setting.YsPath || xyPath != setting.XyPath || ldpath3 != setting.LdPath3 || ldpath4 != setting.LdPath4 || ldpath64 != setting.LdPath64)
             {
                 ResetEmulatorOptions_Click();
             }
@@ -909,7 +903,7 @@ namespace ScriptGraphicHelper.ViewModels
             var imgWidth = this.ImgWidth - 1;
             var imgHeight = this.ImgHeight - 1;
 
-            if (this.FormatSelectedIndex == FormatMode.AnchorsFindStr || this.FormatSelectedIndex == FormatMode.AnchorsCmpStr)
+            if (this.CurrentFormat.AnchorIsEnabled is true)
             {
                 imgWidth = ColorInfo.Width - 1;
                 imgHeight = ColorInfo.Height - 1;
@@ -917,8 +911,8 @@ namespace ScriptGraphicHelper.ViewModels
 
             var left = imgWidth;
             var top = imgHeight;
-            double right = 0;
-            double bottom = 0;
+            var right = 0d;
+            var bottom = 0d;
             var mode_1 = -1;
             var mode_2 = -1;
 
@@ -929,12 +923,12 @@ namespace ScriptGraphicHelper.ViewModels
                     if (colorInfo.Point.X < left)
                     {
                         left = colorInfo.Point.X;
-                        mode_1 = colorInfo.Anchor == AnchorType.Left ? 0 : colorInfo.Anchor == AnchorType.Center ? 1 : colorInfo.Anchor == AnchorType.Right ? 2 : -1;
+                        mode_1 = colorInfo.Anchor == AnchorMode.Left ? 0 : colorInfo.Anchor == AnchorMode.Center ? 1 : colorInfo.Anchor == AnchorMode.Right ? 2 : -1;
                     }
                     if (colorInfo.Point.X > right)
                     {
                         right = colorInfo.Point.X;
-                        mode_2 = colorInfo.Anchor == AnchorType.Left ? 0 : colorInfo.Anchor == AnchorType.Center ? 1 : colorInfo.Anchor == AnchorType.Right ? 2 : -1;
+                        mode_2 = colorInfo.Anchor == AnchorMode.Left ? 0 : colorInfo.Anchor == AnchorMode.Center ? 1 : colorInfo.Anchor == AnchorMode.Right ? 2 : -1;
                     }
                     if (colorInfo.Point.Y < top)
                     {
@@ -944,10 +938,9 @@ namespace ScriptGraphicHelper.ViewModels
                     {
                         bottom = colorInfo.Point.Y;
                     }
-
                 }
             }
-            var tolerance = Setting.Instance.RangeTolerance;
+            var tolerance = Settings.Instance.RangeTolerance;
             return new Range(left >= tolerance ? left - tolerance : 0, top >= tolerance ? top - tolerance : 0, right + tolerance > imgWidth ? imgWidth : right + tolerance, bottom + tolerance > imgHeight ? imgHeight : bottom + tolerance, mode_1, mode_2);
 
         }

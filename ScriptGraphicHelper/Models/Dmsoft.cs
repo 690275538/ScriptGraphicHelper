@@ -52,7 +52,7 @@ public class Dmsoft
 
     public bool Reg()
     {
-        var regCode = Setting.Instance.DmRegcode;
+        var regCode = Settings.Instance.DmRegcode;
         if (regCode == string.Empty || regCode == "")
         {
             MessageBox.ShowAsync("错误, 需要在setting.json文件中填写大漠注册码");

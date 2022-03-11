@@ -35,7 +35,7 @@ namespace ScriptGraphicHelper.Models
             set
             {
                 this.width = value;
-                NotifyPropertyChanged("Width");
+                NotifyPropertyChanged(nameof(Width));
             }
         }
 

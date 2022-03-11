@@ -181,7 +181,7 @@
                     BorderThickness="0,0,0,1"
                     CornerRadius="0">
                     <ComboBox
-                        Name="Format"
+                        x:Name="Format"
                         Width="95"
                         HorizontalAlignment="Right"
                         VerticalAlignment="Center"
@@ -191,26 +191,8 @@
                         BorderBrush="#666666"
                         BorderThickness="0"
                         FontSize="14"
-                        SelectedIndex="{Binding FormatSelectedIndex, Mode=TwoWay}">
-                        <ComboBoxItem>多点比色</ComboBoxItem>
-                        <ComboBoxItem>大漠找色</ComboBoxItem>
-                        <ComboBoxItem>按键找色</ComboBoxItem>
-                        <ComboBoxItem>按键比色</ComboBoxItem>
-                        <ComboBoxItem>AJ找色</ComboBoxItem>
-                        <ComboBoxItem>AJ比色</ComboBoxItem>
-                        <ComboBoxItem>自定义找色</ComboBoxItem>
-                        <ComboBoxItem>自定义比色</ComboBoxItem>
-                        <ComboBoxItem>锚点找色</ComboBoxItem>
-                        <ComboBoxItem>锚点比色</ComboBoxItem>
-                        <ComboBoxItem>AT多点找色</ComboBoxItem>
-                        <ComboBoxItem>AT多点比色</ComboBoxItem>
-                        <ComboBoxItem>AT锚点找色</ComboBoxItem>
-                        <ComboBoxItem>AT锚点比色</ComboBoxItem>
-                        <ComboBoxItem>触动找色</ComboBoxItem>
-                        <ComboBoxItem>触动比色</ComboBoxItem>
-                        <ComboBoxItem>EC找色</ComboBoxItem>
-                        <ComboBoxItem>EC比色</ComboBoxItem>
-                    </ComboBox>
+                        Items="{Binding FormatItems}"
+                        SelectedIndex="{Binding FormatSelectedIndex, Mode=TwoWay}" />
                 </Border>
             </StackPanel>
             <StackPanel

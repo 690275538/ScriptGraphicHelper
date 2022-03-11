@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
+using ScriptGraphicHelper.Views;
 
 namespace ScriptGraphicHelper.Panels
 {

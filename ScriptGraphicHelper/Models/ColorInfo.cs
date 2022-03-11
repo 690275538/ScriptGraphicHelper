@@ -16,7 +16,7 @@ namespace ScriptGraphicHelper.Models
 
         public int Index { get; set; }
 
-        public AnchorType Anchor { get; set; } = AnchorType.None;
+        public AnchorMode Anchor { get; set; } = AnchorMode.None;
 
         public Point Point { get; set; }
 
@@ -46,7 +46,7 @@ namespace ScriptGraphicHelper.Models
             this.Point = new Point(x, y);
             this.Color = Color.FromRgb(color[0], color[1], color[2]);
             this.IsChecked = true;
-            this.Anchor = AnchorType.None;
+            this.Anchor = AnchorMode.None;
         }
 
         public ColorInfo(int index, int x, int y, Color color)
@@ -55,10 +55,10 @@ namespace ScriptGraphicHelper.Models
             this.Point = new Point(x, y);
             this.Color = color;
             this.IsChecked = true;
-            this.Anchor = AnchorType.None;
+            this.Anchor = AnchorMode.None;
         }
 
-        public ColorInfo(int index, AnchorType anchor, int x, int y, byte[] color)
+        public ColorInfo(int index, AnchorMode anchor, int x, int y, byte[] color)
         {
             this.Index = index;
             this.Anchor = anchor;

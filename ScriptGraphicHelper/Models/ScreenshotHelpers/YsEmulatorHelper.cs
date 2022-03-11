@@ -18,7 +18,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         public string BmpPath { get; set; }
         public YsEmulatorHelper()//初始化 , 获取模拟器路径
         {
-            var path = Setting.Instance.YsPath.Trim("\\".ToCharArray()) + "\\";
+            var path = Settings.Instance.YsPath.Trim("\\".ToCharArray()) + "\\";
             if (path != string.Empty && path != "")
             {
                 var index = path.LastIndexOf("\\");
@@ -47,7 +47,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     }
                 }
             }
-            return new string[] { };
+            return Array.Empty<string>();
         }
         public override bool IsStart(int index)
         {

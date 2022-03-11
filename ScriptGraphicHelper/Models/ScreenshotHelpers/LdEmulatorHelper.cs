@@ -29,9 +29,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     var Aimdir = Hkml.OpenSubKey("Software\\ChangZhi2\\dnplayer", true);
                     if (Aimdir == null)
                     {
-                        if (Setting.Instance.Ldpath3 != null && Setting.Instance.Ldpath3 != string.Empty)
+                        if (Settings.Instance.LdPath3 != null && Settings.Instance.LdPath3 != string.Empty)
                         {
-                            this.Path = Setting.Instance.Ldpath64;
+                            this.Path = Settings.Instance.LdPath3;
                         }
                         return;
                     }
@@ -44,9 +44,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     var Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer", true);
                     if (Aimdir == null)
                     {
-                        if (Setting.Instance.Ldpath4 != null && Setting.Instance.Ldpath4 != string.Empty)
+                        if (Settings.Instance.LdPath4 != null && Settings.Instance.LdPath4 != string.Empty)
                         {
-                            this.Path = Setting.Instance.Ldpath64;
+                            this.Path = Settings.Instance.LdPath4;
                         }
                         return;
                     }
@@ -59,9 +59,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     var Aimdir = Hkml.OpenSubKey("Software\\leidian\\ldplayer64", true);
                     if (Aimdir == null)
                     {
-                        if (Setting.Instance.Ldpath64 != null && Setting.Instance.Ldpath64 != string.Empty)
+                        if (Settings.Instance.LdPath64 != null && Settings.Instance.LdPath64 != string.Empty)
                         {
-                            this.Path = Setting.Instance.Ldpath64;
+                            this.Path = Settings.Instance.LdPath64;
                         }
                         return;
                     }
@@ -74,9 +74,9 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     var Aimdir = Hkml.OpenSubKey("Software\\baizhi\\lsplayer", true);
                     if (Aimdir == null)
                     {
-                        if (Setting.Instance.Ldpath64 != null && Setting.Instance.Ldpath64 != string.Empty)
+                        if (Settings.Instance.LdPath64 != null && Settings.Instance.LdPath64 != string.Empty)
                         {
-                            this.Path = Setting.Instance.Ldpath64;
+                            this.Path = Settings.Instance.LdPath64;
                         }
                         return;
                     }

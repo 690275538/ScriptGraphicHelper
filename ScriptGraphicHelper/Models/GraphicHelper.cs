@@ -282,10 +282,10 @@ namespace ScriptGraphicHelper.Models
             int findX;
             int findY;
 
-            var offset = Setting.Instance.IsOffset ? 1 : 0;
+            var offset = Settings.Instance.IsOffset ? 1 : 0;
             if (sim == 0)
             {
-                sim = Setting.Instance.DiySim;
+                sim = Settings.Instance.DiySim;
             }
 
             var similarity = 255 - 255 * (sim / 100.0);
@@ -326,7 +326,7 @@ namespace ScriptGraphicHelper.Models
 
             if (sim == 0)
             {
-                sim = Setting.Instance.DiySim;
+                sim = Settings.Instance.DiySim;
             }
 
             var similarity = 255 - 255 * (sim / 100.0);

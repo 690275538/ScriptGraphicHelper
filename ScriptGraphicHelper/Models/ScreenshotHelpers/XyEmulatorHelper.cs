@@ -84,7 +84,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
         public XyEmulatorHelper()//初始化, 获取模拟器路径
         {
-            var path = Setting.Instance.XyPath.Trim("\\".ToCharArray()) + "\\";
+            var path = Settings.Instance.XyPath.Trim("\\".ToCharArray()) + "\\";
             if (path != string.Empty && path != "")
             {
                 var index = path.LastIndexOf("\\");

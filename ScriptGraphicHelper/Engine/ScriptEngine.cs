@@ -83,7 +83,7 @@ namespace ScriptGraphicHelper.Engine
             return result;
         }
 
-        public string Execute(string entryType, string funcName, object[] args)
+        public string? Execute(string entryType, string funcName, object[] args)
         {
             this.assembly.TryGetTarget(out var assembly);
             var type = assembly.GetType(entryType);

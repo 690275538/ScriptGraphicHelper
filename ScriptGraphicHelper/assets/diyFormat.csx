@@ -16,6 +16,8 @@ namespace CreateColorStrHelper
         // public static double Height;
         // 下标
         // public int Index;
+        //锚点模式, 不需要的话忽略
+        // public AnchorMode Anchor;
         // 坐标
         // public Point Point;
         // 颜色
@@ -39,8 +41,9 @@ namespace CreateColorStrHelper
         /// 格式化范围
         /// </summary>
         /// <param name="mode"></param>
-        /// 1. 返回 sx, sy, ex, ey 格式
-        /// 2. 返回 sx, sy, width, height 格式
+        /// 0. 返回 sx, sy, ex, ey 格式
+        /// 1. 返回 sx, sy, width, height 格式
+        /// 2. 返回 锚点范围格式
         /// <returns/>
         //public string ToString(int mode = 0)
 

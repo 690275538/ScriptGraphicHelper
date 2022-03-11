@@ -9,7 +9,6 @@
         public int Mode_1 { get; set; }
         public int Mode_2 { get; set; }
 
-
         public Range(double left, double top, double right, double bottom, int mode_1 = -1, int mode_2 = -1)
         {
             this.Left = left;
@@ -19,6 +18,7 @@
             this.Mode_1 = mode_1;
             this.Mode_2 = mode_2;
         }
+
         /// <summary>
         /// 格式化范围
         /// </summary>
@@ -29,7 +29,6 @@
         /// <returns/>
         public string ToString(int mode = 0)
         {
-
             if (mode == 1)
             {
                 var width = this.Right - this.Left;
@@ -38,8 +37,8 @@
             }
             else if (mode == 2)
             {
-                var mode_1 = this.Mode_1 == 0 ? "left" : this.Mode_1 == 1 ? "center" : this.Mode_1 == 2 ? "right" : "none";
-                var mode_2 = this.Mode_2 == 0 ? "left" : this.Mode_2 == 1 ? "center" : this.Mode_2 == 2 ? "right" : "none";
+                var mode_1 = this.Mode_1 == 0 ? "Anchor.Left" : this.Mode_1 == 1 ? "Anchor.Center" : this.Mode_1 == 2 ? "Anchor.Right" : "Anchor.None";
+                var mode_2 = this.Mode_2 == 0 ? "Anchor.Left" : this.Mode_2 == 1 ? "Anchor.Center" : this.Mode_2 == 2 ? "Anchor.Right" : "Anchor.None";
 
                 if (this.Mode_1 == this.Mode_2)
                 {
@@ -47,7 +46,7 @@
                 }
                 else
                 {
-                    return string.Format("{0},{1},{2},{3},{4},{5}", this.Left.ToString(), this.Top.ToString(), mode_1, this.Right.ToString(), this.Bottom.ToString(), mode_2);
+                    return string.Format("{0},{1},{2},{3},{4},{5}", this.Left.ToString(), this.Top.ToString(),  this.Right.ToString(), this.Bottom.ToString(), mode_1, mode_2);
                 }
             }
             else

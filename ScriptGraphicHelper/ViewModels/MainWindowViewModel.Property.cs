@@ -7,6 +7,7 @@ using ScriptGraphicHelper.Models;
 using ScriptGraphicHelper.ViewModels.Core;
 using SkiaSharp;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 
@@ -53,31 +54,7 @@ namespace ScriptGraphicHelper.ViewModels
             set
             {
                 this.RaiseAndSetIfChanged(ref this.simSelectedIndex, value);
-                Setting.Instance.SimSelectedIndex = value;
-            }
-        }
-
-        private FormatMode formatSelectedIndex = FormatMode.CmpStr;
-        public FormatMode FormatSelectedIndex
-        {
-            get => this.formatSelectedIndex;
-            set
-            {
-                this.RaiseAndSetIfChanged(ref this.formatSelectedIndex, value);
-                Setting.Instance.FormatSelectedIndex = (int)value;
-                if (value == FormatMode.AnchorsFindStr
-                    || value == FormatMode.AnchorsCmpStr
-                    || value == FormatMode.ATAnchorsFindStr
-                    || value == FormatMode.ATAnchorsCmpStr)
-                {
-                    this.DataGrid_IsVisible = false;
-                    this.ImgMargin = new Thickness(170, 50, 340, 20);
-                }
-                else
-                {
-                    this.DataGrid_IsVisible = true;
-                    this.ImgMargin = new Thickness(170, 50, 280, 20);
-                }
+                Settings.Instance.SimSelectedIndex = value;
             }
         }
 
@@ -339,6 +316,37 @@ namespace ScriptGraphicHelper.ViewModels
             set => this.RaiseAndSetIfChanged(ref this.dataGrid_IsVisible, value);
         }
 
+
+        private List<string> formatItems;
+        public List<string> FormatItems
+        {
+            get => this.formatItems;
+            set => this.formatItems = value;
+        }
+
+        private FormatConfig CurrentFormat;
+
+        private int formatSelectedIndex = 0;
+        public int FormatSelectedIndex
+        {
+            get => this.formatSelectedIndex;
+            set
+            {
+                this.RaiseAndSetIfChanged(ref this.formatSelectedIndex, value);
+                Settings.Instance.FormatSelectedIndex = value;
+                this.CurrentFormat = FormatConfig.GetFormat(this.FormatItems[value])!;
+                if (this.CurrentFormat.AnchorIsEnabled is true)
+                {
+                    this.DataGrid_IsVisible = false;
+                    this.ImgMargin = new Thickness(170, 50, 340, 20);
+                }
+                else
+                {
+                    this.DataGrid_IsVisible = true;
+                    this.ImgMargin = new Thickness(170, 50, 280, 20);
+                }
+            }
+        }
     }
 
 }
