@@ -12,8 +12,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class HwndHelper : BaseHelper
     {
-        public override Action<Bitmap>? SuccessCallBack { get; set; }
-        public override Action<string>? FailCallBack { get; set; }
+        public override Action<Bitmap>? OnSuccessed { get; set; }
+        public override Action<string>? OnFailed { get; set; }
         public override string Path { get; } = "大漠句柄";
         public override string Name { get; } = "大漠句柄";
 
@@ -118,11 +118,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                  GraphicHelper.KeepScreen(sKBitmap);
                  var bitmap = new Bitmap(PixelFormat.Bgra8888, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(width, height), new Vector(96, 96), sKBitmap.RowBytes);
                  sKBitmap.Dispose();
-                 this.SuccessCallBack?.Invoke(bitmap);
+                 this.OnSuccessed?.Invoke(bitmap);
              }).ContinueWith((t) =>
              {
                  if (t.Exception != null)
-                     this.FailCallBack?.Invoke(t.Exception.ToString());
+                     this.OnFailed?.Invoke(t.Exception.ToString());
              });
         }
     }

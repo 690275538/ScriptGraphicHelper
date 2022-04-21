@@ -26,10 +26,6 @@ namespace ScriptGraphicHelper.Models
         public bool IsOffset { get; set; } = false;
         [JsonProperty("dmRegcode")]
         public string DmRegcode { get; set; } = string.Empty;
-        [JsonProperty("ysPath")]
-        public string YsPath { get; set; } = string.Empty;
-        [JsonProperty("xyPath")]
-        public string XyPath { get; set; } = string.Empty;
         [JsonProperty("ldPath3")]
         public string LdPath3 { get; set; } = string.Empty;
         [JsonProperty("ldPath4")]

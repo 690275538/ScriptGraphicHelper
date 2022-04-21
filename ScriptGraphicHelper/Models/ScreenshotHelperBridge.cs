@@ -45,8 +45,6 @@ namespace ScriptGraphicHelper.Models
                 Helpers.Add(new LdEmulatorHelper(1));
                 Helpers.Add(new LdEmulatorHelper(2));
                 Helpers.Add(new LdEmulatorHelper(3));
-                Helpers.Add(new YsEmulatorHelper());
-                Helpers.Add(new XyEmulatorHelper());
                 try
                 {
                     Helpers.Add(new HwndHelper());

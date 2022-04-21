@@ -1,6 +1,9 @@
 ﻿using Avalonia;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform;
+using MQTTnet;
+using MQTTnet.Client;
+using MQTTnet.Client.Options;
 using ScriptGraphicHelper.Views;
 using SkiaSharp;
 using System;
@@ -15,98 +18,100 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
     {
         public override string Path { get; } = "AT连接";
         public override string Name { get; } = "AT连接";
-        public override Action<Bitmap>? SuccessCallBack { get; set; }
-        public override Action<string>? FailCallBack { get; set; }
+        public override Action<Bitmap>? OnSuccessed { get; set; }
+        public override Action<string>? OnFailed { get; set; }
 
-        public string LocalIP { get; set; } = string.Empty;
-
-        public string RemoteIP { get; set; } = string.Empty;
-
-        private TcpClient? Client;
+        private IMqttClient? client;
 
         private string deviceName = "null";
 
-        public ATHelper()
-        {
-
-        }
-
         public override async Task<List<KeyValuePair<int, string>>> Initialize()
         {
-            var config = new AJConfig(Util.GetLocalAddress());
+            var config = new ATConfig();
+            var remoteIP = await config.ShowDialog<string?>(MainWindow.Instance);
 
-            var result = await config.ShowDialog<(string, string)?>(MainWindow.Instance);
-
-            if (result != null)
+            if (!string.IsNullOrEmpty(remoteIP))
             {
-                this.LocalIP = result.Value.Item1;
-                this.RemoteIP = result.Value.Item2;
+                try
+                {
+                    var mqttClientOptions = new MqttClientOptionsBuilder()
+                        .WithTcpServer(remoteIP)
+                        .WithKeepAlivePeriod(TimeSpan.FromMinutes(6))
+                        .Build();
 
-                await Task.Run(() =>
-               {
-                   try
-                   {
-                       this.Client = new TcpClient(this.RemoteIP, 1024);
-                       ConnectAsync(this.Client);
-                   }
-                   catch (Exception ex)
-                   {
-                       MessageBox.ShowAsync(ex.ToString());
-                   }
-               });
+                    var mqttFactory = new MqttFactory();
+                    client = mqttFactory.CreateMqttClient();
+
+                    client.UseApplicationMessageReceivedHandler(ApplicationMessageReceived);
+                    client.UseConnectedHandler(async (e) =>
+                    {
+                        await client.SubscribeAsync(
+                            new MqttTopicFilter
+                            {
+                                Topic = "server/init"
+                            },
+                            new MqttTopicFilter
+                            {
+                                Topic = "server/screen-shot"
+                            });
+
+                        await client.PublishAsync("client/init");
+                    });
+                    client.UseDisconnectedHandler(async (e) =>
+                    {
+                        await client.UnsubscribeAsync("server/init", "server/logging");
+                        client.Dispose();
+                    });
+
+                    await client.ConnectAsync(mqttClientOptions, CancellationToken.None);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.ShowAsync(ex.ToString());
+                }
             }
 
             var list = new List<KeyValuePair<int, string>>
-                {
+            {
                     new KeyValuePair<int, string>(key: 0, value: "null")
-                };
+            };
 
             return list;
         }
 
-        private void ConnectAsync(TcpClient client)
+        private void ApplicationMessageReceived(MqttApplicationMessageReceivedEventArgs e)
         {
-            _ = Task.Run(async () =>
+            var pack = PackData.Parse(e.ApplicationMessage.Payload);
+            if (pack is null) return;
+
+            switch (e.ApplicationMessage.Topic)
             {
-                var stream = client.GetStream();
-                while (true)
-                {
+                case "server/init":
+                    this.deviceName = pack.Description;
+                    break;
+                case "server/screen-shot":
                     try
                     {
-                        Thread.Sleep(50);
-                        var data = await Stick.ReadPackAsync(stream);
-
-                        switch (data.Key)
+                        if (pack.Key == "successed")
                         {
-                            case "init":
-                            {
-                                this.deviceName = data.Description;
-                                break;
-                            }
-                            case "screenShot_success":
-                            {
-                                var sKBitmap = SKBitmap.Decode(data.Buffer);
-                                var pxFormat = sKBitmap.ColorType == SKColorType.Rgba8888 ? PixelFormat.Rgba8888 : PixelFormat.Bgra8888;
-                                var bitmap = new Bitmap(pxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
+                            var sKBitmap = SKBitmap.Decode(pack.Buffer);
+                            var pxFormat = sKBitmap.ColorType == SKColorType.Rgba8888 ? PixelFormat.Rgba8888 : PixelFormat.Bgra8888;
+                            var bitmap = new Bitmap(pxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
 
-                                this.SuccessCallBack?.Invoke(bitmap);
-                                break;
-                            }
-                            case "screenShot_fail":
-                            {
-                                this.FailCallBack?.Invoke(data.Description);
-                                break;
-                            }
+                            this.OnSuccessed?.Invoke(bitmap);
+                        }
+                        else
+                        {
+                            this.OnFailed?.Invoke(pack.Description);
                         }
                     }
-                    catch
+                    catch (Exception ex)
                     {
-
+                        this.OnFailed?.Invoke(ex.ToString());
                     }
-                }
-            });
+                    break;
+            }
         }
-
 
 
         public override async Task<List<KeyValuePair<int, string>>> GetList()
@@ -122,22 +127,19 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         }
 
 
-        public override void ScreenShot(int Index)
+        public override void ScreenShot(int _)
         {
-            if (this.Client == null)
+            if (this.client is null || !this.client.IsConnected)
             {
-                throw new Exception("tcp连接失效");
+                throw new Exception("已断开连接!");
             }
-
-            var stream = this.Client.GetStream();
-
-            var pack = Stick.MakePackData("screenShot");
-            stream.Write(pack);
+            var pack = Stick.MakePackData("...");
+            this.client.PublishAsync("client/screen-shot", pack);
         }
 
-        public override bool IsStart(int Index)
+        public override bool IsStart(int _)
         {
-            return true;
+            return this.client?.IsConnected ?? false;
         }
 
 
@@ -145,8 +147,7 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             try
             {
-                this.Client?.Close();
-                this.Client?.Dispose();
+                this.client?.Dispose();
             }
             catch { };
         }

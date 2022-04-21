@@ -7,8 +7,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     public abstract class BaseHelper
     {
-        public abstract Action<Bitmap>? SuccessCallBack { get; set; }
-        public abstract Action<string>? FailCallBack { get; set; }
+        public abstract Action<Bitmap>? OnSuccessed { get; set; }
+        public abstract Action<string>? OnFailed { get; set; }
         public abstract string Path { get; }
         public abstract string Name { get; }
         public abstract bool IsStart(int Index);

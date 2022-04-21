@@ -43,45 +43,21 @@ function makePackData(key, desc, buffer) {
     return byteBuffer.array();
 }
 
-function send() {
+events.on("send", function (remoteIP) {
     let socket;
     let stream;
-    let remoteIP;
-
+    log("1111");
     try {
+        let img = images.captureScreen();
         socket = new Socket(remoteIP, 5678);
         stream = socket.getOutputStream();
-
-        if (!app.versionName.startsWith("Pro 8")) {
-            var data = makePackData("screenShot_fail", "AJ连接模式仅支持autojsPro 8!", null);
-            stream.write(data);
-            return;
-        }
-
-
-        let engine = null;
-        let _engines = engines.all();
-
-        for (let i = 0; i < _engines.length; i++) {
-            if (_engines[i].getSource().toString().indexOf("cap_script") != -1) {
-                engine = _engines[i];
-            }
-        }
-
-        if (engine == null) {
-            var data = makePackData("screenShot_fail", "获取常驻脚本对象失败, 请在图色助手重新连接aj!", null);
-            stream.write(data);
-            return;
-        }
-
-        let img = engine.getRuntime().images.captureScreen();
         if (img != null) {
             let img_data = images.toBytes(img);
-            var data = makePackData("screenShot_success", null, img_data);
+            var data = makePackData("screenShot_successed", null, img_data);
             stream.write(data);
         }
         else {
-            var data = makePackData("screenShot_fail", "获取截图失败!", null);
+            var data = makePackData("screenShot_failed", "获取截图失败!", null);
             stream.write(data);
         }
     }
@@ -92,11 +68,39 @@ function send() {
         if (stream != null) {
             stream.close();
         }
-
         if (socket != null) {
             socket.close();
         }
     }
+});
+
+
+
+
+let _engines = engines.all();
+
+if (app.versionName.startsWith("Pro 8")) {
+    threads.start(function () {
+        if (!requestScreenCapture()) {
+            alert("请求截图权限失败"); exit();
+        }
+        else {
+            toastLog("请求截图权限成功");
+        }
+    });
+}
+else if (app.versionName.startsWith("Pro 9")) {
+    threads.start(function () {
+        if (!requestScreenCapture()) {
+            alert("请求截图权限失败");
+            exit();
+        }
+        else {
+            toastLog("请求截图权限成功");
+        }
+    });
 }
 
-send();
+setInterval(() => { }, 1000);
+
+

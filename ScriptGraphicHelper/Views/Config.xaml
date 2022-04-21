@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="配置"
     Width="285"
-    Height="460"
+    Height="360"
     CanResize="false"
     Icon="/assets/ico.ico"
     Opened="Window_Opened"
@@ -63,40 +63,6 @@
                         Name="DiySim"
                         Width="120"
                         HorizontalContentAlignment="Center"
-                        Background="Transparent"
-                        BorderThickness="0" />
-                </Border>
-            </StackPanel>
-            <StackPanel Margin="10" Orientation="Horizontal">
-                <TextBlock
-                    Width="85"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="夜神路径" />
-                <Border
-                    Margin="25,0,0,0"
-                    BorderBrush="#666666"
-                    BorderThickness="0,0,0,1">
-                    <TextBox
-                        Name="YsPath"
-                        Width="120"
-                        Background="Transparent"
-                        BorderThickness="0" />
-                </Border>
-            </StackPanel>
-            <StackPanel Margin="10" Orientation="Horizontal">
-                <TextBlock
-                    Width="85"
-                    HorizontalAlignment="Center"
-                    VerticalAlignment="Center"
-                    Text="逍遥路径" />
-                <Border
-                    Margin="25,0,0,0"
-                    BorderBrush="#666666"
-                    BorderThickness="0,0,0,1">
-                    <TextBox
-                        Name="XyPath"
-                        Width="120"
                         Background="Transparent"
                         BorderThickness="0" />
                 </Border>

@@ -35,35 +35,34 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
     {
         public override string Path { get; } = "AJ连接";
         public override string Name { get; } = "AJ连接";
-        public override Action<Bitmap>? SuccessCallBack { get; set; }
-        public override Action<string>? FailCallBack { get; set; }
+        public override Action<Bitmap>? OnSuccessed { get; set; }
+        public override Action<string>? OnFailed { get; set; }
 
         public string LocalIP { get; set; } = string.Empty;
 
         public string RemoteIP { get; set; } = string.Empty;
 
-        private TcpListener? Server;
+        private TcpListener? server;
 
-        private TcpClient? Client;
+        private TcpClient? client;
 
         private int runStep;
 
-        private string runCode = string.Empty;
+        private string sendCode = string.Empty;
 
         private string deviceName { get; set; } = string.Empty;
 
         public AJHelper()
         {
-
-            if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + @"assets/script.js"))
+            var sendCodePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "send_script.js");
+            if (File.Exists(sendCodePath))
             {
-                var sr = File.OpenText(AppDomain.CurrentDomain.BaseDirectory + @"assets/script.js");
-                this.runCode = sr.ReadToEnd();
+                this.sendCode = File.ReadAllText(sendCodePath);
                 this.runStep = 0;
             }
             else
             {
-                throw new FileNotFoundException($"{AppDomain.CurrentDomain.BaseDirectory}assets/script.js");
+                throw new FileNotFoundException(sendCodePath);
             }
         }
 
@@ -104,8 +103,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 {
                     try
                     {
-                        this.Client = new TcpClient(this.RemoteIP, 9317);
-                        var networkStream = this.Client.GetStream();
+                        this.client = new TcpClient(this.RemoteIP, 9317);
+                        var networkStream = this.client.GetStream();
                         for (var i = 0; i < 50; i++)
                         {
                             Thread.Sleep(100);
@@ -144,12 +143,26 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
                                 await networkStream.WriteAsync(send);
 
-                                var capScript = "let _engines = engines.all(); for (let i = 0; i < _engines.length; i++) { if (_engines[i].getSource().toString().indexOf(\"cap_script\") != -1 && _engines[i] != engines.myEngine()) { _engines[i].forceStop(); } } threads.start(function () { if (!requestScreenCapture()) { alert(\"请求截图权限失败\"); exit(); } else { toastLog(\"请求截图权限成功\"); } }); setInterval(() => { }, 1000);";
+                                var initCodePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "init_script.js");
+                                if (!File.Exists(initCodePath))
+                                {
+                                    throw new FileNotFoundException(initCodePath);
+                                }
+                                var initCode = File.ReadAllText(initCodePath);
+                                await networkStream.WriteAsync(GetRunCommandBytes(initCode, "init_script"));
+                                await Task.Delay(500);
 
-                                await networkStream.WriteAsync(GetRunCommandBytes(capScript, "cap_script"));
-                                this.Server = new TcpListener(IPAddress.Parse(this.LocalIP), 5678);
-                                this.Server.Start();
-                                this.Server.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Server);
+                                var capCodePath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "assets", "cap_script.js");
+                                if (!File.Exists(capCodePath))
+                                {
+                                    throw new FileNotFoundException(capCodePath);
+                                }
+
+                                var capCode = File.ReadAllText(capCodePath);
+                                await networkStream.WriteAsync(GetRunCommandBytes(capCode, "cap_script"));
+                                this.server = new TcpListener(IPAddress.Parse(this.LocalIP), 5678);
+                                this.server.Start();
+                                this.server.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.server);
                                 break;
                             }
                         }
@@ -160,8 +173,6 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                     }
                 });
             }
-
-
             return await GetList();
         }
 
@@ -194,38 +205,45 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 
                     var data = await Stick.ReadPackAsync(stream);
 
-                    if (data.Key == "screenShot_success")
+                    if (data.Key == "screenShot_successed")
                     {
                         var sKBitmap = SKBitmap.Decode(data.Buffer);
                         var pxFormat = sKBitmap.ColorType == SKColorType.Rgba8888 ? PixelFormat.Rgba8888 : PixelFormat.Bgra8888;
                         var bitmap = new Bitmap(pxFormat, AlphaFormat.Opaque, sKBitmap.GetPixels(), new PixelSize(sKBitmap.Width, sKBitmap.Height), new Vector(96, 96), sKBitmap.RowBytes);
                         sKBitmap.Dispose();
-                        this.SuccessCallBack?.Invoke(bitmap);
+                        this.OnSuccessed?.Invoke(bitmap);
                     }
-                    else if (data.Key == "screenShot_fail")
+                    else if (data.Key == "screenShot_failed")
                     {
-                        this.FailCallBack?.Invoke(data.Description);
+                        this.OnFailed?.Invoke(data.Description ?? "未知错误");
                     }
 
                     stream.Close();
                     client.Close();
-                    this.Server?.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.Server);
                 }
                 catch (Exception ex)
                 {
-                    this.FailCallBack?.Invoke(ex.ToString());
+                    this.OnFailed?.Invoke(ex.ToString());
+                }
+                finally
+                {
+                    if (this.server.Server.Connected)
+                    {
+                        this.server?.BeginAcceptTcpClient(new AsyncCallback(ConnectCallback), this.server);
+                    }
+                    
                 }
             }
         }
 
         public override void ScreenShot(int Index)
         {
-            if (this.Client == null)
+            if (this.client == null)
             {
                 throw new Exception("tcp连接失效");
             }
-            this.runCode = this.runCode.Replace("let remoteIP;", $"let remoteIP = '{this.LocalIP}'");
-            this.Client.GetStream().Write(GetRunCommandBytes(this.runCode, "screenshotHelper"));
+            var sendCode = this.sendCode.Replace("let remoteIP;", $"let remoteIP = '{this.LocalIP}'");
+            this.client.GetStream().Write(GetRunCommandBytes(sendCode, "send_script"));
         }
 
         public override bool IsStart(int Index)
@@ -238,9 +256,10 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         {
             try
             {
-                this.Server?.Stop();
-                this.Client?.Close();
-                this.Client?.Dispose();
+                this.server?.Server.Close();
+                this.server.Stop();
+                this.client?.Close();
+                this.client?.Dispose();
             }
             catch { };
         }

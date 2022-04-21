@@ -12,8 +12,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class AdbHelper : BaseHelper
     {
-        public override Action<Bitmap>? SuccessCallBack { get; set; }
-        public override Action<string>? FailCallBack { get; set; }
+        public override Action<Bitmap>? OnSuccessed { get; set; }
+        public override Action<string>? OnFailed { get; set; }
         public override string Path { get; } = AppDomain.CurrentDomain.BaseDirectory.Replace("\\", "/") + "assets/adb/";
         public override string Name { get; } = "Adb连接";
 
@@ -76,31 +76,31 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
         public override async void ScreenShot(int index)
         {
             await Task.Run(() =>
-             {
-                 var name = "screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
-                 var fullName = this.Path + "screenshot/" + name;
-                 PipeCmd($"-s { this.DeviceInfos[index].Value }  exec-out screencap -p > { fullName }");
-                 for (var i = 0; i < 50; i++)
-                 {
-                     Thread.Sleep(100);
-                     if (File.Exists(fullName))
-                     {
-                         break;
-                     }
-                 }
-                 FileStream stream = new(fullName, FileMode.Open, FileAccess.Read);
-                 var bitmap = new Bitmap(stream);
-                 stream.Position = 0;
-                 var sKBitmap = SKBitmap.Decode(stream);
-                 GraphicHelper.KeepScreen(sKBitmap);
-                 sKBitmap.Dispose();
-                 stream.Dispose();
-                 this.SuccessCallBack?.Invoke(bitmap);
-             }).ContinueWith((t) =>
-             {
-                 if (t.Exception != null)
-                     this.FailCallBack?.Invoke(t.Exception.ToString());
-             });
+            {
+                var name = "screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                var fullName = this.Path + "screenshot/" + name;
+                PipeCmd($"-s { this.DeviceInfos[index].Value }  exec-out screencap -p > { fullName }");
+                for (var i = 0; i < 50; i++)
+                {
+                    Thread.Sleep(100);
+                    if (File.Exists(fullName))
+                    {
+                        break;
+                    }
+                }
+                FileStream stream = new(fullName, FileMode.Open, FileAccess.Read);
+                var bitmap = new Bitmap(stream);
+                stream.Position = 0;
+                var sKBitmap = SKBitmap.Decode(stream);
+                GraphicHelper.KeepScreen(sKBitmap);
+                sKBitmap.Dispose();
+                stream.Dispose();
+                this.OnSuccessed?.Invoke(bitmap);
+            }).ContinueWith((t) =>
+            {
+                if (t.Exception != null)
+                    this.OnFailed?.Invoke(t.Exception.ToString());
+            });
         }
 
         public string PipeCmd(string theCommand)

@@ -23,6 +23,7 @@ using Image = Avalonia.Controls.Image;
 using Point = Avalonia.Point;
 using Range = ScriptGraphicHelper.Models.Range;
 using TabItem = ScriptGraphicHelper.Models.TabItem;
+using Cursor = Avalonia.Input.Cursor;
 
 namespace ScriptGraphicHelper.ViewModels
 {
@@ -234,7 +235,7 @@ namespace ScriptGraphicHelper.ViewModels
                     this.EmulatorInfo = await ScreenshotHelperBridge.Initialize();
                     this.EmulatorSelectedIndex = -1;
 
-                    ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select].SuccessCallBack = new Action<Bitmap>((bitmap) =>
+                    ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select].OnSuccessed = new Action<Bitmap>((bitmap) =>
                     {
                         Dispatcher.UIThread.InvokeAsync(() =>
                         {
@@ -250,7 +251,7 @@ namespace ScriptGraphicHelper.ViewModels
                         });
                     });
 
-                    ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select].FailCallBack = new Action<string>((errorMessage) =>
+                    ScreenshotHelperBridge.Helpers[ScreenshotHelperBridge.Select].OnFailed = new Action<string>((errorMessage) =>
                     {
                         MessageBox.ShowAsync(errorMessage);
                         this.WindowCursor = new Cursor(StandardCursorType.Arrow);
@@ -773,15 +774,13 @@ namespace ScriptGraphicHelper.ViewModels
         {
             var config = new Config();
             var setting = Settings.Instance;
-            var ysPath = setting.YsPath;
-            var xyPath = setting.XyPath;
             var ldpath3 = setting.LdPath3;
             var ldpath4 = setting.LdPath4;
             var ldpath64 = setting.LdPath64;
 
             await config.ShowDialog(MainWindow.Instance);
 
-            if (ysPath != setting.YsPath || xyPath != setting.XyPath || ldpath3 != setting.LdPath3 || ldpath4 != setting.LdPath4 || ldpath64 != setting.LdPath64)
+            if (ldpath3 != setting.LdPath3 || ldpath4 != setting.LdPath4 || ldpath64 != setting.LdPath64)
             {
                 ResetEmulatorOptions_Click();
             }

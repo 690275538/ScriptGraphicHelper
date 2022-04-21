@@ -75,7 +75,7 @@
 		<AvaloniaXaml Include="Views\AJConfig.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</AvaloniaXaml>
-		<AvaloniaXaml Include="Views\TcpConfig.xaml">
+		<AvaloniaXaml Include="Views\ATConfig.xaml">
 			<Generator>MSBuild:Compile</Generator>
 		</AvaloniaXaml>
 		<AvaloniaXaml Include="Views\HwndConfig.xaml">
@@ -90,14 +90,15 @@
 		<None Include="..\.editorconfig" Link=".editorconfig" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="Avalonia" Version="0.10.11" />
-		<PackageReference Include="Avalonia.Desktop" Version="0.10.11" />
-		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.11" />
-		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.11" />
-		<PackageReference Include="Avalonia.Svg.Skia" Version="0.10.11.1" />
-		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.11.5" />
-		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.0.1" />
+		<PackageReference Include="Avalonia" Version="0.10.13" />
+		<PackageReference Include="Avalonia.Desktop" Version="0.10.13" />
+		<PackageReference Include="Avalonia.Diagnostics" Version="0.10.13" />
+		<PackageReference Include="Avalonia.ReactiveUI" Version="0.10.13" />
+		<PackageReference Include="Avalonia.Svg.Skia" Version="0.10.12" />
+		<PackageReference Include="Avalonia.Xaml.Behaviors" Version="0.10.13.3" />
+		<PackageReference Include="Microsoft.CodeAnalysis.CSharp.Scripting" Version="4.1.0" />
 		<PackageReference Include="Microsoft.Win32.Registry" Version="5.0.0" />
+		<PackageReference Include="MQTTnet" Version="3.1.2" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
 	</ItemGroup>
 
@@ -125,11 +126,8 @@
 		<Compile Update="Views\MessageBox.xaml.cs">
 			<DependentUpon>MessageBox.xaml</DependentUpon>
 		</Compile>
-		<Compile Update="Views\TcpConfig - 复制.xaml.cs">
-			<DependentUpon>TcpConfig.xaml</DependentUpon>
-		</Compile>
-		<Compile Update="Views\TcpConfig.xaml.cs">
-			<DependentUpon>TcpConfig.xaml</DependentUpon>
+		<Compile Update="Views\ATConfig.xaml.cs">
+			<DependentUpon>ATConfig.xaml</DependentUpon>
 		</Compile>
 		<Compile Update="Views\ImgEditor.xaml.cs">
 			<DependentUpon>ImgEditor.xaml</DependentUpon>
@@ -185,7 +183,13 @@
 		<None Update="assets\使用说明.txt">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
-		<None Update="assets\script.js">
+		<None Update="Assets\send_script.js">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\cap_script.js">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+		<None Update="Assets\init_script.js">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
 	</ItemGroup>
@@ -207,7 +211,7 @@
 		<CFBundleDisplayName>ScriptGraphicHelper</CFBundleDisplayName>
 		<CFBundleIdentifier>org.yiszza.scriptgraphichelper</CFBundleIdentifier>
 		<CFBundleShortVersionString>综合图色助手</CFBundleShortVersionString>
-		<CFBundleVersion>1.3.8</CFBundleVersion>
+		<CFBundleVersion>1.4.0</CFBundleVersion>
 		<CFBundleExecutable>TestApp</CFBundleExecutable>
 		<CFBundleIconFile>assets\ico.ico</CFBundleIconFile>
 		<!-- Will be copied from output directory -->

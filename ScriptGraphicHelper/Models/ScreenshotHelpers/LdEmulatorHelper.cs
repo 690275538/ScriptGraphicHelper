@@ -13,8 +13,8 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
 {
     class LdEmulatorHelper : BaseHelper
     {
-        public override Action<Bitmap>? SuccessCallBack { get; set; }
-        public override Action<string>? FailCallBack { get; set; }
+        public override Action<Bitmap>? OnSuccessed { get; set; }
+        public override Action<string>? OnFailed { get; set; }
         public override string Path { get; } = string.Empty;
         public override string Name { get; } = string.Empty;
         public string BmpPath { get; set; } = string.Empty;
@@ -230,11 +230,11 @@ namespace ScriptGraphicHelper.Models.ScreenshotHelpers
                 GraphicHelper.KeepScreen(sKBitmap);
                 sKBitmap.Dispose();
                 stream.Dispose();
-                this.SuccessCallBack?.Invoke(bitmap);
+                this.OnSuccessed?.Invoke(bitmap);
             }).ContinueWith((t) =>
             {
                 if (t.Exception != null)
-                    this.FailCallBack?.Invoke(t.Exception.ToString());
+                    this.OnFailed?.Invoke(t.Exception.ToString());
             });
         }
         public void Screencap(int ldIndex, string savePath, string saveName)//截图
