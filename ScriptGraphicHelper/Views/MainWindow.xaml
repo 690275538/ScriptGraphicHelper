@@ -144,7 +144,7 @@
                             ItemsSource="{Binding EmulatorInfo, Mode=TwoWay}">
                             <ComboBox.ContextMenu>
                                 <ContextMenu Style="{DynamicResource MaterialDesignContextMenu}">
-                                    <MenuItem Command="{Binding ClearEmulatorOptions_Click}" Header="重置选择" />
+                                    <MenuItem Command="{Binding ClearEmulatorOptions_Click}" Header="重置选择" FontSize="10" />
                                 </ContextMenu>
                             </ComboBox.ContextMenu>
                             <i:Interaction.Triggers>

@@ -128,7 +128,7 @@ namespace ScriptGraphicHelper.ViewModels
         }
         public Bitmap Bmp { get; set; }
 
-        private FormatMode _formatSelectedIndex;
+        private FormatMode _formatSelectedIndex=FormatMode.compareStr;
         public FormatMode FormatSelectedIndex
         {
             get { return _formatSelectedIndex; }

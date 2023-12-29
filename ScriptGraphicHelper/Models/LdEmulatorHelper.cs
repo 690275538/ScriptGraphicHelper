@@ -30,7 +30,7 @@ namespace ScriptGraphicHelper.Models
                         Path = string.Empty;
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString();
+                    Path = Aimdir.GetValue("InstallDir", "").ToString();
                     if (Path == string.Empty)
                     {
                         string path = GetInkTargetPath(AppDomain.CurrentDomain.BaseDirectory, "雷电模拟器3.0.lnk");
@@ -51,7 +51,7 @@ namespace ScriptGraphicHelper.Models
                         Path = string.Empty;
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString();
+                    Path = Aimdir.GetValue("InstallDir","").ToString();
                     if (Path == string.Empty)
                     {
                         string path = GetInkTargetPath(AppDomain.CurrentDomain.BaseDirectory, "雷电模拟器4.0.lnk");
@@ -72,7 +72,7 @@ namespace ScriptGraphicHelper.Models
                         Path = string.Empty;
                         return;
                     }
-                    Path = Aimdir.GetValue("InstallDir").ToString();
+                    Path = Aimdir.GetValue("InstallDir", "").ToString();
                     if (Path == string.Empty)
                     {
                         string path = GetInkTargetPath(AppDomain.CurrentDomain.BaseDirectory, "雷电模拟器64.lnk");
