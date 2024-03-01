@@ -1,11 +1,8 @@
-﻿using ScriptGraphicHelper.Models.ScriptGraphicHelper.Models;
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
-using System.IO;
 using System.Threading.Tasks;
-using System.Windows;
+using ScriptGraphicHelper.Models.ScriptGraphicHelper.Models;
 
 namespace ScriptGraphicHelper.Models
 {
@@ -36,6 +33,7 @@ namespace ScriptGraphicHelper.Models
             Emulators.Add(new LdEmulatorHelper(1));
             Emulators.Add(new LdEmulatorHelper(2));
             Emulators.Add(new MuMuEmulatorHelper());
+            Emulators.Add(new UsbEmulatorHelper());
             Emulators.Add(new YsEmulatorHelper());
             Emulators.Add(new XyEmulatorHelper());
             Emulators.Add(new MobileTcpHelper());
@@ -87,7 +85,7 @@ namespace ScriptGraphicHelper.Models
         public async static Task<ObservableCollection<string>> GetAll()
         {
             ObservableCollection<string> result = new ObservableCollection<string>();
-            Info =await Emulators[Select].ListAll();
+            Info = await Emulators[Select].ListAll();
             foreach (var item in Info)
             {
                 result.Add(item.Value);

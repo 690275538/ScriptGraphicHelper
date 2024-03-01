@@ -4,8 +4,6 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Net.NetworkInformation;
-using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -45,6 +43,7 @@ namespace ScriptGraphicHelper.Models
         {
             string result = string.Empty;
             DirectoryInfo directoryInfo = new DirectoryInfo(path);
+            if (!directoryInfo.Exists) return result;
             FileSystemInfo[] fileSystemInfos = directoryInfo.GetFileSystemInfos();
             foreach (var item in fileSystemInfos)
             {
@@ -92,7 +91,7 @@ namespace ScriptGraphicHelper.Models
                 }
                 else if (i == 1)
                 {
-                    player_list_index = line[1].Trim().Replace(" result","").Trim('[',',',']').Split(",").Select(d=> int.Parse(d) ).ToList();
+                    player_list_index = line[1].Trim().Replace(" result", "").Trim('[', ',', ']').Split(",").Select(d => int.Parse(d)).ToList();
                 }
             }
             var player_list = player_list_index.Select(d =>
@@ -145,7 +144,7 @@ namespace ScriptGraphicHelper.Models
                     MessageBox.Show("模拟器未启动 ! ");
                     return new Bitmap(1, 1);
                 }
-                string BmpName = "Screen_" + DateTime.Now.ToString("yy-MM-dd-HH-mm-ss") + ".png";
+                string BmpName = "Screen_temp.jpeg";
                 string img_path = $"/sdcard/Pictures/{BmpName}";
                 Screencap(Index, img_path);
                 try
@@ -197,7 +196,7 @@ namespace ScriptGraphicHelper.Models
                 RedirectStandardOutput = true,
                 RedirectStandardInput = true,
                 UseShellExecute = false,
-                StandardOutputEncoding =Encoding.UTF8,
+                StandardOutputEncoding = Encoding.UTF8,
             };
             Process pipe = Process.Start(start);
             StreamReader readStream = pipe.StandardOutput;
